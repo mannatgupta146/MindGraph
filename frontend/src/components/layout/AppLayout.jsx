@@ -13,7 +13,7 @@ const AppLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <div className="ml-[260px] min-h-screen flex flex-col">
+      <div className="ml-[260px] h-screen flex flex-col">
         <TopBar title={title} />
         <main className="flex-1 p-8 overflow-y-auto">
           <div className="max-w-[1200px] mx-auto w-full">
