@@ -32,18 +32,18 @@
 }
 
 .dark {
-  /* Dark Theme */
-  --bg-color: #0F172A;
-  --surface-color: #1E293B;
-  --surface-hover-color: #334155;
-  --border-color: #334155;
+  /* Premium Dark Theme (Bespoke Zinc/Neutral) */
+  --bg-color: #09090B; /* Deep OLED-like off-black */
+  --surface-color: #121214; /* Very subtle elevation */
+  --surface-hover-color: #1F1F22;
+  --border-color: #27272A;
   --primary-color: #3B82F6;
   --primary-hover-color: #60A5FA;
   --secondary-color: #06B6D4;
   --accent-color: #F59E0B;
-  --text-color: #F8FAFC;
-  --text-muted-color: #94A3B8;
-  --text-disabled-color: #64748B;
+  --text-color: #FAFAFA;
+  --text-muted-color: #A1A1AA;
+  --text-disabled-color: #52525B;
 }
 
 body {
