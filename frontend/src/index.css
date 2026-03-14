@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  /* Map Tailwind colors to CSS variables */
+  --color-background: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-surface-hover: var(--surface-hover-color);
+  --color-border: var(--border-color);
+  --color-primary: var(--primary-color);
+  --color-primary-hover: var(--primary-hover-color);
+  --color-secondary: var(--secondary-color);
+  --color-accent: var(--accent-color);
+  --color-text-primary: var(--text-color);
+  --color-text-secondary: var(--text-muted-color);
+  --color-text-tertiary: var(--text-disabled-color);
+  --font-sans: "Inter", sans-serif;
+}
+
+:root {
+  /* Light Theme */
+  --bg-color: #F8FAFC;
+  --surface-color: #FFFFFF;
+  --surface-hover-color: #F1F5F9;
+  --border-color: #E2E8F0;
+  --primary-color: #3B82F6;
+  --primary-hover-color: #2563EB;
+  --secondary-color: #06B6D4;
+  --accent-color: #F59E0B;
+  --text-color: #0F172A;
+  --text-muted-color: #64748B;
+  --text-disabled-color: #94A3B8;
+}
+
+.dark {
+  /* Dark Theme */
+  --bg-color: #0F172A;
+  --surface-color: #1E293B;
+  --surface-hover-color: #334155;
+  --border-color: #334155;
+  --primary-color: #3B82F6;
+  --primary-hover-color: #60A5FA;
+  --secondary-color: #06B6D4;
+  --accent-color: #F59E0B;
+  --text-color: #F8FAFC;
+  --text-muted-color: #94A3B8;
+  --text-disabled-color: #64748B;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
