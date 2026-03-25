@@ -127,7 +127,20 @@ export const deleteSave = async (req, res) => {
 export const getGraphData = async (req, res) => {
   try {
     const userId = req.user.id;
-    const saves = await Save.find({ user: userId }).select('title type tags createdAt');
+    const saves = await Save.find({ user: userId }).select('title type tags embedding createdAt');
+
+    // Helper for cosine similarity
+    const cosineSimilarity = (vecA, vecB) => {
+      let dotProduct = 0;
+      let normA = 0;
+      let normB = 0;
+      for (let i = 0; i < vecA.length; i++) {
+        dotProduct += vecA[i] * vecB[i];
+        normA += vecA[i] * vecA[i];
+        normB += vecB[i] * vecB[i];
+      }
+      return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    };
 
     const nodes = saves.map(save => ({
       id: save._id,
@@ -138,16 +151,30 @@ export const getGraphData = async (req, res) => {
     }));
 
     const links = [];
-    // Create links between saves that share at least one tag
+    // Create links between saves
     for (let i = 0; i < saves.length; i++) {
       for (let j = i + 1; j < saves.length; j++) {
+        // Option 1: Shared Tags (Strong Link)
         const commonTags = saves[i].tags.filter(tag => saves[j].tags.includes(tag));
         if (commonTags.length > 0) {
           links.push({
             source: saves[i]._id,
             target: saves[j]._id,
-            value: commonTags.length // Thickness based on number of shared tags
+            value: commonTags.length * 2,
+            type: 'tag'
           });
+        } 
+        // Option 2: Semantic Similarity (AI Hidden Link)
+        else if (saves[i].embedding?.length > 0 && saves[j].embedding?.length > 0) {
+          const sim = cosineSimilarity(saves[i].embedding, saves[j].embedding);
+          if (sim > 0.82) { // Threshold for "Conceptual Link"
+            links.push({
+              source: saves[i]._id,
+              target: saves[j]._id,
+              value: sim,
+              type: 'semantic'
+            });
+          }
         }
       }
     }
