@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Global Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // ⌘K or Ctrl+K for Search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        navigate('/search');
+      }
+      // ⌘I or Ctrl+I for Inbox
+      if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
+        e.preventDefault();
+        navigate('/inbox');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
   
   // Extract title from path
   const path = location.pathname.substring(1);

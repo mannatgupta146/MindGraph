@@ -10,14 +10,15 @@ const Search = () => {
   const [selectedSave, setSelectedSave] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  const handleSearch = async (e, forcedQuery) => {
+    if (e) e.preventDefault();
+    const activeQuery = forcedQuery || query;
+    if (!activeQuery.trim()) return;
 
     setLoading(true);
     setHasSearched(true);
     try {
-      const { data } = await axios.get(`http://localhost:3000/api/saves/search?query=${encodeURIComponent(query)}`, {
+      const { data } = await axios.get(`http://localhost:3000/api/saves/search?query=${encodeURIComponent(activeQuery)}`, {
         withCredentials: true
       });
       setResults(data);
@@ -62,19 +63,41 @@ const Search = () => {
         </div>
       </form>
 
+      {/* Discovery Suggestions */}
+      <div className="flex flex-wrap items-center justify-center gap-3 py-2 animate-in fade-in slide-in-from-top-4 duration-700">
+        <span className="text-[10px] text-text-tertiary font-black uppercase tracking-[0.2em] mr-1">Discovery:</span>
+        {['Project Management', 'AI Prompts', 'Status Reports', 'Dashboard Help'].map((tag) => (
+          <button
+            key={tag}
+            onClick={() => { setQuery(tag); handleSearch(null, tag); }}
+            className="px-4 py-1.5 bg-surface border border-border rounded-full text-xs text-text-secondary hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all cursor-pointer"
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+
       {/* Results Section */}
       <div className="space-y-6 pt-4">
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map(n => (
-              <div key={n} className="h-32 bg-surface border border-border rounded-2xl animate-pulse"></div>
+              <div key={n} className="h-32 bg-surface border border-border rounded-3xl animate-pulse"></div>
             ))}
           </div>
         ) : results.length > 0 ? (
           <>
-            <div className="flex items-center justify-between text-text-tertiary text-sm px-2">
-              <span>Found {results.length} relevant memories</span>
-              <span>Sorted by Semantic Relevancy</span>
+            <div className="flex flex-col space-y-1 mb-4 px-2">
+              <div className="flex items-center justify-between text-text-tertiary text-[10px] font-black uppercase tracking-[0.2em]">
+                <span className="flex items-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary/40 mr-2"></div>
+                  Search Results
+                </span>
+                <span>Sorted by Relevancy</span>
+              </div>
+              <h2 className="text-xl font-bold text-text-primary">
+                Showing {results.length} memories for <span className="text-primary">"{query}"</span>
+              </h2>
             </div>
             <div className="grid grid-cols-1 gap-4">
               {results.map((result) => (

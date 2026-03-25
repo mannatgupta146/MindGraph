@@ -11,6 +11,7 @@ const KnowledgeGraph = () => {
   const [selectedSaveId, setSelectedSaveId] = useState(null);
   const [selectedSave, setSelectedSave] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [searchQuery, setSearchQuery] = useState('');
   const { theme } = useContext(ThemeContext);
   const isDark = theme === 'dark';
 
@@ -96,6 +97,16 @@ const KnowledgeGraph = () => {
     const current = fgRef.current.zoom();
     const next = Math.max(0.6, Math.min(3, current * factor));
     fgRef.current.zoom(next, 400);
+  };
+
+  const focusNode = (q) => {
+    if (!q || q.length < 2) return;
+    const node = graphData.nodes.find(n => n.title?.toLowerCase().includes(q.toLowerCase()));
+    if (node) {
+      fgRef.current.centerAt(node.x, node.y, 800);
+      fgRef.current.zoom(1.8, 800);
+      setSelectedSaveId(node.id);
+    }
   };
 
   // Node click
@@ -199,6 +210,22 @@ const KnowledgeGraph = () => {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* GRAPH SEARCH (Top Right) */}
+      <div className="absolute top-6 right-6 z-50">
+        <div className="relative group">
+          <input 
+            type="text"
+            placeholder="Find in graph..."
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); focusNode(e.target.value); }}
+            className="w-48 pl-10 pr-4 py-2 bg-surface/80 backdrop-blur-xl border border-border rounded-2xl text-xs text-text-primary focus:w-64 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-xl"
+          />
+          <svg className="absolute left-3.5 top-2.5 w-3.5 h-3.5 text-text-tertiary group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
         </div>
       </div>
 

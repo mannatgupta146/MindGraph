@@ -65,6 +65,19 @@ export const getSaves = async (req, res) => {
   }
 };
 
+const cosineSimilarity = (vecA, vecB) => {
+  if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
+  let dotProduct = 0;
+  let normA = 0;
+  let normB = 0;
+  for (let i = 0; i < vecA.length; i++) {
+    dotProduct += vecA[i] * vecB[i];
+    normA += vecA[i] * vecA[i];
+    normB += vecB[i] * vecB[i];
+  }
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+};
+
 export const semanticSearch = async (req, res) => {
   try {
     const { query } = req.query;
@@ -75,32 +88,52 @@ export const semanticSearch = async (req, res) => {
     }
 
     const queryEmbedding = await generateEmbedding(query);
+    const saves = await Save.find({ user: userId })
+      .select('title content summary type tags embedding createdAt')
+      .lean();
 
-    // MongoDB Atlas Vector Search Pipeline
-    const results = await Save.aggregate([
-      {
-        $vectorSearch: {
-          index: "vector_index", // Name of the index in Atlas
-          path: "embedding",
-          queryVector: queryEmbedding,
-          numCandidates: 100,
-          limit: 10,
-          filter: { user: userId }
-        }
-      },
-      {
-        $project: {
-          title: 1,
-          summary: 1,
-          type: 1,
-          tags: 1,
-          createdAt: 1,
-          score: { $meta: "vectorSearchScore" }
-        }
-      }
-    ]);
+    const queryLower = query.toLowerCase();
+    const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
 
-    res.json(results);
+    // Calculate hybrid scores
+    const scoredResults = saves
+      .map(save => {
+        // 1. Semantic Score (0 to 1)
+        const semanticScore = (save.embedding && save.embedding.length === 384) 
+          ? cosineSimilarity(queryEmbedding, save.embedding) 
+          : 0;
+        
+        // 2. Word-Level Match Score (0 to 1)
+        const titleText = (save.title || '').toLowerCase();
+        const contentText = (save.content || '').toLowerCase();
+        const tagsText = (save.tags || []).join(' ').toLowerCase();
+        
+        let matchingWordsCount = 0;
+        queryWords.forEach(word => {
+          // Check for partial/singular/plural matches
+          if (titleText.includes(word) || contentText.includes(word) || tagsText.includes(word)) {
+            matchingWordsCount++;
+          }
+        });
+
+        const wordMatchScore = queryWords.length > 0 ? (matchingWordsCount / queryWords.length) : 0;
+        const literalScore = wordMatchScore > 0 ? (0.6 + (wordMatchScore * 0.4)) : 0; // Boost any match to at least 0.6
+
+        // 3. Final Combined Score (Take the best signal)
+        const score = Math.max(semanticScore, literalScore);
+        
+        return { ...save, score };
+      })
+      .filter(save => save.score > 0.25) // Broad capture for hybrid ranking
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 15);
+
+    console.log(`[HYBRID SEARCH] Query: "${query}" | Words: ${queryWords.length} | Matches: ${scoredResults.length} | Max Score: ${scoredResults[0]?.score?.toFixed(4) || 0}`);
+
+    // Remove content from response to keep it light
+    const finalResults = scoredResults.map(({ content, embedding, ...rest }) => rest);
+
+    res.json(finalResults);
   } catch (error) {
     console.error('Semantic search error:', error);
     res.status(500).json({ message: 'Search failed' });
@@ -128,19 +161,6 @@ export const getGraphData = async (req, res) => {
   try {
     const userId = req.user.id;
     const saves = await Save.find({ user: userId }).select('title type tags embedding createdAt');
-
-    // Helper for cosine similarity
-    const cosineSimilarity = (vecA, vecB) => {
-      let dotProduct = 0;
-      let normA = 0;
-      let normB = 0;
-      for (let i = 0; i < vecA.length; i++) {
-        dotProduct += vecA[i] * vecB[i];
-        normA += vecA[i] * vecA[i];
-        normB += vecB[i] * vecB[i];
-      }
-      return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-    };
 
     const nodes = saves.map(save => ({
       id: save._id,
