@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { createSave, getSaves, semanticSearch, deleteSave, getGraphData } from '../controllers/save.controller.js';
+import { createSave, getSaves, semanticSearch, deleteSave, getGraphData, getInbox, updateSave } from '../controllers/save.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -10,8 +10,10 @@ router.use(protect);
 
 router.post('/', upload.single('file'), createSave);
 router.get('/', getSaves);
+router.get('/inbox', getInbox);
 router.get('/graph', getGraphData);
 router.get('/search', semanticSearch);
+router.patch('/:id', updateSave);
 router.delete('/:id', deleteSave);
 
 export default router;

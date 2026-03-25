@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes.js';
 import saveRoutes from './routes/save.routes.js';
+import collectionRoutes from './routes/collection.routes.js';
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/saves', saveRoutes);
+app.use('/api/collections', collectionRoutes);
 
-export default app
+export default app;

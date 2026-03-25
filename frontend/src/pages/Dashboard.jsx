@@ -112,6 +112,7 @@ const Dashboard = () => {
         isOpen={!!selectedSave}
         onClose={() => setSelectedSave(null)}
         onDeleteSuccess={fetchSaves}
+        onUpdateSuccess={fetchSaves}
       />
     </div>
   );

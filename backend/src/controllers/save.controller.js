@@ -140,6 +140,32 @@ export const semanticSearch = async (req, res) => {
   }
 };
 
+export const updateSave = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updates = req.body;
+
+    // Remove immutable or sensitive fields
+    delete updates.user;
+    delete updates.embedding;
+
+    const save = await Save.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: updates },
+      { new: true }
+    );
+
+    if (!save) {
+      return res.status(404).json({ message: 'Save not found' });
+    }
+
+    res.json(save);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating memory' });
+  }
+};
+
 export const deleteSave = async (req, res) => {
   try {
     const { id } = req.params;
@@ -154,6 +180,16 @@ export const deleteSave = async (req, res) => {
     res.json({ message: 'Memory deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting memory' });
+  }
+};
+
+export const getInbox = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const saves = await Save.find({ user: userId, status: 'inbox' }).sort({ createdAt: -1 });
+    res.json(saves);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching inbox' });
   }
 };
 
