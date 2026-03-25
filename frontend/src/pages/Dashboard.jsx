@@ -1,16 +1,29 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import MemoryCard from '../components/ui/MemoryCard';
+import AddSaveModal from '../components/ui/AddSaveModal';
 import { AuthContext } from '../context/AuthContext';
-
-const DUMMY_SAVES = [
-  { id: 1, type: 'article', title: 'The Architecture of the Human Brain in the Age of AI', summary: 'Understanding how neural networks mimic biological structures, but fail at long-term episodic memory indexing without external vector stores like Pinecone.', date: '2026-03-14T10:00:00Z', tags: ['Neuroscience', 'AI', 'Vector DB'] },
-  { id: 2, type: 'tweet', title: 'Must read thread on distributed systems', summary: 'If you are building a semantic search engine, do not ignore the power of simple inverted indices before jumping to pure HNSW graphs. Hybrid search is the future.', date: '2026-03-13T15:30:00Z', tags: ['System Design', 'Search'] },
-  { id: 3, type: 'pdf', title: 'Attention Is All You Need', summary: 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. We propose a new simple network architecture, the Transformer...', date: '2026-03-12T09:12:00Z', tags: ['Research', 'Transformers', 'Deep Learning'] },
-  { id: 4, type: 'article', title: 'Why Raycast is taking over the developer workflow', summary: 'A deep dive into keyboard-first interfaces, rust-based performance, and creating local-first experiences that feel instantaneous.', date: '2026-03-14T08:45:00Z', tags: ['UX', 'Productivity', 'Rust'] },
-];
+import axios from 'axios';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
+  const [saves, setSaves] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchSaves = async () => {
+    try {
+      const { data } = await axios.get('http://localhost:3000/api/saves');
+      setSaves(data);
+    } catch (error) {
+      console.error('Error fetching saves:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSaves();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -44,15 +57,51 @@ const Dashboard = () => {
       <section>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-text-primary">Recent Saves</h2>
-          <button className="text-sm font-medium text-primary hover:text-primary-hover transition-colors">View All Archive</button>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              New Save
+            </button>
+            <button className="text-sm font-medium text-primary hover:text-primary-hover transition-colors">View All Archive</button>
+          </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {DUMMY_SAVES.map(save => (
-            <MemoryCard key={save.id} {...save} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map(n => (
+              <div key={n} className="h-64 bg-surface border border-border rounded-xl animate-pulse"></div>
+            ))}
+          </div>
+        ) : saves.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {saves.map(save => (
+              <MemoryCard key={save._id} {...save} date={save.createdAt} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-surface border border-border rounded-2xl border-dashed">
+            <h3 className="text-xl font-medium text-text-secondary mb-2">No memories saved yet</h3>
+            <p className="text-text-tertiary mb-6">Start by capturing your first article, tweet, or thought.</p>
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20"
+            >
+              Capture New Memory
+            </button>
+          </div>
+        )}
       </section>
+
+      <AddSaveModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSaveSuccess={fetchSaves} 
+      />
     </div>
   );
 };
