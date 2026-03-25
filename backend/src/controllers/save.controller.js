@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Save from '../models/save.model.js';
 import { generateEmbedding, generateAISummary, generateAITags } from '../services/ai.service.js';
 import { PDFParse } from 'pdf-parse';
@@ -7,22 +8,31 @@ export const createSave = async (req, res) => {
     let { title, content, type, url, tags: userTags } = req.body;
     const userId = req.user.id;
 
-    // Handle PDF file upload
+    let fileUrl = null;
+
+    // Handle File upload (PDF/Image)
     if (req.file) {
-      if (req.file.mimetype === 'application/pdf') {
-        const parser = new PDFParse({ data: req.file.buffer });
+      const isPDF = req.file.mimetype === 'application/pdf';
+      const isImage = req.file.mimetype.startsWith('image/');
+
+      if (isPDF) {
+        const dataBuffer = fs.readFileSync(req.file.path);
+        const parser = new PDFParse({ data: dataBuffer });
         const result = await parser.getText();
-        content = result.text;
+        content = result.text || 'No text content extracted from PDF';
         await parser.destroy();
         
-        // Use AI to generate a title if not provided
         if (!title) {
-          const titlePrompt = `Generate a short, descriptive title (max 6 words) for this document content: ${content.substring(0, 500)}`;
-          // For now, let's just use a snippet or implement a quick title extractor
           title = content.split('\n')[0].substring(0, 50).trim() || req.file.originalname;
         }
         type = 'pdf';
+      } else if (isImage) {
+        if (!content) content = `Visual artifact: ${req.file.originalname}`;
+        if (!title) title = req.file.originalname;
+        type = 'image';
       }
+      
+      fileUrl = `http://localhost:3000/uploads/${req.file.filename}`;
     }
 
     if (!content) {
@@ -45,7 +55,8 @@ export const createSave = async (req, res) => {
       url,
       tags: combinedTags,
       summary,
-      embedding
+      embedding,
+      fileUrl
     });
 
     res.status(201).json(newSave);

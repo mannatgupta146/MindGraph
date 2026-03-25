@@ -23,7 +23,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
       formData.append('type', type);
       if (url) formData.append('url', url);
       
-      if (type === 'pdf' && file) {
+      if ((type === 'pdf' || type === 'image') && file) {
         formData.append('file', file);
       } else {
         formData.append('content', content);
@@ -102,32 +102,36 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
             />
           </div>
 
-          {type === 'pdf' ? (
+          { (type === 'pdf' || type === 'image') ? (
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-text-secondary">PDF File</label>
+              <label className="block text-sm font-medium text-text-secondary">
+                {type === 'pdf' ? 'PDF File' : 'Image File'}
+              </label>
               <div className="relative group/file">
                 <input
                   type="file"
-                  accept=".pdf"
+                  accept={type === 'pdf' ? ".pdf" : "image/*"}
                   onChange={(e) => setFile(e.target.files[0])}
                   required={!content}
                   className="hidden"
-                  id="pdf-upload"
+                  id="file-upload"
                 />
                 <label 
-                  htmlFor="pdf-upload"
+                  htmlFor="file-upload"
                   className="flex flex-col items-center justify-center w-full h-32 px-4 py-6 bg-background/50 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
                 >
                   <svg className={`w-8 h-8 mb-2 ${file ? 'text-emerald-500' : 'text-text-tertiary'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <span className="text-sm font-medium text-text-secondary">
-                    {file ? file.name : "Select or drag PDF here"}
+                  <span className="text-sm font-medium text-text-secondary text-center px-4">
+                    {file ? file.name : `Select or drag ${type.toUpperCase()} here`}
                   </span>
-                  {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to parse</span>}
+                  {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to capture</span>}
                 </label>
               </div>
-              <p className="text-[10px] text-text-tertiary italic">Content will be extracted automatically using local AI</p>
+              <p className="text-[10px] text-text-tertiary italic">
+                {type === 'pdf' ? 'Content will be extracted automatically' : 'Original image will be persisted for visual recall'}
+              </p>
             </div>
           ) : (
             <div>

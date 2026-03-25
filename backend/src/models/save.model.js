@@ -40,6 +40,9 @@ const saveSchema = new mongoose.Schema({
   collection: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Collection'
+  },
+  fileUrl: {
+    type: String
   }
 }, {
   timestamps: true

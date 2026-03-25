@@ -138,20 +138,59 @@ const MemoryDetailDrawer = ({ save, isOpen, onClose, onDeleteSuccess, onUpdateSu
             {/* Title & URL */}
             <div>
               <h1 className="text-3xl font-bold text-text-primary leading-tight mb-4 tracking-tight">{save.title}</h1>
-              {save.url && (
-                <a 
-                  href={save.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="inline-flex items-center text-primary hover:text-primary-hover group bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
-                >
-                  <span className="truncate max-w-sm text-sm font-medium">{save.url}</span>
-                  <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              )}
+              <div className="flex flex-wrap gap-3">
+                {save.url && (
+                  <a 
+                    href={save.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="inline-flex items-center text-primary hover:text-primary-hover group bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
+                  >
+                    <span className="truncate max-w-sm text-sm font-medium">Source Link</span>
+                    <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                )}
+                {save.fileUrl && (
+                  <a 
+                    href={save.fileUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="inline-flex items-center text-secondary hover:text-secondary-hover group bg-secondary/5 px-3 py-1.5 rounded-lg border border-secondary/10 transition-colors"
+                  >
+                    <span className="truncate max-w-sm text-sm font-medium">Original Artifact</span>
+                    <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                  </a>
+                )}
+              </div>
             </div>
+
+            {/* Image Preview for visual artifacts */}
+            {save.type === 'image' && save.fileUrl && (
+              <div className="relative group rounded-3xl overflow-hidden border border-border shadow-2xl bg-black/5">
+                <img 
+                  src={save.fileUrl} 
+                  alt={save.title} 
+                  className="w-full h-auto object-contain max-h-[500px] transition-transform duration-500 group-hover:scale-[1.02]" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                   <a 
+                    href={save.fileUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-white text-xs font-bold flex items-center bg-black/50 px-3 py-2 rounded-full backdrop-blur-md"
+                  >
+                    <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    View Full Resolution
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* AI Summary Block */}
             {save.summary && (
