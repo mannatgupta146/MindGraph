@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import MemoryCard from '../components/ui/MemoryCard';
 import AddSaveModal from '../components/ui/AddSaveModal';
+import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -9,6 +10,7 @@ const Dashboard = () => {
   const [saves, setSaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSave, setSelectedSave] = useState(null);
 
   const fetchSaves = async () => {
     try {
@@ -58,12 +60,9 @@ const Dashboard = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-text-primary">Recent Saves</h2>
           <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20 flex items-center"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl flex items-center shadow-lg shadow-primary/20 transition-all font-bold group">
+              <svg className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               New Save
             </button>
@@ -80,7 +79,12 @@ const Dashboard = () => {
         ) : saves.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {saves.map(save => (
-              <MemoryCard key={save._id} {...save} date={save.createdAt} />
+              <MemoryCard 
+                key={save._id} 
+                {...save} 
+                date={save.createdAt} 
+                onClick={() => setSelectedSave(save)}
+              />
             ))}
           </div>
         ) : (
@@ -101,6 +105,13 @@ const Dashboard = () => {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSaveSuccess={fetchSaves} 
+      />
+
+      <MemoryDetailDrawer 
+        save={selectedSave}
+        isOpen={!!selectedSave}
+        onClose={() => setSelectedSave(null)}
+        onDeleteSuccess={fetchSaves}
       />
     </div>
   );

@@ -31,6 +31,15 @@ const saveSchema = new mongoose.Schema({
   embedding: {
     type: [Number],
     default: []
+  },
+  status: {
+    type: String,
+    enum: ['inbox', 'archived', 'processed'],
+    default: 'inbox'
+  },
+  collection: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Collection'
   }
 }, {
   timestamps: true

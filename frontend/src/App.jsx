@@ -5,6 +5,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Search from './pages/Search';
+import KnowledgeGraph from './pages/KnowledgeGraph';
 import AppLayout from './components/layout/AppLayout';
 
 const PrivateRoute = ({ children }) => {
@@ -32,9 +34,9 @@ function AppRoutes() {
         
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/inbox" element={<PrivateRoute><PlaceholderPage title="Inbox" /></PrivateRoute>} />
-        <Route path="/search" element={<PrivateRoute><PlaceholderPage title="Semantic Search" /></PrivateRoute>} />
+        <Route path="/search" element={<PrivateRoute><Search /></PrivateRoute>} />
         <Route path="/collections" element={<PrivateRoute><PlaceholderPage title="Collections" /></PrivateRoute>} />
-        <Route path="/graph" element={<PrivateRoute><PlaceholderPage title="Knowledge Graph" /></PrivateRoute>} />
+        <Route path="/graph" element={<PrivateRoute><KnowledgeGraph /></PrivateRoute>} />
         <Route path="/resurface" element={<PrivateRoute><PlaceholderPage title="Memory Resurfacing" /></PrivateRoute>} />
         <Route path="/settings" element={<PrivateRoute><PlaceholderPage title="Settings" /></PrivateRoute>} />
         

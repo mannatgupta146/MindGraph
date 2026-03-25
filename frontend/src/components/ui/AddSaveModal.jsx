@@ -8,6 +8,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
 
   if (!isOpen) return null;
 
@@ -17,11 +18,22 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
     setError(null);
 
     try {
-      await axios.post('http://localhost:3000/api/saves', {
-        title,
-        content,
-        type,
-        url
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('type', type);
+      if (url) formData.append('url', url);
+      
+      if (type === 'pdf' && file) {
+        formData.append('file', file);
+      } else {
+        formData.append('content', content);
+      }
+
+      await axios.post('http://localhost:3000/api/saves', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        withCredentials: true
       });
       onSaveSuccess();
       onClose();
@@ -33,6 +45,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
       setError(err.response?.data?.message || 'Failed to save content');
     } finally {
       setLoading(false);
+      setFile(null);
     }
   };
 
@@ -89,17 +102,46 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Content / Notes</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Paste content or write your thoughts here..."
-              required
-              rows={4}
-              className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors resize-none"
-            />
-          </div>
+          {type === 'pdf' ? (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-text-secondary">PDF File</label>
+              <div className="relative group/file">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  required={!content}
+                  className="hidden"
+                  id="pdf-upload"
+                />
+                <label 
+                  htmlFor="pdf-upload"
+                  className="flex flex-col items-center justify-center w-full h-32 px-4 py-6 bg-background/50 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
+                >
+                  <svg className={`w-8 h-8 mb-2 ${file ? 'text-emerald-500' : 'text-text-tertiary'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <span className="text-sm font-medium text-text-secondary">
+                    {file ? file.name : "Select or drag PDF here"}
+                  </span>
+                  {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to parse</span>}
+                </label>
+              </div>
+              <p className="text-[10px] text-text-tertiary italic">Content will be extracted automatically using local AI</p>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Content / Notes</label>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Paste content or write your thoughts here..."
+                required
+                rows={4}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors resize-none"
+              />
+            </div>
+          )}
 
           <div className="pt-4 flex items-center space-x-3">
              <button
