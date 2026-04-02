@@ -71,6 +71,30 @@ export const createSave = async (req, res) => {
       }
     }
 
+    // Handle Tweet metadata extraction
+    if (type === 'tweet' && url) {
+      try {
+        const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`;
+        const response = await fetch(oembedUrl);
+        if (!response.ok) throw new Error('Failed to fetch tweet info');
+        
+        const data = await response.json();
+        const authorName = data.author_name;
+        const html = data.html; // Contains the tweet text inside <p>
+        
+        // Strip HTML tags to get clean text
+        const cleanText = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        if (!title) title = `Tweet by ${authorName}`;
+        content = cleanText;
+      } catch (tError) {
+        console.error('Tweet extraction error:', tError.message);
+        if (!content) {
+          return res.status(400).json({ message: 'Failed to fetch tweet content. Please ensure the link is valid or enter content manually.' });
+        }
+      }
+    }
+
     if (!content) {
       return res.status(400).json({ message: 'Content or PDF file is required' });
     }
