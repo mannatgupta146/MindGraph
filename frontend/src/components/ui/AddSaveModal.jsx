@@ -92,12 +92,15 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Source URL (Optional)</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">
+              Source URL {type === 'youtube' ? '(Required)' : '(Optional)'}
+            </label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder={type === 'youtube' ? "https://youtube.com/watch?v=..." : "https://example.com"}
+              required={type === 'youtube'}
               className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
@@ -131,6 +134,15 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
               </div>
               <p className="text-[10px] text-text-tertiary italic">
                 {type === 'pdf' ? 'Content will be extracted automatically' : 'Original image will be persisted for visual recall'}
+              </p>
+            </div>
+          ) : type === 'youtube' ? (
+            <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl flex items-start space-x-3">
+              <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                <span className="text-primary font-bold">Smart Capture Active:</span> AI will automatically fetch the video title, description, and full transcript for your Second Brain.
               </p>
             </div>
           ) : (

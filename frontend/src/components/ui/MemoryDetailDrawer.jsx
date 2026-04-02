@@ -168,6 +168,36 @@ const MemoryDetailDrawer = ({ save, isOpen, onClose, onDeleteSuccess, onUpdateSu
               </div>
             </div>
 
+            {/* YouTube Embed Preview */}
+            {save.type === 'youtube' && save.url && (
+              <div className="rounded-3xl overflow-hidden border border-border shadow-2xl aspect-video bg-black/5">
+                {(() => {
+                  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                  const match = save.url.match(regExp);
+                  const videoId = (match && match[2].length === 11) ? match[2] : null;
+                  
+                  return videoId ? (
+                    <iframe 
+                      width="100%" 
+                      height="100%" 
+                      src={`https://www.youtube.com/embed/${videoId}?autoplay=0`}
+                      title="YouTube video player" 
+                      frameBorder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-surface/50">
+                      <svg className="w-12 h-12 text-red-500 mb-4 opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z" />
+                      </svg>
+                      <p className="text-text-secondary font-medium">Invalid YouTube URL</p>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
             {/* Image Preview for visual artifacts */}
             {save.type === 'image' && save.fileUrl && (
               <div className="relative group rounded-3xl overflow-hidden border border-border shadow-2xl bg-black/5">

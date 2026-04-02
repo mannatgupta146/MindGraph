@@ -1,7 +1,11 @@
 import fs from 'fs';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 import Save from '../models/save.model.js';
 import { generateEmbedding, generateAISummary, generateAITags } from '../services/ai.service.js';
 import { PDFParse } from 'pdf-parse';
+import ytdl from '@distube/ytdl-core';
+const { getSubtitles } = require('youtube-captions-scraper');
 
 export const createSave = async (req, res) => {
   try {
@@ -33,6 +37,38 @@ export const createSave = async (req, res) => {
       }
       
       fileUrl = `http://localhost:3000/uploads/${req.file.filename}`;
+    }
+
+    // Handle YouTube metadata extraction
+    if (type === 'youtube' && url) {
+      try {
+        const info = await ytdl.getBasicInfo(url);
+        const videoTitle = info.videoDetails.title;
+        const videoDescription = info.videoDetails.description;
+        
+        if (!title) title = videoTitle;
+        
+        let transcriptText = '';
+        try {
+          // Extract Video ID properly
+          const videoID = ytdl.getVideoID(url);
+          const captions = await getSubtitles({
+            videoID,
+            lang: 'en'
+          });
+          transcriptText = captions.map(c => c.text).join(' ');
+        } catch (tError) {
+          console.warn('Transcript not available for this video:', tError.message);
+        }
+
+        content = `Video Title: ${videoTitle}\n\nDescription: ${videoDescription}\n\nTranscript: ${transcriptText || 'No transcript available'}`;
+      } catch (yError) {
+        console.error('YouTube extraction error:', yError.message);
+        // Fallback to manual content if provided, otherwise error
+        if (!content) {
+          return res.status(400).json({ message: 'Failed to fetch YouTube metadata. Please provide a valid link or enter content manually.' });
+        }
+      }
     }
 
     if (!content) {
