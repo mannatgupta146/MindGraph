@@ -52,20 +52,18 @@ const Search = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 py-8 px-4">
+    <div className="space-y-8 animate-in fade-in duration-500">
       {/* Search Header */}
-      <div className="text-center space-y-3">
-        <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">
-          <svg className="w-3 h-3 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <div className="relative pl-5 py-2 mb-10">
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary/80 to-primary/20 rounded-full"></div>
+        <div className="flex items-center space-x-2 text-text-tertiary mb-1">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          Semantic Intelligence
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Semantic Intelligence</span>
         </div>
-        <h1 className="text-3xl font-black text-text-primary tracking-tighter sm:text-4xl">
-          Search your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Second Brain</span>
-        </h1>
-        <p className="text-text-secondary text-base max-w-2xl mx-auto leading-relaxed">
-          Ask anything in natural language. We'll use vector-based AI to find the deepest conceptual matches in your archive.
+        <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
+          Ask anything in natural language. We use vector-based AI to find the deepest conceptual matches in your archive.
         </p>
       </div>
 

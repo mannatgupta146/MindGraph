@@ -46,15 +46,15 @@ const Archives = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col space-y-2">
-        <div className="flex items-center space-x-2 text-text-tertiary">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+      <div className="relative pl-5 py-2">
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary/80 to-primary/20 rounded-full"></div>
+        <div className="flex items-center space-x-2 text-text-tertiary mb-1">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
           </svg>
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Storage Vault</span>
         </div>
-        <h1 className="text-4xl font-bold text-text-primary tracking-tight">Archives</h1>
-        <p className="text-text-secondary max-w-2xl">
+        <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
           Everything you've hidden from your active brain. These memories are still searchable but won't clutter your graph or dashboard.
         </p>
       </div>
@@ -79,7 +79,7 @@ const Archives = () => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 bg-surface/30 border-2 border-dashed border-border rounded-[40px]">
+        <div className="flex flex-col items-center justify-center py-32 min-h-[400px] text-center space-y-4 bg-surface/30 border-2 border-dashed border-border rounded-[40px] w-full">
           <div className="w-20 h-20 rounded-full bg-surface-hover flex items-center justify-center text-text-tertiary">
             <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />

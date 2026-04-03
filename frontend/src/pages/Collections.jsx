@@ -6,7 +6,7 @@ const Collections = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newCollection, setNewCollection] = useState({ title: '', description: '', icon: '📁', color: '#6366f1' });
+  const [newCollection, setNewCollection] = useState({ title: '', description: '', icon: '📁', color: '#0F92D4' });
   const navigate = useNavigate();
 
   const fetchCollections = async () => {
@@ -28,7 +28,7 @@ const Collections = () => {
     e.preventDefault();
     try {
       await axios.post('http://localhost:3000/api/collections', newCollection);
-      setNewCollection({ title: '', description: '', icon: '📁', color: '#6366f1' });
+      setNewCollection({ title: '', description: '', icon: '📁', color: '#0F92D4' });
       setIsModalOpen(false);
       fetchCollections();
     } catch (error) {
@@ -39,31 +39,30 @@ const Collections = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Header */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6 pt-2">
-        <div>
-          <div className="flex items-center space-x-3 mb-1">
-            <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20 shadow-inner">
-              <svg className="w-5 h-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-black text-text-primary tracking-tight">Collections</h1>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full mb-12">
+        <div className="relative pl-5 py-2">
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary/80 to-primary/20 rounded-full"></div>
+          <div className="flex items-center space-x-2 text-text-tertiary mb-1">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Thematic Vaults</span>
           </div>
-          <p className="text-text-secondary max-w-xl text-sm">
-            Organize your knowledge into thematic projects and structured topics.
+          <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
+            Organize your knowledge into thematic projects and structured topics. Curate custom vaults to group related research, active tasks, and interconnected semantic concepts.
           </p>
         </div>
         
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg flex items-center shadow-lg shadow-secondary/20 transition-all font-bold group transform hover:-translate-y-0.5 text-sm"
+          className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl flex items-center shadow-lg shadow-primary/20 transition-all font-bold group shrink-0"
         >
-          <svg className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
           New Project
         </button>
-      </section>
+      </div>
 
       {/* Grid */}
       {loading ? (

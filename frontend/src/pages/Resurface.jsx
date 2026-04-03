@@ -28,17 +28,18 @@ const Resurface = () => {
     <div className="space-y-8">
       
       {/* Header and Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-            <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full mb-4">
+        <div className="relative pl-5 py-2">
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary/80 to-primary/20 rounded-full"></div>
+          <div className="flex items-center space-x-2 text-text-tertiary mb-1">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Anti-Library Synthesis</span>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Daily Resurface</h1>
-            <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mt-0.5">Anti-Library Synthesis</p>
-          </div>
+          <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
+            Serendipitous connections from your archive to spark new ideas and reflections. Discover hidden patterns and forgotten memories through AI-driven daily synthesis.
+          </p>
         </div>
 
         <button 
@@ -98,7 +99,7 @@ const Resurface = () => {
               </div>
             </section>
           ) : (
-             <div className="text-center min-h-[65vh] flex flex-col items-center justify-center w-full bg-surface border border-border rounded-2xl border-dashed">
+             <div className="text-center min-h-[62vh] flex flex-col items-center justify-center w-full bg-surface border border-border rounded-2xl border-dashed">
                <div className="w-16 h-16 mb-6 bg-background border border-border rounded-full flex items-center justify-center shadow-lg">
                  <svg className="w-6 h-6 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />

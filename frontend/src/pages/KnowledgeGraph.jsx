@@ -169,7 +169,7 @@ const KnowledgeGraph = () => {
     };
 
     const color = colors[node.type] || colors.default;
-    const baseSize = 4.5;
+    const baseSize = 8.0; // Reduced from 4.5 to keep nodes elegant
     let size = isSelected ? baseSize * 1.5 : (isHighlighted ? baseSize * 1.2 : baseSize);
     
     if (isTagged) {
@@ -226,26 +226,26 @@ const KnowledgeGraph = () => {
   }, [id, hoverNode, isDark, graphData.links, selectedTag]);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full h-[calc(100vh-170px)] bg-background rounded-3xl overflow-hidden border border-border group"
-    >
-      {/* Search Header Overlay */}
-      <div className="absolute top-6 left-6 z-50 transition-all duration-500">
-        <div className="bg-surface/80 backdrop-blur-2xl px-5 py-3.5 rounded-2xl border border-border shadow-xl flex items-center space-x-3.5">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center transition-all bg-primary/10 text-primary">
-             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-             </svg>
-          </div>
-          <div className="flex flex-col justify-center">
-            <h1 className="text-sm font-bold text-text-primary leading-tight tracking-tight">
-              Knowledge Graph
-            </h1>
-            <p className="text-[11px] text-text-tertiary font-medium mt-0.5">Active Synthesis: {graphData.nodes.length} Memories</p>
-          </div>
+    <div className="h-[calc(100vh-160px)] min-h-[400px] flex flex-col space-y-6 animate-in fade-in duration-700">
+      {/* Universal Header */}
+      <div className="relative pl-5 py-2 shrink-0">
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary/80 to-primary/20 rounded-full"></div>
+        <div className="flex items-center space-x-2 text-text-tertiary mb-1">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Semantic Constellation</span>
         </div>
+        <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
+          A living, breathing visual representation of your connected memories.
+        </p>
       </div>
+
+      {/* Graph Canvas Container */}
+      <div
+        ref={containerRef}
+        className="relative w-full flex-1 bg-background rounded-3xl overflow-hidden border border-border group"
+      >
 
       {/* Empty State Overlay */}
       {!loading && graphData.nodes.length === 0 && (
@@ -363,8 +363,8 @@ const KnowledgeGraph = () => {
         linkDirectionalParticleSpeed={0.015}
         linkDirectionalParticleWidth={3}
         backgroundColor="transparent"
-        minZoom={0.4}
-        maxZoom={1.6}
+        minZoom={0.5}
+        maxZoom={1.3}
         onEngineStop={() => {
           if (graphData.nodes.length > 0 && fgRef.current && !id && !selectedTag) {
              const xs = graphData.nodes.map(n => n.x || 0);
@@ -393,6 +393,7 @@ const KnowledgeGraph = () => {
         }}
         onUpdateSuccess={fetchGraphData}
       />
+    </div>
     </div>
   );
 };

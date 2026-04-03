@@ -7,7 +7,7 @@ const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, onClick }) =>
   return (
     <div 
       onClick={onClick}
-      className="bg-surface rounded-xl p-4 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-full min-h-[180px] group"
+      className="bg-surface rounded-xl p-5 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-64 group"
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center space-x-1.5">
@@ -47,8 +47,8 @@ const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, onClick }) =>
         <span className="text-text-tertiary text-[10px] font-medium">{new Date(date).toLocaleDateString()}</span>
       </div>
       
-      <h3 className="text-base font-bold text-text-primary mb-1 line-clamp-1 group-hover:text-primary transition-colors tracking-tight">{title}</h3>
-      <div className="text-[13px] text-text-secondary mb-3 flex-1 line-clamp-3 markdown-card-content leading-snug">
+      <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-2 group-hover:text-primary transition-colors tracking-tight">{title}</h3>
+      <div className="text-sm text-text-secondary mb-4 flex-1 line-clamp-4 markdown-card-content leading-relaxed">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {summary}
         </ReactMarkdown>
