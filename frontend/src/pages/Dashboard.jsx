@@ -42,11 +42,8 @@ const Dashboard = () => {
     fetchSaves();
   };
 
-  // High-Level Mastery Pillars: 6 categories that cover everything in the digital & physical world.
-  const universalTags = ['Technology', 'Business', 'Philosophy', 'Science', 'Culture', 'Lifestyle'];
-
-  // Consolidate to ONLY the 6 Master Pillars for maximum UI clarity
-  const allTags = ['All', ...universalTags];
+  // Dynamic Tags from user saves for organic discovery
+  const allTags = ['All', ...new Set(saves.flatMap(s => s.tags || []))].filter(Boolean).slice(0, 10);
 
   const filteredSaves = selectedTag === 'All' 
     ? saves 
@@ -62,25 +59,25 @@ const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* AI Synthesis Banner */}
-      <section className="bg-surface border border-secondary/30 rounded-2xl p-6 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+      <section className="bg-surface border border-secondary/30 rounded-2xl p-4 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
         <div className="relative z-10">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center border border-secondary/50">
-              <svg className="w-5 h-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-7 h-7 rounded-lg bg-secondary/20 flex items-center justify-center border border-secondary/50">
+              <svg className="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-text-primary">AI Daily Synthesis</h2>
+            <h2 className="text-lg font-semibold text-text-primary">AI Daily Synthesis</h2>
           </div>
-          <p className="text-lg text-text-secondary max-w-2xl leading-relaxed">
+          <p className="text-base text-text-secondary max-w-2xl leading-relaxed">
             Welcome back, <span className="text-text-primary font-medium">{user?.name?.split(' ')[0] || 'Architect'}</span>. 
             We noticed you saved 3 articles about <span className="text-secondary font-medium relative inline-block group cursor-pointer">Vector Databases<span className="absolute bottom-0 left-0 w-full h-0.5 bg-secondary/50 rounded-full"></span></span> recently. 
             Would you like to auto-generate a Knowledge Graph connecting semantic search paradigms to your existing notes on System Design?
           </p>
-          <button className="mt-6 px-4 py-2 bg-secondary/10 text-secondary hover:bg-secondary/20 font-medium rounded-lg border border-secondary/20 transition-colors flex items-center">
+          <button className="mt-4 px-3 py-1.5 bg-secondary/10 text-secondary hover:bg-secondary/20 text-sm font-medium rounded-lg border border-secondary/20 transition-colors flex items-center">
             Generate Synthesis
-            <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3.5 h-3.5 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </button>
@@ -93,18 +90,18 @@ const Dashboard = () => {
           <div className="w-1.5 h-6 bg-primary/20 rounded-full"></div>
           <h3 className="text-xs font-black uppercase tracking-[0.2em] text-text-tertiary">Thematic Discovery</h3>
         </div>
-        <div className="flex items-center space-x-3 overflow-x-auto pb-4 pt-2 -mx-2 px-2 scrollbar-none scroll-smooth">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 pt-1 -mx-2 px-2 scrollbar-none scroll-smooth">
           {allTags.map(tag => (
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`whitespace-nowrap px-6 py-2.5 rounded-2xl text-sm font-bold border transition-all ${
+              className={`whitespace-nowrap px-4 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                 selectedTag === tag 
-                ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' 
+                ? 'bg-primary border-primary text-white shadow shadow-primary/20' 
                 : 'bg-surface border-border text-text-secondary hover:border-primary/40 hover:text-primary'
               }`}
             >
-              {tag === 'All' ? 'All Memories' : `#${tag}`}
+              {tag === 'All' ? 'All Memories' : `#${tag.toLowerCase()}`}
             </button>
           ))}
         </div>
@@ -112,13 +109,13 @@ const Dashboard = () => {
 
       {/* Recent Saves Grid */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-text-primary">
-            {selectedTag === 'All' ? 'Recent Saves' : `Themed: ${selectedTag}`}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-text-primary">
+            {selectedTag === 'All' ? 'Recent Saves' : `Filtered: ${selectedTag}`}
           </h2>
-          <div className="flex items-center space-x-4">
-            <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl flex items-center shadow-lg shadow-primary/20 transition-all font-bold group">
-              <svg className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex items-center space-x-3">
+            <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg flex items-center shadow-md shadow-primary/20 transition-all font-bold text-sm group">
+              <svg className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               New Save

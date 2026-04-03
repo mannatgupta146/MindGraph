@@ -48,11 +48,8 @@ const KnowledgeGraph = () => {
     }
   };
 
-  // High-Level Mastery Pillars: 6 categories that cover everything in the digital & physical world.
-  const universalTags = ['Technology', 'Business', 'Philosophy', 'Science', 'Culture', 'Lifestyle'];
-
-  // Consolidate to ONLY the 6 Master Pillars for maximum Graph clarity
-  const activeTags = [...universalTags];
+  // Master Pillars removed for Compact UI.
+  // Graph focus is now completely organic.
 
   // Sync selected node from URL
   useEffect(() => {
@@ -178,48 +175,22 @@ const KnowledgeGraph = () => {
     >
       {/* Search Header Overlay */}
       <div className="absolute top-6 left-6 z-50 transition-all duration-500">
-        <div className="bg-surface/80 backdrop-blur-2xl p-5 rounded-[2rem] border border-border shadow-2xl flex items-center space-x-4">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${selectedTag ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/30' : 'bg-primary/10 text-primary'}`}>
-             <svg className={`w-7 h-7 ${selectedTag ? 'animate-pulse' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-surface/80 backdrop-blur-2xl p-4 rounded-[2rem] border border-border shadow-2xl flex items-center space-x-4">
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-all bg-primary/10 text-primary">
+             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
              </svg>
           </div>
           <div>
             <h1 className="text-sm font-black uppercase tracking-widest text-text-primary">
-              {selectedTag ? `Discovery: #${selectedTag}` : 'Knowledge Graph'}
+              Knowledge Graph
             </h1>
             <p className="text-[10px] text-text-tertiary font-bold tracking-tight">Active Synthesis: {graphData.nodes.length} Memories</p>
           </div>
         </div>
       </div>
 
-      {/* Tag Discovery Bar (Top Right) */}
-      <div className="absolute top-6 right-6 z-50 flex items-center space-x-2 max-w-md overflow-x-auto no-scrollbar pb-2">
-        {activeTags.map(tag => (
-          <button
-            key={tag}
-            onClick={() => handleTagClick(tag)}
-            className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-              selectedTag === tag 
-              ? 'bg-secondary border-secondary text-white shadow-lg shadow-secondary/30' 
-              : 'bg-surface/80 backdrop-blur-md border-border text-text-secondary hover:border-secondary/40 hover:text-text-primary'
-            }`}
-          >
-            #{tag}
-          </button>
-        ))}
-        {selectedTag && (
-          <button 
-            onClick={() => setSelectedTag(null)}
-            className="p-2 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg"
-            title="Clear Discovery"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-      </div>
+      {/* Tag Discovery Bar Removed for compact UI */}
 
       {/* Control Buttons (Bottom Left) */}
       <div className="absolute bottom-6 left-6 z-50 flex space-x-2">
