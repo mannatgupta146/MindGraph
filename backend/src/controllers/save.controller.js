@@ -26,9 +26,10 @@ export const createSave = async (req, res) => {
 
       if (isPDF) {
         try {
-          const dataBuffer = fs.readFileSync(req.file.path);
+          const dataBuffer = req.file.buffer;
           const data = await pdf(dataBuffer);
           content = data.text || 'No text content extracted from PDF';
+
           
           if (!title) {
             title = content.split('\n')[0].substring(0, 50).trim() || req.file.originalname;
@@ -39,15 +40,17 @@ export const createSave = async (req, res) => {
           return res.status(400).json({ message: 'Failed to process PDF file' });
         }
       } else if (isImage) {
-
-
-        if (!content) content = `Visual artifact: ${req.file.originalname}`;
+        if (!content) content = `Visual artifact indexed: ${req.file.originalname}`;
         if (!title) title = req.file.originalname;
         type = 'image';
       }
       
-      fileUrl = `http://localhost:3000/uploads/${req.file.filename}`;
+      // Since we are in Production-Mode (Memory Storage), 
+      // we don't set a local fileUrl. 
+      // This keeps the server clean and ready for Cloudinary/S3.
+      fileUrl = null; 
     }
+
 
     // Handle YouTube metadata extraction
     if (type === 'youtube' && url) {
@@ -145,12 +148,16 @@ export const createSave = async (req, res) => {
 export const getSaves = async (req, res) => {
   try {
     const userId = req.user.id;
-    const saves = await Save.find({ user: userId }).sort({ createdAt: -1 });
+    // Dashboard shows all active (non-archived) memories for easy discovery
+    const saves = await Save.find({ user: userId, status: { $ne: 'archived' } }).sort({ createdAt: -1 });
     res.json(saves);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching saves' });
   }
 };
+
+
+
 
 export const getSaveById = async (req, res) => {
   try {
@@ -279,10 +286,23 @@ export const getInbox = async (req, res) => {
   }
 };
 
-export const getGraphData = async (req, res) => {
+export const getArchivedSaves = async (req, res) => {
   try {
     const userId = req.user.id;
-    const saves = await Save.find({ user: userId }).select('title type tags embedding createdAt');
+    const saves = await Save.find({ user: userId, status: 'archived' }).sort({ createdAt: -1 });
+    res.json(saves);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching archived saves' });
+  }
+};
+
+export const getGraphData = async (req, res) => {
+
+  try {
+    const userId = req.user.id;
+    // The Graph only shows processed/curated knowledge to keep it semantic and clean
+    const saves = await Save.find({ user: userId, status: 'processed' }).select('title type tags embedding createdAt');
+
 
     const nodes = saves.map(save => ({
       id: save._id,
@@ -309,15 +329,16 @@ export const getGraphData = async (req, res) => {
         // Option 2: Semantic Similarity (AI Hidden Link)
         else if (saves[i].embedding?.length > 0 && saves[j].embedding?.length > 0) {
           const sim = cosineSimilarity(saves[i].embedding, saves[j].embedding);
-          if (sim > 0.82) { // Threshold for "Conceptual Link"
+          if (sim > 0.78) { // Lower threshold for "Semantic Discovery"
             links.push({
               source: saves[i]._id,
               target: saves[j]._id,
-              value: sim,
+              value: Math.pow(sim, 2) * 5, // Non-linear weight for better clustering
               type: 'semantic'
             });
           }
         }
+
       }
     }
 

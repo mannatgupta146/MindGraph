@@ -10,7 +10,9 @@ import KnowledgeGraph from './pages/KnowledgeGraph';
 import Inbox from './pages/Inbox';
 import Collections from './pages/Collections';
 import CollectionDetail from './pages/CollectionDetail';
+import Archives from './pages/Archives';
 import AppLayout from './components/layout/AppLayout';
+
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -41,11 +43,16 @@ function AppRoutes() {
         <Route path="/inbox/:id" element={<PrivateRoute><Inbox /></PrivateRoute>} />
         <Route path="/search" element={<PrivateRoute><Search /></PrivateRoute>} />
         <Route path="/search/:id" element={<PrivateRoute><Search /></PrivateRoute>} />
+        <Route path="/archives" element={<PrivateRoute><Archives /></PrivateRoute>} />
+        <Route path="/archives/:id" element={<PrivateRoute><Archives /></PrivateRoute>} />
+
         <Route path="/collections" element={<PrivateRoute><Collections /></PrivateRoute>} />
         <Route path="/collections/:id" element={<PrivateRoute><CollectionDetail /></PrivateRoute>} />
 
         <Route path="/graph" element={<PrivateRoute><KnowledgeGraph /></PrivateRoute>} />
+        <Route path="/graph/:id" element={<PrivateRoute><KnowledgeGraph /></PrivateRoute>} />
         <Route path="/resurface" element={<PrivateRoute><PlaceholderPage title="Memory Resurfacing" /></PrivateRoute>} />
+
         <Route path="/settings" element={<PrivateRoute><PlaceholderPage title="Settings" /></PrivateRoute>} />
         
         <Route path="*" element={<Navigate to="/dashboard" />} />

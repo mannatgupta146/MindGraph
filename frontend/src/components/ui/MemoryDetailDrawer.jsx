@@ -229,9 +229,10 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                 {save.type === 'youtube' && save.url && (
                   <div className="rounded-3xl overflow-hidden border border-border shadow-2xl aspect-video bg-black/5">
                     {(() => {
-                      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                      const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|shorts)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
                       const match = save.url.match(regExp);
-                      const videoId = (match && match[2].length === 11) ? match[2] : null;
+                      const videoId = match ? match[1] : null;
+
                       
                       return videoId ? (
                         <iframe 
@@ -370,15 +371,18 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
 
               <div className="flex justify-between items-center px-2">
                 <button 
-                  onClick={() => handleStatusUpdate('archived')}
+                  onClick={() => handleStatusUpdate(save.status === 'archived' ? 'processed' : 'archived')}
                   disabled={isUpdating}
                   className="text-text-tertiary hover:text-text-primary text-sm font-bold transition-all flex items-center space-x-1"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                   </svg>
-                  <span>{isUpdating ? 'Wait...' : 'Archive Memory'}</span>
+                  <span>
+                    {isUpdating ? 'Wait...' : (save.status === 'archived' ? 'Restore to Dashboard' : 'Archive Memory')}
+                  </span>
                 </button>
+
 
                 <button 
                   onClick={handleDelete}

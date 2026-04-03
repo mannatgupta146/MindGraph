@@ -87,7 +87,13 @@ const Dashboard = () => {
               </svg>
               New Save
             </button>
-            <button className="text-sm font-medium text-primary hover:text-primary-hover transition-colors">View All Archive</button>
+            <button 
+              onClick={() => navigate('/archives')}
+              className="text-sm font-medium text-primary hover:text-primary-hover transition-colors"
+            >
+              View All Archive
+            </button>
+
           </div>
         </div>
         

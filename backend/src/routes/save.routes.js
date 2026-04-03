@@ -1,28 +1,28 @@
 import express from 'express';
 import multer from 'multer';
-import { createSave, getSaves, getSaveById, semanticSearch, deleteSave, getGraphData, getInbox, updateSave } from '../controllers/save.controller.js';
+import { createSave, getSaves, getSaveById, semanticSearch, deleteSave, getGraphData, getInbox, getArchivedSaves, updateSave } from '../controllers/save.controller.js';
+
 
 import { protect } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'src/uploads');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
-  }
+// Professional Memory Storage for Production-Readiness
+// We process files in-memory to keep the server clean and cloud-compatible.
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
-const upload = multer({ storage });
 
 router.use(protect);
 
 router.post('/', upload.single('file'), createSave);
 router.get('/', getSaves);
 router.get('/inbox', getInbox);
+router.get('/archived', getArchivedSaves);
+
 router.get('/graph', getGraphData);
 router.get('/search', semanticSearch);
 router.get('/:id', getSaveById);
