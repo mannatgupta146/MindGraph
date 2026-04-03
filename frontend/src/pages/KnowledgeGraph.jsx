@@ -13,8 +13,8 @@ const KnowledgeGraph = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSave, setSelectedSave] = useState(null);
   const [hoverNode, setHoverNode] = useState(null);
+  const [selectedTag, setSelectedTag] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-  const [searchQuery, setSearchQuery] = useState('');
   const { theme } = useContext(ThemeContext);
   const isDark = theme === 'dark';
 
@@ -48,20 +48,20 @@ const KnowledgeGraph = () => {
     }
   };
 
-  useEffect(() => {
-    fetchGraphData();
-  }, []);
+  // High-Level Mastery Pillars: 6 categories that cover everything in the digital & physical world.
+  const universalTags = ['Technology', 'Business', 'Philosophy', 'Science', 'Culture', 'Lifestyle'];
+
+  // Consolidate to ONLY the 6 Master Pillars for maximum Graph clarity
+  const activeTags = [...universalTags];
 
   // Sync selected node from URL
   useEffect(() => {
     if (id && graphData.nodes.length > 0) {
       const node = graphData.nodes.find(n => n.id === id);
       if (node && fgRef.current) {
-        // Fly to node
         fgRef.current.centerAt(node.x, node.y, 800);
         fgRef.current.zoom(2.2, 800);
         
-        // Load details for drawer
         if (!selectedSave || selectedSave._id !== id) {
           axios.get(`http://localhost:3000/api/saves/${id}`, { withCredentials: true })
             .then(({ data }) => setSelectedSave(data))
@@ -79,16 +79,38 @@ const KnowledgeGraph = () => {
     const fg = fgRef.current;
     
     fg.d3Force('center', null);
-    fg.d3Force('x', forceX(0).strength(0.1));
-    fg.d3Force('y', forceY(0).strength(0.1));
-    fg.d3Force('charge').strength(-120);
-    fg.d3Force('collide', forceCollide(25));
-    fg.d3Force('link').distance(80).strength(0.4);
+    fg.d3Force('x', forceX(0).strength(0.12));
+    fg.d3Force('y', forceY(0).strength(0.12));
+    fg.d3Force('charge').strength(-150);
+    fg.d3Force('collide', forceCollide(30));
+    fg.d3Force('link').distance(70).strength(0.5);
   }, [graphData]);
 
-  // High-Fidelity Node Painter
+  // Handle Focus Mode: Recenter on Cluster
+  const handleTagClick = (tag) => {
+    const isClearing = selectedTag === tag;
+    const newTag = isClearing ? null : tag;
+    setSelectedTag(newTag);
+
+    if (newTag) {
+      const taggedNodes = graphData.nodes.filter(n => n.tags?.includes(newTag));
+      if (taggedNodes.length > 0) {
+        const avgX = taggedNodes.reduce((sum, n) => sum + n.x, 0) / taggedNodes.length;
+        const avgY = taggedNodes.reduce((sum, n) => sum + n.y, 0) / taggedNodes.length;
+        fgRef.current.centerAt(avgX, avgY, 1000);
+        fgRef.current.zoom(1.8, 1000);
+      }
+    } else {
+      fgRef.current.zoomToFit(800, 100);
+    }
+  };
+
+  // Discovery Node Painter
   const paintNode = useCallback((node, ctx, globalScale) => {
     const isSelected = id === node.id;
+    const isTagged = selectedTag && node.tags?.includes(selectedTag);
+    const isDimmed = selectedTag && !isTagged;
+
     const isHighlighted = hoverNode === node || (hoverNode && graphData.links.some(l => 
       (l.source.id === node.id && l.target.id === hoverNode.id) || 
       (l.target.id === node.id && l.source.id === hoverNode.id)
@@ -104,13 +126,22 @@ const KnowledgeGraph = () => {
 
     const color = colors[node.type] || colors.default;
     const baseSize = 6;
-    const size = isSelected ? baseSize * 1.5 : (isHighlighted ? baseSize * 1.2 : baseSize);
+    let size = isSelected ? baseSize * 1.5 : (isHighlighted ? baseSize * 1.2 : baseSize);
+    
+    if (isTagged) {
+      const pulse = 1 + Math.sin(Date.now() / 400) * 0.15;
+      size *= pulse;
+    }
+
+    const opacity = isDimmed ? 0.15 : 1;
+
+    ctx.globalAlpha = opacity;
 
     // 1. Draw Outer Glow
     ctx.beginPath();
-    ctx.arc(node.x, node.y, size * 2.5, 0, 2 * Math.PI, false);
-    const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 2.5);
-    gradient.addColorStop(0, `${color}${isSelected ? '66' : '33'}`);
+    ctx.arc(node.x, node.y, size * (isTagged ? 4 : 2.5), 0, 2 * Math.PI, false);
+    const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * (isTagged ? 4 : 2.5));
+    gradient.addColorStop(0, `${color}${isSelected || isTagged ? '88' : '33'}`);
     gradient.addColorStop(1, 'transparent');
     ctx.fillStyle = gradient;
     ctx.fill();
@@ -120,50 +151,74 @@ const KnowledgeGraph = () => {
     ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
     ctx.fillStyle = color;
     ctx.shadowColor = color;
-    ctx.shadowBlur = isSelected ? 15 : 5;
+    ctx.shadowBlur = isSelected || isTagged ? (isTagged ? 25 : 15) : 5;
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    // 3. Draw Inner Pulse (if selected)
-    if (isSelected) {
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, size * 0.4, 0, 2 * Math.PI, false);
-      ctx.fillStyle = '#fff';
-      ctx.fill();
-    }
-
-    // 4. Draw Label (if zoomed in or hovered)
-    if (globalScale > 1.2 || isHighlighted || isSelected) {
-      const fontSize = 10 / globalScale;
-      ctx.font = `${isHighlighted || isSelected ? '700' : '400'} ${fontSize}px Inter`;
+    // 3. Draw Label
+    if (globalScale > 1.2 || isHighlighted || isSelected || isTagged) {
+      const fontSize = 11 / globalScale;
+      ctx.font = `${isHighlighted || isSelected || isTagged ? '900' : '500'} ${fontSize}px Inter`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillStyle = isDark ? 'rgba(255,255,255,0.9)' : 'rgba(15,23,42,0.9)';
+      ctx.fillStyle = isDark ? `rgba(255,255,255,${isDimmed ? 0.2 : 0.95})` : `rgba(15,23,42,${isDimmed ? 0.2 : 0.95})`;
       
       const label = node.title || 'Untitled';
-      const truncatedLabel = label.length > 20 ? label.slice(0, 17) + '...' : label;
-      ctx.fillText(truncatedLabel, node.x, node.y + size + 4);
+      const truncatedLabel = label.length > 22 ? label.slice(0, 19) + '...' : label;
+      ctx.fillText(truncatedLabel, node.x, node.y + size + 5);
     }
-  }, [id, hoverNode, isDark, graphData.links]);
+    
+    ctx.globalAlpha = 1;
+  }, [id, hoverNode, isDark, graphData.links, selectedTag]);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[calc(100vh-140px)] bg-background rounded-3xl overflow-hidden border border-border shadow-2xl mt-4"
+      className="relative w-full h-[calc(100vh-140px)] bg-background rounded-3xl overflow-hidden border border-border mt-4 group"
     >
       {/* Search Header Overlay */}
-      <div className="absolute top-6 left-6 z-50 pointer-events-none">
-        <div className="bg-surface/80 backdrop-blur-xl p-4 rounded-3xl border border-border shadow-2xl flex items-center space-x-3 pointer-events-auto">
-          <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <div className="absolute top-6 left-6 z-50 transition-all duration-500">
+        <div className="bg-surface/80 backdrop-blur-2xl p-5 rounded-[2rem] border border-border shadow-2xl flex items-center space-x-4">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${selectedTag ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/30' : 'bg-primary/10 text-primary'}`}>
+             <svg className={`w-7 h-7 ${selectedTag ? 'animate-pulse' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
              </svg>
           </div>
           <div>
-            <h1 className="text-sm font-black uppercase tracking-widest text-text-primary">Knowledge Graph</h1>
-            <p className="text-[10px] text-text-tertiary font-bold tracking-tight">Vibrating with {graphData.nodes.length} memories</p>
+            <h1 className="text-sm font-black uppercase tracking-widest text-text-primary">
+              {selectedTag ? `Discovery: #${selectedTag}` : 'Knowledge Graph'}
+            </h1>
+            <p className="text-[10px] text-text-tertiary font-bold tracking-tight">Active Synthesis: {graphData.nodes.length} Memories</p>
           </div>
         </div>
+      </div>
+
+      {/* Tag Discovery Bar (Top Right) */}
+      <div className="absolute top-6 right-6 z-50 flex items-center space-x-2 max-w-md overflow-x-auto no-scrollbar pb-2">
+        {activeTags.map(tag => (
+          <button
+            key={tag}
+            onClick={() => handleTagClick(tag)}
+            className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
+              selectedTag === tag 
+              ? 'bg-secondary border-secondary text-white shadow-lg shadow-secondary/30' 
+              : 'bg-surface/80 backdrop-blur-md border-border text-text-secondary hover:border-secondary/40 hover:text-text-primary'
+            }`}
+          >
+            #{tag}
+          </button>
+        ))}
+        {selectedTag && (
+          <button 
+            onClick={() => setSelectedTag(null)}
+            className="p-2 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg"
+            title="Clear Discovery"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Control Buttons (Bottom Left) */}
@@ -196,17 +251,36 @@ const KnowledgeGraph = () => {
         nodeCanvasObject={paintNode}
         onNodeClick={node => navigate(`/graph/${node.id}`)}
         onNodeHover={setHoverNode}
-        linkWidth={link => link.type === 'tag' ? 3 : 1}
+        linkWidth={link => {
+          if (selectedTag) {
+            const sourceMatch = link.source.tags?.includes(selectedTag);
+            const targetMatch = link.target.tags?.includes(selectedTag);
+            return sourceMatch && targetMatch ? 4 : 0.5;
+          }
+          return link.type === 'tag' ? 2 : 1;
+        }}
         linkColor={link => {
+          if (selectedTag) {
+            const sourceMatch = link.source.tags?.includes(selectedTag);
+            const targetMatch = link.target.tags?.includes(selectedTag);
+            return sourceMatch && targetMatch ? '#3B82F6' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)');
+          }
           if (hoverNode && (link.source.id === hoverNode.id || link.target.id === hoverNode.id)) return '#3B82F6';
           return isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
         }}
-        linkDirectionalParticles={link => (hoverNode && (link.source.id === hoverNode.id || link.target.id === hoverNode.id)) ? 4 : 0}
-        linkDirectionalParticleSpeed={0.01}
-        linkDirectionalParticleWidth={2}
+        linkDirectionalParticles={link => {
+          if (selectedTag) {
+             const sourceMatch = link.source.tags?.includes(selectedTag);
+             const targetMatch = link.target.tags?.includes(selectedTag);
+             return sourceMatch && targetMatch ? 6 : 0;
+          }
+          return (hoverNode && (link.source.id === hoverNode.id || link.target.id === hoverNode.id)) ? 4 : 0;
+        }}
+        linkDirectionalParticleSpeed={0.015}
+        linkDirectionalParticleWidth={3}
         backgroundColor="transparent"
         cooldownTicks={100}
-        onEngineStop={() => { if (!id) fgRef.current.zoomToFit(800, 100); }}
+        onEngineStop={() => { if (!id && !selectedTag) fgRef.current.zoomToFit(800, 100); }}
       />
 
       <MemoryDetailDrawer
