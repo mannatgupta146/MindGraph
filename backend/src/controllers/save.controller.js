@@ -2,7 +2,7 @@ import fs from 'fs';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import Save from '../models/save.model.js';
-import { generateAISummary, generateAITags, generateMistralEmbedding } from '../services/ai.service.js';
+import { generateAISummary, generateAITags, generateMistralEmbedding, generateResurfaceSynthesis } from '../services/ai.service.js';
 import * as pineconeService from '../services/pinecone.service.js';
 import pdf from 'pdf-parse-fork';
 import ytdl from '@distube/ytdl-core';
@@ -348,5 +348,32 @@ export const getGraphData = async (req, res) => {
   } catch (error) {
     console.error('Graph data error:', error);
     res.status(500).json({ message: 'Error fetching graph data' });
+  }
+};
+
+export const getResurfacedMemories = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // We use MongoDB aggregation to efficiently grab 3 RANDOM memories that are currently active in the graph
+    const randomMemories = await Save.aggregate([
+      { $match: { user: userId, status: { $ne: 'archived' } } },
+      { $sample: { size: 3 } }
+    ]);
+
+    if (randomMemories.length === 0) {
+      return res.json({ memories: [], synthesis: "You have no memories in your graph yet." });
+    }
+
+    // Pass the random selections to Mistral AI to draw a connective line
+    const synthesis = await generateResurfaceSynthesis(randomMemories);
+
+    res.json({
+      memories: randomMemories,
+      synthesis
+    });
+  } catch (error) {
+    console.error('Resurface retrieval error:', error);
+    res.status(500).json({ message: 'Error generating resurface content' });
   }
 };

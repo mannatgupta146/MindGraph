@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { createSave, getSaves, getSaveById, semanticSearch, deleteSave, getGraphData, getInbox, getArchivedSaves, updateSave } from '../controllers/save.controller.js';
+import { createSave, getSaves, getSaveById, semanticSearch, deleteSave, getGraphData, getInbox, getArchivedSaves, updateSave, getResurfacedMemories } from '../controllers/save.controller.js';
 
 
 import { protect } from '../middlewares/auth.middleware.js';
@@ -25,6 +25,7 @@ router.get('/archived', getArchivedSaves);
 
 router.get('/graph', getGraphData);
 router.get('/search', semanticSearch);
+router.get('/resurface', getResurfacedMemories);
 router.get('/:id', getSaveById);
 router.patch('/:id', updateSave);
 

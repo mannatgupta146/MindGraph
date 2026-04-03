@@ -11,6 +11,7 @@ import Inbox from './pages/Inbox';
 import Collections from './pages/Collections';
 import CollectionDetail from './pages/CollectionDetail';
 import Archives from './pages/Archives';
+import Resurface from './pages/Resurface';
 import AppLayout from './components/layout/AppLayout';
 
 
@@ -51,7 +52,7 @@ function AppRoutes() {
 
         <Route path="/graph" element={<PrivateRoute><KnowledgeGraph /></PrivateRoute>} />
         <Route path="/graph/:id" element={<PrivateRoute><KnowledgeGraph /></PrivateRoute>} />
-        <Route path="/resurface" element={<PrivateRoute><PlaceholderPage title="Memory Resurfacing" /></PrivateRoute>} />
+        <Route path="/resurface" element={<PrivateRoute><Resurface /></PrivateRoute>} />
 
         <Route path="/settings" element={<PrivateRoute><PlaceholderPage title="Settings" /></PrivateRoute>} />
         

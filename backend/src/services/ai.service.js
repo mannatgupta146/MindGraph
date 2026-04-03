@@ -108,3 +108,30 @@ export const generateAITags = async (content) => {
   }
 };
 
+/**
+ * Intelligent Resurface Synthesis
+ * Takes an array of 3 random memory objects and generates a compelling connection
+ */
+export const generateResurfaceSynthesis = async (memories) => {
+  if (!memories || memories.length === 0) return "Explore your forgotten thoughts.";
+  
+  try {
+    const memoryContext = memories.map(m => `- [${m.type}] ${m.title}`).join('\n');
+    
+    const model = new ChatMistralAI({
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: "mistral-small-latest",
+      temperature: 0.7,
+    });
+
+    const response = await model.invoke([
+      ["system", "You are an AI in a Knowledge OS. You are given 3 random saves the user made in the past. Your job is to write EXACTLY ONE compelling, intriguing sentence that conceptually connects these 3 items, or tells the user why they should revisit them today. Be profound but concise. No filler words. No quotes."],
+      ["human", `Here are the 3 forgotten memories:\n${memoryContext}\n\nWrite a 1-sentence synthesis insight.`]
+    ]);
+
+    return response.content.trim().replace(/^["']|["']$/g, '');
+  } catch (error) {
+    console.error('Error generating resurface synthesis:', error);
+    return "A cluster of forgotten thoughts resurfaces from your archive.";
+  }
+};
