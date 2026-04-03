@@ -6,6 +6,15 @@ import { ThemeContext } from '../context/ThemeContext';
 import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
 import { forceX, forceY, forceCollide } from 'd3-force';
 
+// Pre-compile SVG paths outside of component for blazing 60FPS render performance
+const NODE_ICONS = {
+  youtube: new Path2D('M8 5v14l11-7z'), // Play
+  pdf: new Path2D('M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm6 1.5L18.5 10H12V3.5z'), // Document
+  tweet: new Path2D('M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z'), // Bird
+  article: new Path2D('M4 6h16v2H4zm0 5h16v2H4zm0 5h8v2H4z'), // Text lines
+  default: new Path2D('M13 10V3L4 14h7v7l9-11h-7z') // Lightning Bolt
+};
+
 const KnowledgeGraph = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,20 +30,30 @@ const KnowledgeGraph = () => {
   const fgRef = useRef();
   const containerRef = useRef();
 
-  // Responsive dimensions
+  // Responsive dimensions using ResizeObserver (guarantees perfect fit even when sidebars toggle)
   useEffect(() => {
-    const updateSize = () => {
-      if (containerRef.current) {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      if (entries[0]) {
         setDimensions({
-          width: containerRef.current.clientWidth,
-          height: containerRef.current.clientHeight
+          width: entries[0].contentRect.width,
+          height: entries[0].contentRect.height
         });
       }
-    };
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, []);
+
+  const handleZoomIn = () => {
+    if (!fgRef.current) return;
+    fgRef.current.zoom(fgRef.current.zoom() * 1.3, 300);
+  };
+
+  const handleZoomOut = () => {
+    if (!fgRef.current) return;
+    fgRef.current.zoom(fgRef.current.zoom() / 1.3, 300);
+  };
 
   // Fetch data
   const fetchGraphData = async () => {
@@ -47,7 +66,10 @@ const KnowledgeGraph = () => {
       setLoading(false);
     }
   };
-
+  // Fetch data on initial mount
+  useEffect(() => {
+    fetchGraphData();
+  }, []);
   // Master Pillars removed for Compact UI.
   // Graph focus is now completely organic.
 
@@ -70,17 +92,39 @@ const KnowledgeGraph = () => {
     }
   }, [id, graphData.nodes]);
 
-  // Physics Setup
+  // Real Vector-based D3 Physics Setup
   useEffect(() => {
     if (!fgRef.current) return;
     const fg = fgRef.current;
     
+    // Disable static centering to allow free-floating clusters
     fg.d3Force('center', null);
-    fg.d3Force('x', forceX(0).strength(0.12));
-    fg.d3Force('y', forceY(0).strength(0.12));
-    fg.d3Force('charge').strength(-150);
-    fg.d3Force('collide', forceCollide(30));
-    fg.d3Force('link').distance(70).strength(0.5);
+    
+    // Stronger gravity to keep the constellation from exploding too far into deep space
+    fg.d3Force('x', forceX(0).strength(0.15));
+    fg.d3Force('y', forceY(0).strength(0.15));
+    
+    // Balanced repulsion so they maintain distinct semantic clusters without flying away
+    fg.d3Force('charge').strength(-250); 
+    
+    // Prevent nodes from overlapping visually
+    fg.d3Force('collide', forceCollide(35));
+    
+    // The core magic: Use proper vector cosine similarity to control distance.
+    const linkForce = fg.d3Force('link');
+    if (linkForce) {
+      linkForce
+        .distance(link => {
+          const similarity = link.sim || 0.6; // fallback
+          const maxDistance = 700; // maximum repelling distance for weak links
+          return (1 - similarity) * maxDistance; 
+        })
+        .strength(link => {
+          // Stronger mathematical pull towards identical vectors
+          return link.sim ? link.sim * 1.5 : 0.5;
+        });
+    }
+
   }, [graphData]);
 
   // Handle Focus Mode: Recenter on Cluster
@@ -104,6 +148,9 @@ const KnowledgeGraph = () => {
 
   // Discovery Node Painter
   const paintNode = useCallback((node, ctx, globalScale) => {
+    // Failsafe: if the physics engine hasn't assigned proper coordinates yet, do not attempt to draw (prevents canvas crashes)
+    if (typeof node.x !== 'number' || typeof node.y !== 'number') return;
+
     const isSelected = id === node.id;
     const isTagged = selectedTag && node.tags?.includes(selectedTag);
     const isDimmed = selectedTag && !isTagged;
@@ -122,7 +169,7 @@ const KnowledgeGraph = () => {
     };
 
     const color = colors[node.type] || colors.default;
-    const baseSize = 6;
+    const baseSize = 4.5;
     let size = isSelected ? baseSize * 1.5 : (isHighlighted ? baseSize * 1.2 : baseSize);
     
     if (isTagged) {
@@ -143,14 +190,24 @@ const KnowledgeGraph = () => {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // 2. Draw Main Orb
+    // 2. Draw Solid Background Badge
     ctx.beginPath();
-    ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+    ctx.arc(node.x, node.y, size * 1.5, 0, 2 * Math.PI, false);
     ctx.fillStyle = color;
     ctx.shadowColor = color;
     ctx.shadowBlur = isSelected || isTagged ? (isTagged ? 25 : 15) : 5;
     ctx.fill();
     ctx.shadowBlur = 0;
+
+    // 3. Draw Vector Icon inside the Badge
+    ctx.save();
+    // Set scale relative to 24x24 standard viewport 
+    const iconScale = (size * 1.5) / 24; 
+    ctx.translate(node.x - (12 * iconScale), node.y - (12 * iconScale));
+    ctx.scale(iconScale, iconScale);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill(NODE_ICONS[node.type] || NODE_ICONS.default);
+    ctx.restore();
 
     // 3. Draw Label
     if (globalScale > 1.2 || isHighlighted || isSelected || isTagged) {
@@ -171,24 +228,45 @@ const KnowledgeGraph = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[calc(100vh-140px)] bg-background rounded-3xl overflow-hidden border border-border mt-4 group"
+      className="relative w-full h-[calc(100vh-170px)] bg-background rounded-3xl overflow-hidden border border-border group"
     >
       {/* Search Header Overlay */}
       <div className="absolute top-6 left-6 z-50 transition-all duration-500">
-        <div className="bg-surface/80 backdrop-blur-2xl p-4 rounded-[2rem] border border-border shadow-2xl flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-all bg-primary/10 text-primary">
-             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-surface/80 backdrop-blur-2xl px-5 py-3.5 rounded-2xl border border-border shadow-xl flex items-center space-x-3.5">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center transition-all bg-primary/10 text-primary">
+             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
              </svg>
           </div>
-          <div>
-            <h1 className="text-sm font-black uppercase tracking-widest text-text-primary">
+          <div className="flex flex-col justify-center">
+            <h1 className="text-sm font-bold text-text-primary leading-tight tracking-tight">
               Knowledge Graph
             </h1>
-            <p className="text-[10px] text-text-tertiary font-bold tracking-tight">Active Synthesis: {graphData.nodes.length} Memories</p>
+            <p className="text-[11px] text-text-tertiary font-medium mt-0.5">Active Synthesis: {graphData.nodes.length} Memories</p>
           </div>
         </div>
       </div>
+
+      {/* Empty State Overlay */}
+      {!loading && graphData.nodes.length === 0 && (
+        <div className="absolute inset-0 z-40 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-700">
+          <div className="w-20 h-20 mb-6 bg-surface border border-border rounded-full flex items-center justify-center shadow-2xl">
+            <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-text-primary mb-3 tracking-tight">Cosmic Void</h2>
+          <p className="text-text-secondary max-w-sm leading-relaxed mb-8">
+            Your graph is currently empty. Capture articles, tweets, or thoughts into your Inbox and watch the AI weave them into a living semantic constellation.
+          </p>
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20"
+          >
+            Start Capturing Knowledge
+          </button>
+        </div>
+      )}
 
       {/* Tag Discovery Bar Removed for compact UI */}
 
@@ -204,7 +282,16 @@ const KnowledgeGraph = () => {
           </svg>
         </button>
         <button 
-          onClick={() => { fgRef.current.zoomToFit(600); }}
+          onClick={() => { 
+            const xs = graphData.nodes.map(n => n.x || 0);
+            const width = Math.max(...xs) - Math.min(...xs);
+            if (width < 400) {
+              fgRef.current.centerAt(0, 0, 600);
+              fgRef.current.zoom(1.2, 600);
+            } else {
+              fgRef.current.zoomToFit(600, 100); 
+            }
+          }}
           className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
           title="Recenter"
         >
@@ -214,8 +301,34 @@ const KnowledgeGraph = () => {
         </button>
       </div>
 
-      <ForceGraph2D
-        ref={fgRef}
+      {/* Zoom Controls (Bottom Right) */}
+      <div className="absolute bottom-6 right-6 z-50 flex flex-col space-y-2">
+        <button 
+          onClick={handleZoomIn}
+          className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
+          title="Zoom In"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+        <button 
+          onClick={handleZoomOut}
+          className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
+          title="Zoom Out"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+          </svg>
+        </button>
+      </div>
+
+      <div 
+        className="absolute inset-0 rounded-3xl overflow-hidden z-0"
+        style={{ clipPath: 'inset(0 round 1.5rem)' }}
+      >
+        <ForceGraph2D
+          ref={fgRef}
         graphData={graphData}
         width={dimensions.width}
         height={dimensions.height}
@@ -250,9 +363,24 @@ const KnowledgeGraph = () => {
         linkDirectionalParticleSpeed={0.015}
         linkDirectionalParticleWidth={3}
         backgroundColor="transparent"
-        cooldownTicks={100}
-        onEngineStop={() => { if (!id && !selectedTag) fgRef.current.zoomToFit(800, 100); }}
+        minZoom={0.4}
+        maxZoom={1.6}
+        onEngineStop={() => {
+          if (graphData.nodes.length > 0 && fgRef.current && !id && !selectedTag) {
+             const xs = graphData.nodes.map(n => n.x || 0);
+             const width = Math.max(...xs) - Math.min(...xs);
+             
+             // If the constellation is tiny, strictly enforce an elegant fixed zoom so nodes aren't massively blown up
+             if (width < 400) {
+                fgRef.current.centerAt(0, 0, 800);
+                fgRef.current.zoom(1.2, 800);
+             } else {
+                fgRef.current.zoomToFit(800, 150);
+             }
+          }
+        }}
       />
+      </div>
 
       <MemoryDetailDrawer
         save={selectedSave}

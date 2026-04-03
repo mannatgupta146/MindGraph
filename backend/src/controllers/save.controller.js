@@ -300,8 +300,8 @@ export const getGraphData = async (req, res) => {
 
   try {
     const userId = req.user.id;
-    // The Graph only shows processed/curated knowledge to keep it semantic and clean
-    const saves = await Save.find({ user: userId, status: 'processed' }).select('title type tags embedding createdAt');
+    // Show all active knowledge (both inbox and processed) so the graph is immediately visible
+    const saves = await Save.find({ user: userId, status: { $ne: 'archived' } }).select('title type tags embedding createdAt');
 
 
     const nodes = saves.map(save => ({
@@ -323,18 +323,20 @@ export const getGraphData = async (req, res) => {
             source: saves[i]._id,
             target: saves[j]._id,
             value: commonTags.length * 2,
-            type: 'tag'
+            type: 'tag',
+            sim: 0.95 // Very high theoretical similarity for shared tags
           });
         } 
-        // Option 2: Semantic Similarity (AI Hidden Link)
+        // Option 2: Semantic Similarity (AI Hidden Link via Vectors)
         else if (saves[i].embedding?.length > 0 && saves[j].embedding?.length > 0) {
           const sim = cosineSimilarity(saves[i].embedding, saves[j].embedding);
-          if (sim > 0.78) { // Lower threshold for "Semantic Discovery"
+          if (sim > 0.55) { // Lower threshold creates a broader web for D3 graph physics to handle
             links.push({
               source: saves[i]._id,
               target: saves[j]._id,
-              value: Math.pow(sim, 2) * 5, // Non-linear weight for better clustering
-              type: 'semantic'
+              value: Math.pow(sim, 2) * 5,
+              type: 'semantic',
+              sim: sim // Pass exact vector cosine similarity back
             });
           }
         }
