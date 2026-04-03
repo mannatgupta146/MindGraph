@@ -20,20 +20,17 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
       setIsDeleting(false);
       setIsUpdating(false);
       fetchCollections();
-      // If we have an ID but no save object (e.g. direct URL), fetch it
       if (saveId && (!save || save._id !== saveId)) {
         fetchSaveDetails(saveId);
       }
     } else {
-      setSave(null); // Clear data on close
+      setSave(null);
       setIsDeleting(false);
       setIsUpdating(false);
       setError(null);
     }
   }, [isOpen, saveId]);
 
-
-  // Sync internal state when initialSave changes
   useEffect(() => {
     if (initialSave) setSave(initialSave);
   }, [initialSave]);
@@ -131,7 +128,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
         saveId: save._id
       }, { withCredentials: true });
       if (onUpdateSuccess) onUpdateSuccess();
-      fetchCollections(); // Refresh list
+      fetchCollections();
     } catch (err) {
       setError('Failed to add memory to collection');
     } finally {
@@ -144,14 +141,14 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300" 
-        onClick={onClose}
+        onClick={() => !(isDeleting || isUpdating) && onClose()}
       ></div>
 
       <div className="absolute inset-y-0 right-0 max-w-2xl w-full flex">
         <div className="h-full w-full bg-surface border-l border-border shadow-2xl flex flex-col transform transition-transform duration-300 ease-out animate-slide-in-right">
           
           {/* Header */}
-          <div className="p-6 border-b border-border flex items-center justify-between bg-surface/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="p-6 border-b border-border flex items-center justify-between bg-surface/80 backdrop-blur-md sticky top-0 z-10 transition-opacity duration-300">
             <div className="flex items-center space-x-3">
               {save && (
                 <>
@@ -171,7 +168,11 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
               )}
               {!save && isFetching && <span className="text-text-tertiary text-sm">Loading memory...</span>}
             </div>
-            <button onClick={onClose} className="p-2 text-text-tertiary hover:text-text-primary hover:bg-surface-hover rounded-full transition-all">
+            <button 
+              onClick={onClose} 
+              disabled={isDeleting || isUpdating}
+              className="p-2 text-text-tertiary hover:text-text-primary hover:bg-surface-hover rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -179,7 +180,22 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar pb-32">
+          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar pb-32 relative">
+            {/* Global Loading Overlay */}
+            {(isDeleting || isUpdating) && (
+              <div className="absolute inset-0 z-50 bg-surface/60 backdrop-blur-[2px] flex flex-col items-center justify-center animate-in fade-in duration-300">
+                <div className="relative">
+                  <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 bg-primary/10 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                <p className="mt-4 text-text-primary font-bold text-sm tracking-widest uppercase animate-pulse">
+                  {isDeleting ? 'Deleting Forever...' : 'Syncing Brain...'}
+                </p>
+              </div>
+            )}
+
             {error && <p className="p-3 bg-red-500/10 text-red-500 rounded-xl text-sm border border-red-500/20">{error}</p>}
             
             {isFetching && !save && (
@@ -201,7 +217,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                         href={save.url} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="inline-flex items-center text-primary hover:text-primary-hover group bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors"
+                        className={`inline-flex items-center text-primary hover:text-primary-hover group bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 transition-colors ${isDeleting || isUpdating ? 'pointer-events-none opacity-30' : ''}`}
                       >
                         <span className="truncate max-w-sm text-sm font-medium">Source Link</span>
                         <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,7 +230,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                         href={save.fileUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="inline-flex items-center text-secondary hover:text-secondary-hover group bg-secondary/5 px-3 py-1.5 rounded-lg border border-secondary/10 transition-colors"
+                        className={`inline-flex items-center text-secondary hover:text-secondary-hover group bg-secondary/5 px-3 py-1.5 rounded-lg border border-secondary/10 transition-colors ${isDeleting || isUpdating ? 'pointer-events-none opacity-30' : ''}`}
                       >
                         <span className="truncate max-w-sm text-sm font-medium">Original Artifact</span>
                         <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -233,7 +249,6 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                       const match = save.url.match(regExp);
                       const videoId = match ? match[1] : null;
 
-                      
                       return videoId ? (
                         <iframe 
                           width="100%" 
@@ -253,17 +268,6 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                         </div>
                       );
                     })()}
-                  </div>
-                )}
-
-                {/* Image Preview */}
-                {save.type === 'image' && save.fileUrl && (
-                  <div className="relative group rounded-3xl overflow-hidden border border-border shadow-2xl bg-black/5">
-                    <img 
-                      src={save.fileUrl} 
-                      alt={save.title} 
-                      className="w-full h-auto object-contain max-h-[500px] transition-transform duration-500 group-hover:scale-[1.02]" 
-                    />
                   </div>
                 )}
 
@@ -306,8 +310,8 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                         <button 
                           key={col._id}
                           onClick={() => !isInCollection && handleAddToCollection(col._id)}
-                          disabled={isAddingToCollection || isInCollection}
-                          className={`px-4 py-2 rounded-xl border text-sm font-bold flex items-center space-x-2 transition-all ${
+                          disabled={isAddingToCollection || isInCollection || isDeleting || isUpdating}
+                          className={`px-4 py-2 rounded-xl border text-sm font-bold flex items-center space-x-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
                             isInCollection 
                             ? 'bg-secondary/10 border-secondary text-secondary' 
                             : 'border-border text-text-secondary hover:border-secondary/40 hover:text-text-primary'
@@ -339,13 +343,13 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
 
           {/* Footer Actions */}
           {save && (
-            <div className="p-5 border-t border-border bg-surface/90 backdrop-blur-md sticky bottom-0 w-full flex flex-col space-y-4 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+            <div className={`p-5 border-t border-border bg-surface/90 backdrop-blur-md sticky bottom-0 w-full flex flex-col space-y-4 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] transition-opacity duration-300 ${(isDeleting || isUpdating) ? 'pointer-events-none opacity-30' : ''}`}>
               <div className="flex space-x-3">
                 {save.status === 'inbox' && (
                   <button 
                     onClick={() => handleStatusUpdate('processed')}
-                    disabled={isUpdating}
-                    className="flex-1 py-3 px-4 bg-secondary text-white font-bold text-sm rounded-xl hover:bg-secondary/90 shadow-md shadow-secondary/20 transition-all flex items-center justify-center space-x-2"
+                    disabled={isUpdating || isDeleting}
+                    className="flex-1 py-3 px-4 bg-secondary text-white font-bold text-sm rounded-xl hover:bg-secondary/90 shadow-md shadow-secondary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
@@ -356,7 +360,8 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                 
                 <button 
                   onClick={handleCopy}
-                  className={`flex-1 py-3 px-4 font-bold text-sm rounded-xl transition-all flex items-center justify-center space-x-2 ${
+                  disabled={isDeleting || isUpdating}
+                  className={`flex-1 py-3 px-4 font-bold text-sm rounded-xl transition-all flex items-center justify-center space-x-2 disabled:opacity-50 ${
                     copyStatus === 'Copied! ✓' 
                     ? 'bg-green-500 text-white' 
                     : 'bg-primary text-white hover:bg-primary-hover shadow-md shadow-primary/20'
@@ -372,8 +377,8 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
               <div className="flex justify-between items-center px-2">
                 <button 
                   onClick={() => handleStatusUpdate(save.status === 'archived' ? 'processed' : 'archived')}
-                  disabled={isUpdating}
-                  className="text-text-tertiary hover:text-text-primary text-sm font-bold transition-all flex items-center space-x-1"
+                  disabled={isUpdating || isDeleting}
+                  className="text-text-tertiary hover:text-text-primary text-sm font-bold transition-all flex items-center space-x-1 disabled:opacity-50"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
@@ -386,8 +391,8 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
 
                 <button 
                   onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="text-red-500/60 hover:text-red-500 text-sm font-bold transition-all flex items-center space-x-1"
+                  disabled={isDeleting || isUpdating}
+                  className="text-red-500/60 hover:text-red-500 text-sm font-bold transition-all flex items-center space-x-1 disabled:opacity-50"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
