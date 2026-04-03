@@ -136,6 +136,24 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
     }
   };
 
+  const handleRemoveFromCollection = async (collectionId) => {
+    if (!save) return;
+    setIsAddingToCollection(true);
+    setError(null);
+    try {
+      await axios.post('http://localhost:3000/api/collections/remove', {
+        collectionId,
+        saveId: save._id
+      }, { withCredentials: true });
+      if (onUpdateSuccess) onUpdateSuccess();
+      fetchCollections();
+    } catch (err) {
+      setError('Failed to remove memory from collection');
+    } finally {
+      setIsAddingToCollection(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
@@ -180,7 +198,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar pb-32 relative">
+          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar pb-8 relative">
             {/* Global Loading Overlay */}
             {(isDeleting || isUpdating) && (
               <div className="absolute inset-0 z-50 bg-surface/60 backdrop-blur-[2px] flex flex-col items-center justify-center animate-in fade-in duration-300">
@@ -309,21 +327,26 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                       return (
                         <button 
                           key={col._id}
-                          onClick={() => !isInCollection && handleAddToCollection(col._id)}
-                          disabled={isAddingToCollection || isInCollection || isDeleting || isUpdating}
-                          className={`px-4 py-2 rounded-xl border text-sm font-bold flex items-center space-x-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
+                          onClick={() => isInCollection ? handleRemoveFromCollection(col._id) : handleAddToCollection(col._id)}
+                          disabled={isAddingToCollection || isDeleting || isUpdating}
+                          className={`px-4 py-2 rounded-xl border text-sm font-bold flex items-center space-x-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed group ${
                             isInCollection 
-                            ? 'bg-secondary/10 border-secondary text-secondary' 
+                            ? 'bg-secondary/10 border-secondary text-secondary hover:bg-red-500/10 hover:border-red-500 hover:text-red-500' 
                             : 'border-border text-text-secondary hover:border-secondary/40 hover:text-text-primary'
                           }`}
                         >
                           <span>{col.icon}</span>
-                          <span>{col.title}</span>
-                          {isInCollection && (
-                            <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
+                          <span className={isInCollection ? 'group-hover:line-through' : ''}>{col.title}</span>
+                          {isInCollection ? (
+                            <>
+                              <svg className="w-4 h-4 ml-1 group-hover:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <svg className="w-4 h-4 ml-1 hidden group-hover:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </>
+                          ) : null}
                         </button>
                       );
                     })}

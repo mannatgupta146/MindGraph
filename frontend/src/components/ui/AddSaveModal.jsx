@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
+const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [type, setType] = useState('article');
@@ -9,6 +9,29 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
+  const [collections, setCollections] = useState([]);
+  const [selectedCollection, setSelectedCollection] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      if (preselectedCollectionId) {
+        setSelectedCollection(preselectedCollectionId);
+      } else {
+        setSelectedCollection('');
+      }
+      
+      const fetchCollections = async () => {
+        try {
+          const { data } = await axios.get('http://localhost:3000/api/collections');
+          setCollections(data);
+        } catch (error) {
+          console.error('Error fetching collections:', error);
+        }
+      };
+      
+      fetchCollections();
+    }
+  }, [isOpen, preselectedCollectionId]);
 
   if (!isOpen) return null;
 
@@ -29,13 +52,25 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
         formData.append('content', content);
       }
 
-      await axios.post('http://localhost:3000/api/saves', formData, {
+      const { data } = await axios.post('http://localhost:3000/api/saves', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
         withCredentials: true
       });
-      onSaveSuccess();
+
+      if (selectedCollection) {
+        try {
+          await axios.post('http://localhost:3000/api/collections/add', {
+            collectionId: selectedCollection,
+            saveId: data._id
+          }, { withCredentials: true });
+        } catch (linkErr) {
+          console.error("Failed to link memory to project", linkErr);
+        }
+      }
+
+      onSaveSuccess(data);
       onClose();
       // Reset form
       setTitle('');
@@ -90,6 +125,23 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess }) => {
               <option value="image">Image</option>
             </select>
           </div>
+
+          {collections.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Project (Optional)</label>
+              <select
+                value={selectedCollection}
+                onChange={(e) => setSelectedCollection(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
+                disabled={!!preselectedCollectionId}
+              >
+                <option value="">No Project</option>
+                {collections.map(col => (
+                  <option key={col._id} value={col._id}>{col.icon} {col.title}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           { (type !== 'pdf' && type !== 'image') && (
             <div>

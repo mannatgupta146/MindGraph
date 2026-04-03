@@ -89,7 +89,7 @@ export const generateAITags = async (content) => {
     });
 
     const response = await model.invoke([
-      ["system", "You are a specialized AI that extracts semantic tags. Extract 3-5 high-quality tags from this text. Return only the tags as a comma-separated list. No preamble, no periods, no numbering."],
+      ["system", "You are a specialized AI that extracts semantic tags. Extract 3-5 high-quality tags from this text. You MUST include at least one of these primary broad categories if remotely applicable: Technology, Politics, Science, Business, Health, Arts, History, Philosophy, Entertainment. Return only the tags as a comma-separated list. No preamble, no periods, no numbering."],
       ["user", `Content to tag: ${content.substring(0, 4000)}`]
     ]);
 
@@ -99,9 +99,9 @@ export const generateAITags = async (content) => {
     console.error('Error generating AI tags:', error);
     // Fallback: Basic keyword matching
     const commonTopics = [
+      'Technology', 'Politics', 'Science', 'Business', 'Health', 'Arts', 'History', 'Philosophy', 'Entertainment',
       'AI', 'Machine Learning', 'Productivity', 'Design', 'Development', 
-      'React', 'Node', 'Database', 'Search', 'Psychology', 'Neuroscience',
-      'Finance', 'Health', 'Tech', 'Startup', 'Writing', 'Code'
+      'Database', 'Psychology', 'Neuroscience', 'Finance', 'Startup'
     ];
     const foundTags = commonTopics.filter(topic => content.toLowerCase().includes(topic.toLowerCase()));
     return foundTags.slice(0, 5).length > 0 ? foundTags.slice(0, 5) : ['General'];

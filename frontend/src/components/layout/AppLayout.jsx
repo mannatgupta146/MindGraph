@@ -28,7 +28,8 @@ const AppLayout = ({ children }) => {
   
   // Extract title from path
   const path = location.pathname.substring(1);
-  const title = path.charAt(0).toUpperCase() + path.slice(1) || 'Dashboard';
+  const base = path.split('/')[0];
+  const title = base ? (base.charAt(0).toUpperCase() + base.slice(1)) : 'Dashboard';
 
   return (
     <div className="min-h-screen bg-background">

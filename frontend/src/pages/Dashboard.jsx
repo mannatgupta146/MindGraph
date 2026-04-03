@@ -42,8 +42,8 @@ const Dashboard = () => {
     fetchSaves();
   };
 
-  // Dynamic Tags from user saves for organic discovery
-  const allTags = ['All', ...new Set(saves.flatMap(s => s.tags || []))].filter(Boolean).slice(0, 10);
+  // Expanded Core Pillars to encompass all major world topics
+  const allTags = ['All', 'Technology', 'Politics', 'Science', 'Business', 'Health', 'Arts', 'History', 'Philosophy', 'Entertainment'];
 
   const filteredSaves = selectedTag === 'All' 
     ? saves 
