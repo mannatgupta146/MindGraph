@@ -1,11 +1,15 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 
 const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, onClick }) => {
   return (
     <div 
       onClick={onClick}
-      className="bg-surface rounded-xl p-5 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-full group"
-    >      <div className="flex justify-between items-start mb-3">
+      className="bg-surface rounded-xl p-5 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-full min-h-[240px] group"
+    >
+      <div className="flex justify-between items-start mb-3">
         <div className="flex items-center space-x-2">
           {type === 'article' && (
             <div className="flex items-center space-x-1.5 px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">
@@ -51,8 +55,13 @@ const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, onClick }) =>
         <span className="text-text-tertiary text-xs">{new Date(date).toLocaleDateString()}</span>
       </div>
       
-      <h3 className="text-lg font-semibold text-text-primary mb-2 transition-colors">{title}</h3>
-      <p className="text-sm text-text-secondary mb-4 flex-1">{summary}</p>
+      <h3 className="text-lg font-semibold text-text-primary mb-2 line-clamp-1 group-hover:text-primary transition-colors">{title}</h3>
+      <div className="text-sm text-text-secondary mb-4 flex-1 line-clamp-3 markdown-card-content">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {summary}
+        </ReactMarkdown>
+      </div>
+
       
       <div className="flex flex-wrap gap-2 mt-auto">
         {tags?.map(tag => (

@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import MemoryCard from '../components/ui/MemoryCard';
+
 import AddSaveModal from '../components/ui/AddSaveModal';
 import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
 import { AuthContext } from '../context/AuthContext';
@@ -7,12 +9,18 @@ import axios from 'axios';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [saves, setSaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSave, setSelectedSave] = useState(null);
+  
+  // Find the selected save from the local list if it exists (for instant access)
+  const selectedSave = id ? saves.find(s => s._id === id) : null;
+
 
   const fetchSaves = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.get('http://localhost:3000/api/saves');
       setSaves(data);
@@ -23,9 +31,22 @@ const Dashboard = () => {
     }
   };
 
+
+  const handleDeleteSuccess = () => {
+    // 1. Optimistic local update
+    setSaves(prev => prev.filter(s => s._id !== id));
+    // 2. Navigate back to clear the drawer
+    navigate('/dashboard');
+    // 3. Trigger full re-sync with animation
+    fetchSaves();
+  };
+
+
   useEffect(() => {
     fetchSaves();
   }, []);
+
+
 
   return (
     <div className="space-y-8">
@@ -83,9 +104,10 @@ const Dashboard = () => {
                 key={save._id} 
                 {...save} 
                 date={save.createdAt} 
-                onClick={() => setSelectedSave(save)}
+                onClick={() => navigate(`/dashboard/${save._id}`)}
               />
             ))}
+
           </div>
         ) : (
           <div className="text-center py-20 bg-surface border border-border rounded-2xl border-dashed">
@@ -109,11 +131,14 @@ const Dashboard = () => {
 
       <MemoryDetailDrawer 
         save={selectedSave}
-        isOpen={!!selectedSave}
-        onClose={() => setSelectedSave(null)}
-        onDeleteSuccess={fetchSaves}
+        saveId={id}
+        isOpen={!!id}
+        onClose={() => navigate('/dashboard')}
+        onDeleteSuccess={handleDeleteSuccess}
         onUpdateSuccess={fetchSaves}
       />
+
+
     </div>
   );
 };

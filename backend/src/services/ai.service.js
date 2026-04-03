@@ -1,4 +1,10 @@
 import { pipeline } from '@xenova/transformers';
+import { MistralAIEmbeddings, ChatMistralAI } from "@langchain/mistralai";
+import dotenv from 'dotenv';
+
+
+dotenv.config();
+
 
 // Configuration for local models
 let extractor = null;
@@ -20,42 +26,85 @@ export const generateEmbedding = async (text) => {
     return Array.from(output.data);
   } catch (error) {
     console.error('Error generating local embedding:', error);
-    // Return an empty array or a zero vector if it fails, though it shouldn't locally
+    // Return an empty array or a zero vector if it fails
     return new Array(384).fill(0); 
   }
 };
 
+export const generateMistralEmbedding = async (text) => {
+  try {
+    const embeddings = new MistralAIEmbeddings({
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: "mistral-embed",
+    });
+    const [embedding] = await embeddings.embedDocuments([text]);
+    return embedding;
+  } catch (error) {
+    console.error('Error generating Mistral embedding:', error);
+    return [];
+  }
+};
+
+
 /**
- * Basic extraction-based summarizer for free tier.
- * Extracts the first few meaningful sentences.
+ * Real AI extraction using Mistral.
+ * Returns a high-quality summary of the content.
  */
 export const generateAISummary = async (content) => {
   if (!content) return "";
   
-  // Simple heuristic: Take the first 3 sentences or first 200 characters
-  const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 10).map(s => s.trim());
-  const summary = sentences.slice(0, 3).join('. ') + (sentences.length > 3 ? '.' : '');
-  
-  return summary || content.substring(0, 150) + "...";
+  try {
+    const model = new ChatMistralAI({
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: "mistral-small-latest",
+      temperature: 0,
+    });
+
+    const response = await model.invoke([
+      ["system", "You are a specialized AI that summarizes digital captures. Generate a concise 1-2 sentence summary of this content that captures its core value and context."],
+      ["user", `Content to summarize: ${content.substring(0, 4000)}`]
+    ]);
+
+    return response.content.trim();
+  } catch (error) {
+    console.error('Error generating AI summary:', error);
+    // Fallback: Simple extraction
+    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 10).map(s => s.trim());
+    return sentences.slice(0, 3).join('. ') + "...";
+  }
 };
 
 /**
- * Basic keyword-based tagger for free tier.
- * Extracts common tech/topic keywords found in the text.
+ * Real AI Semantic Tagger.
+ * Extracts 3-5 relevant semantic tags from the content.
  */
 export const generateAITags = async (content) => {
   if (!content) return [];
   
-  const commonTopics = [
-    'AI', 'Machine Learning', 'Productivity', 'Design', 'Development', 
-    'React', 'Node', 'Database', 'Search', 'Psychology', 'Neuroscience',
-    'Finance', 'Health', 'Tech', 'Startup', 'Writing', 'Code'
-  ];
-  
-  const foundTags = commonTopics.filter(topic => 
-    content.toLowerCase().includes(topic.toLowerCase())
-  );
-  
-  // Take up to 5 tags, or add 'General' if none found
-  return foundTags.slice(0, 5).length > 0 ? foundTags.slice(0, 5) : ['General'];
+  try {
+    const model = new ChatMistralAI({
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: "mistral-small-latest",
+      temperature: 0,
+    });
+
+    const response = await model.invoke([
+      ["system", "You are a specialized AI that extracts semantic tags. Extract 3-5 high-quality tags from this text. Return only the tags as a comma-separated list. No preamble, no periods, no numbering."],
+      ["user", `Content to tag: ${content.substring(0, 4000)}`]
+    ]);
+
+    const tags = response.content.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+    return tags.length > 0 ? tags.slice(0, 5) : ['General'];
+  } catch (error) {
+    console.error('Error generating AI tags:', error);
+    // Fallback: Basic keyword matching
+    const commonTopics = [
+      'AI', 'Machine Learning', 'Productivity', 'Design', 'Development', 
+      'React', 'Node', 'Database', 'Search', 'Psychology', 'Neuroscience',
+      'Finance', 'Health', 'Tech', 'Startup', 'Writing', 'Code'
+    ];
+    const foundTags = commonTopics.filter(topic => content.toLowerCase().includes(topic.toLowerCase()));
+    return foundTags.slice(0, 5).length > 0 ? foundTags.slice(0, 5) : ['General'];
+  }
 };
+

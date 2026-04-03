@@ -2,10 +2,15 @@ import fs from 'fs';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import Save from '../models/save.model.js';
-import { generateEmbedding, generateAISummary, generateAITags } from '../services/ai.service.js';
-import { PDFParse } from 'pdf-parse';
+import { generateAISummary, generateAITags, generateMistralEmbedding } from '../services/ai.service.js';
+import * as pineconeService from '../services/pinecone.service.js';
+import pdf from 'pdf-parse-fork';
 import ytdl from '@distube/ytdl-core';
+
+
+
 const { getSubtitles } = require('youtube-captions-scraper');
+
 
 export const createSave = async (req, res) => {
   try {
@@ -20,17 +25,22 @@ export const createSave = async (req, res) => {
       const isImage = req.file.mimetype.startsWith('image/');
 
       if (isPDF) {
-        const dataBuffer = fs.readFileSync(req.file.path);
-        const parser = new PDFParse({ data: dataBuffer });
-        const result = await parser.getText();
-        content = result.text || 'No text content extracted from PDF';
-        await parser.destroy();
-        
-        if (!title) {
-          title = content.split('\n')[0].substring(0, 50).trim() || req.file.originalname;
+        try {
+          const dataBuffer = fs.readFileSync(req.file.path);
+          const data = await pdf(dataBuffer);
+          content = data.text || 'No text content extracted from PDF';
+          
+          if (!title) {
+            title = content.split('\n')[0].substring(0, 50).trim() || req.file.originalname;
+          }
+          type = 'pdf';
+        } catch (pdfError) {
+          console.error('PDF Parse error:', pdfError);
+          return res.status(400).json({ message: 'Failed to process PDF file' });
         }
-        type = 'pdf';
       } else if (isImage) {
+
+
         if (!content) content = `Visual artifact: ${req.file.originalname}`;
         if (!title) title = req.file.originalname;
         type = 'image';
@@ -100,9 +110,9 @@ export const createSave = async (req, res) => {
     }
 
     // 1. Generate AI enhancements
-    const embedding = await generateEmbedding(content);
     const summary = await generateAISummary(content);
     const aiTags = await generateAITags(content);
+    const embedding = await generateMistralEmbedding(content);
 
     // Combine user tags with AI tags
     const combinedTags = [...new Set([...(userTags || []), ...aiTags])];
@@ -115,11 +125,17 @@ export const createSave = async (req, res) => {
       url,
       tags: combinedTags,
       summary,
-      embedding,
+      // Store the 1024-dim embedding for graph visualization
+      embedding, 
       fileUrl
     });
 
+    // 2. Index in Pinecone for semantic search (chunks)
+    await pineconeService.upsertMemoryToPinecone(newSave._id.toString(), content, { user: userId.toString() });
+
+
     res.status(201).json(newSave);
+
   } catch (error) {
     console.error('Error creating save:', error);
     res.status(500).json({ message: 'Error processing content' });
@@ -135,6 +151,24 @@ export const getSaves = async (req, res) => {
     res.status(500).json({ message: 'Error fetching saves' });
   }
 };
+
+export const getSaveById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const save = await Save.findOne({ _id: id, user: userId });
+    
+    if (!save) {
+      return res.status(404).json({ message: 'Memory not found' });
+    }
+    
+    res.json(save);
+  } catch (error) {
+    console.error('Error fetching memory details:', error);
+    res.status(500).json({ message: 'Error fetching memory details' });
+  }
+};
+
 
 const cosineSimilarity = (vecA, vecB) => {
   if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
@@ -158,53 +192,30 @@ export const semanticSearch = async (req, res) => {
       return res.status(400).json({ message: 'Search query is required' });
     }
 
-    const queryEmbedding = await generateEmbedding(query);
-    const saves = await Save.find({ user: userId })
-      .select('title content summary type tags embedding createdAt')
+    // Use Pinecone for semantic search
+    const pineconeResults = await pineconeService.queryPinecone(query, userId.toString(), 15);
+    
+    if (pineconeResults.length === 0) {
+      // Fallback or empty
+      return res.json([]);
+    }
+
+    // Hydrate results from MongoDB
+    const saveIds = [...new Set(pineconeResults.map(r => r.saveId))];
+    const saves = await Save.find({ _id: { $in: saveIds } })
+      .select('title summary type tags createdAt')
       .lean();
 
-    const queryLower = query.toLowerCase();
-    const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+    // Map scores back and sort
+    const finalResults = saves.map(save => {
+      const match = pineconeResults.find(r => r.saveId === save._id.toString());
+      return { ...save, score: match ? match.score : 0 };
+    }).sort((a, b) => b.score - a.score);
 
-    // Calculate hybrid scores
-    const scoredResults = saves
-      .map(save => {
-        // 1. Semantic Score (0 to 1)
-        const semanticScore = (save.embedding && save.embedding.length === 384) 
-          ? cosineSimilarity(queryEmbedding, save.embedding) 
-          : 0;
-        
-        // 2. Word-Level Match Score (0 to 1)
-        const titleText = (save.title || '').toLowerCase();
-        const contentText = (save.content || '').toLowerCase();
-        const tagsText = (save.tags || []).join(' ').toLowerCase();
-        
-        let matchingWordsCount = 0;
-        queryWords.forEach(word => {
-          // Check for partial/singular/plural matches
-          if (titleText.includes(word) || contentText.includes(word) || tagsText.includes(word)) {
-            matchingWordsCount++;
-          }
-        });
-
-        const wordMatchScore = queryWords.length > 0 ? (matchingWordsCount / queryWords.length) : 0;
-        const literalScore = wordMatchScore > 0 ? (0.6 + (wordMatchScore * 0.4)) : 0; // Boost any match to at least 0.6
-
-        // 3. Final Combined Score (Take the best signal)
-        const score = Math.max(semanticScore, literalScore);
-        
-        return { ...save, score };
-      })
-      .filter(save => save.score > 0.25) // Broad capture for hybrid ranking
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 15);
-
-    console.log(`[HYBRID SEARCH] Query: "${query}" | Words: ${queryWords.length} | Matches: ${scoredResults.length} | Max Score: ${scoredResults[0]?.score?.toFixed(4) || 0}`);
-
-    // Remove content from response to keep it light
-    const finalResults = scoredResults.map(({ content, embedding, ...rest }) => rest);
+    console.log(`[PINECONE SEARCH] Query: "${query}" | Results: ${finalResults.length}`);
 
     res.json(finalResults);
+
   } catch (error) {
     console.error('Semantic search error:', error);
     res.status(500).json({ message: 'Search failed' });
@@ -248,7 +259,11 @@ export const deleteSave = async (req, res) => {
       return res.status(404).json({ message: 'Save not found' });
     }
 
+    // Cleanup Pinecone
+    await pineconeService.deleteFromPinecone(id);
+
     res.json({ message: 'Memory deleted successfully' });
+
   } catch (error) {
     res.status(500).json({ message: 'Error deleting memory' });
   }

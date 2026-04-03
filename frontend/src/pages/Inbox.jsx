@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import MemoryCard from '../components/ui/MemoryCard';
+
 import AddSaveModal from '../components/ui/AddSaveModal';
 import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
 import { AuthContext } from '../context/AuthContext';
@@ -7,14 +9,19 @@ import axios from 'axios';
 
 const Inbox = () => {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [saves, setSaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSave, setSelectedSave] = useState(null);
+  
+  // Find the selected save from the local list if it exists
+  const selectedSave = id ? saves.find(s => s._id === id) : null;
+
 
   const fetchInbox = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const { data } = await axios.get('http://localhost:3000/api/saves/inbox');
       setSaves(data);
     } catch (error) {
@@ -23,6 +30,19 @@ const Inbox = () => {
       setLoading(false);
     }
   };
+
+
+  const handleDeleteSuccess = () => {
+    // 1. Optimistic local update
+    setSaves(prev => prev.filter(s => s._id !== id));
+    // 2. Navigate back to clear the drawer
+    navigate('/inbox');
+    // 3. Trigger full re-sync with animation
+    fetchInbox();
+  };
+
+
+
 
   useEffect(() => {
     fetchInbox();
@@ -74,9 +94,10 @@ const Inbox = () => {
                 key={save._id} 
                 {...save} 
                 date={save.createdAt} 
-                onClick={() => setSelectedSave(save)}
+                onClick={() => navigate(`/inbox/${save._id}`)}
               />
             ))}
+
           </div>
         ) : (
           <div className="text-center py-32 bg-surface/50 border border-border rounded-3xl border-dashed">
@@ -107,11 +128,15 @@ const Inbox = () => {
 
       <MemoryDetailDrawer 
         save={selectedSave}
-        isOpen={!!selectedSave}
-        onClose={() => setSelectedSave(null)}
-        onDeleteSuccess={fetchInbox}
+        saveId={id}
+        isOpen={!!id}
+        onClose={() => navigate('/inbox')}
+        onDeleteSuccess={handleDeleteSuccess}
         onUpdateSuccess={fetchInbox}
       />
+
+
+
     </div>
   );
 };

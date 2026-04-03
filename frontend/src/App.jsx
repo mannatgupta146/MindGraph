@@ -36,10 +36,14 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/dashboard" />} />
         
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/dashboard/:id" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/inbox" element={<PrivateRoute><Inbox /></PrivateRoute>} />
+        <Route path="/inbox/:id" element={<PrivateRoute><Inbox /></PrivateRoute>} />
         <Route path="/search" element={<PrivateRoute><Search /></PrivateRoute>} />
+        <Route path="/search/:id" element={<PrivateRoute><Search /></PrivateRoute>} />
         <Route path="/collections" element={<PrivateRoute><Collections /></PrivateRoute>} />
         <Route path="/collections/:id" element={<PrivateRoute><CollectionDetail /></PrivateRoute>} />
+
         <Route path="/graph" element={<PrivateRoute><KnowledgeGraph /></PrivateRoute>} />
         <Route path="/resurface" element={<PrivateRoute><PlaceholderPage title="Memory Resurfacing" /></PrivateRoute>} />
         <Route path="/settings" element={<PrivateRoute><PlaceholderPage title="Settings" /></PrivateRoute>} />

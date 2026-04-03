@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import { createSave, getSaves, semanticSearch, deleteSave, getGraphData, getInbox, updateSave } from '../controllers/save.controller.js';
+import { createSave, getSaves, getSaveById, semanticSearch, deleteSave, getGraphData, getInbox, updateSave } from '../controllers/save.controller.js';
+
 import { protect } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -24,7 +25,9 @@ router.get('/', getSaves);
 router.get('/inbox', getInbox);
 router.get('/graph', getGraphData);
 router.get('/search', semanticSearch);
+router.get('/:id', getSaveById);
 router.patch('/:id', updateSave);
+
 router.delete('/:id', deleteSave);
 
 export default router;

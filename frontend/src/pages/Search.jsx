@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 import MemoryCard from '../components/ui/MemoryCard';
 import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
 
 const Search = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedSave, setSelectedSave] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  
+  // Find the selected save from the local results list if it exists
+  const selectedSave = id ? results.find(r => r._id === id) : null;
+
 
   const handleSearch = async (e, forcedQuery) => {
     if (e) e.preventDefault();
@@ -28,6 +35,16 @@ const Search = () => {
       setLoading(false);
     }
   };
+
+  const handleDeleteSuccess = () => {
+    // 1. Optimistic local update
+    setResults(prev => prev.filter(s => s._id !== id));
+    // 2. Clear URL to hide drawer
+    navigate('/search');
+    // 3. For search, we stay on current results but filtered
+  };
+
+
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 py-8">
@@ -103,9 +120,10 @@ const Search = () => {
               {results.map((result) => (
                 <div 
                   key={result._id} 
-                  onClick={() => setSelectedSave(result)}
+                  onClick={() => navigate(`/search/${result._id}`)}
                   className="bg-surface p-5 border border-border hover:border-primary/50 rounded-2xl cursor-pointer transition-all hover:shadow-lg group flex items-start space-x-4"
                 >
+
                   <div className={`mt-1 p-2 rounded-lg border ${
                     result.type === 'article' ? 'bg-secondary/10 text-secondary border-secondary/20' :
                     result.type === 'tweet' ? 'bg-blue-400/10 text-blue-400 border-blue-400/20' :
@@ -181,10 +199,13 @@ const Search = () => {
       {/* Single Detail Drawer for Search Results */}
       <MemoryDetailDrawer 
         save={selectedSave}
-        isOpen={!!selectedSave}
-        onClose={() => setSelectedSave(null)}
-        onDeleteSuccess={handleSearch} // Re-run search if deleted
+        saveId={id}
+        isOpen={!!id}
+        onClose={() => navigate('/search')}
+        onDeleteSuccess={handleDeleteSuccess}
       />
+
+
     </div>
   );
 };
