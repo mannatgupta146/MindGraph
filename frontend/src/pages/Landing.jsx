@@ -110,7 +110,7 @@ const Landing = () => {
   ];
 
   return (
-    <div className={`relative min-h-screen ${theme === 'dark' ? 'bg-black text-white' : 'bg-gray-50 text-gray-900'} overflow-hidden transition-colors duration-500`}>
+    <div className={`relative min-h-screen ${theme === 'dark' ? 'bg-black text-white' : 'bg-gray-50 text-gray-900'} overflow-x-hidden transition-colors duration-500`}>
       
       {/* 1. INTERACTIVE NEURAL BACKGROUND (FULL SCREEN & DYNAMNIC) */}
       <div className="absolute inset-0 z-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]">
@@ -152,17 +152,17 @@ const Landing = () => {
       </div>
 
       {/* 2. COMMAND HEADER NAVIGATION */}
-      <nav className="fixed top-0 left-0 right-0 z-50 p-6 pointer-events-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
         <div className="max-w-[1600px] mx-auto flex justify-between items-center relative">
           
           {/* LEFT: Logo */}
-          <div className="flex items-center space-x-3 bg-background/60 backdrop-blur-xl border border-border px-5 py-2.5 rounded-2xl shadow-xl pointer-events-auto">
-             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-base">M</div>
-             <span className="font-bold tracking-tighter text-xl uppercase text-text-primary">MindGraph</span>
+          <div className="flex items-center space-x-3 bg-background/60 backdrop-blur-xl border border-border px-4 md:px-5 py-2 md:py-2.5 rounded-xl md:rounded-2xl shadow-xl pointer-events-auto">
+             <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm md:text-base">M</div>
+             <span className="font-bold tracking-tighter text-lg md:text-xl uppercase text-text-primary">MindGraph</span>
           </div>
           
           {/* CENTER: Stats HUD */}
-          <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center bg-background/40 backdrop-blur-xl border border-border rounded-2xl px-6 py-2.5 space-x-8 text-[9px] font-black uppercase tracking-[0.2em] opacity-60 pointer-events-auto">
+          <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center bg-background/40 backdrop-blur-xl border border-border rounded-2xl px-6 py-2.5 space-x-8 text-[9px] font-black uppercase tracking-[0.2em] opacity-60 pointer-events-auto">
              {stats.map((s, i) => (
                 <div key={i} className="flex items-center space-x-2">
                    <span className="text-primary">{s.icon}</span>
@@ -180,27 +180,27 @@ const Landing = () => {
       </nav>
 
       {/* 3. HERO CONTENT - WIDE & ACCESSIBLE */}
-      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-12 pt-34 pb-40 flex flex-col items-start text-left pointer-events-none">
+      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-28 md:pt-48 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
         
         <div className="max-w-4xl">
-           <div className="flex items-center space-x-3 mb-0">
+           <div className="flex items-center space-x-3 mb-4">
               <span className="w-12 h-[1px] bg-primary"></span>
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Intelligence OS v1.0</span>
            </div>
 
-           <h1 className="text-6xl md:text-[108px] font-black mb-8 leading-[0.85] tracking-tight pointer-events-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-             Experience Your <br/>
+           <h1 className="text-4xl sm:text-6xl md:text-[108px] font-black mb-6 md:mb-8 leading-[0.95] md:leading-[0.85] tracking-tight pointer-events-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+             Experience Your <br className="hidden md:block"/>
              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary animate-gradient">Total Memory.</span>
            </h1>
 
-           <p className="max-w-2xl text-xl text-text-secondary mb-12 font-medium leading-relaxed pointer-events-auto opacity-70">
+           <p className="max-w-2xl text-lg md:text-xl text-text-secondary mb-10 md:mb-12 font-medium leading-relaxed pointer-events-auto opacity-70">
              MindGraph builds neural bridges between every link, image, and discovery you encounter. 
              Stop searching. Start discovering your personal knowledge constellation.
            </p>
 
            <button 
               onClick={handleCTAClick}
-              className="group pointer-events-auto px-12 py-5 bg-text-primary text-background font-black rounded-2xl flex items-center shadow-2xl hover:scale-105 transition-all"
+              className="group pointer-events-auto px-10 md:px-12 py-4 md:py-5 bg-text-primary text-background font-black rounded-xl md:rounded-2xl flex items-center shadow-2xl hover:scale-105 transition-all text-sm md:text-base"
            >
               {user ? 'Resume Brain Sync' : 'Sync Consciousness'}
               <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -211,15 +211,15 @@ const Landing = () => {
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 3.1 ENAGAGING 'HOW IT WORKS' - NEURAL LIFECYCLE */}
-      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-12 py-40 pointer-events-auto">
-         <div className="text-center w-full max-w-[1400px] mx-auto px-4">
+      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
+         <div className="text-center w-full max-w-[1400px] mx-auto">
             <div className="flex items-center justify-center space-x-6 mb-12 animate-fade-in opacity-40">
                <div className="w-12 h-[1px] bg-primary/20"></div>
                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary whitespace-nowrap">Neural Lifecycle</span>
                <div className="w-12 h-[1px] bg-primary/20"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
                
                {/* Stage 1: SIPHONING */}
                <div 
@@ -227,11 +227,11 @@ const Landing = () => {
                   onMouseEnter={() => setHoverStage(1)}
                   onMouseLeave={() => setHoverStage(0)}
                >
-                  <div className="p-6 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-primary/50 border-t-primary/20 overflow-hidden will-change-transform">
+                  <div className="p-6 md:p-8 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-primary/50 border-t-primary/20 overflow-hidden will-change-transform">
                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[60px] group-hover:bg-primary/20 transition-all pointer-events-none" />
                      
                      {/* SIPHON ANIMATION BOX */}
-                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-4 relative overflow-hidden flex items-center justify-center pointer-events-none">
+                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
                         {/* Neural Core */}
                         <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.5)] z-20 animate-pulse relative">
                            <Cpu className="w-8 h-8 text-white" />
@@ -283,11 +283,11 @@ const Landing = () => {
                   onMouseEnter={() => setHoverStage(2)}
                   onMouseLeave={() => setHoverStage(0)}
                >
-                  <div className="p-6 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-secondary/50 border-t-secondary/20 overflow-hidden will-change-transform">
+                  <div className="p-6 md:p-8 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-secondary/50 border-t-secondary/20 overflow-hidden will-change-transform">
                      <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 blur-[60px] group-hover:bg-secondary/20 transition-all pointer-events-none" />
                      
                      {/* BRIDGING ANIMATION BOX */}
-                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-4 relative overflow-hidden flex items-center justify-center pointer-events-none">
+                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
                         <svg className="absolute inset-0 w-full h-full p-12">
                            {/* Central Node */}
                            <circle cx="50%" cy="50%" r="8" className="fill-secondary shadow-lg" />
@@ -335,11 +335,11 @@ const Landing = () => {
                   onMouseEnter={() => setHoverStage(3)}
                   onMouseLeave={() => setHoverStage(0)}
                >
-                  <div className="p-6 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-amber-500/50 border-t-amber-500/20 overflow-hidden will-change-transform">
+                  <div className="p-6 md:p-8 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-amber-500/50 border-t-amber-500/20 overflow-hidden will-change-transform">
                      <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[60px] group-hover:bg-amber-500/20 transition-all pointer-events-none" />
                      
                      {/* DISCOVERY ANIMATION BOX */}
-                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-4 relative overflow-hidden flex items-center justify-center pointer-events-none">
+                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
                         {/* Pulsing Cluster */}
                         <div className="relative">
                            <motion.div 
@@ -399,11 +399,11 @@ const Landing = () => {
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 4. HIGH-FIDELITY BENTO DASHBOARD */}
-      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-12 py-40 pointer-events-none">
+      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-none">
           
-          <div className="flex items-center space-x-6 mb-16">
-             <h2 className="text-4xl font-black uppercase tracking-widest text-text-primary">System Core Features</h2>
-             <div className="flex-1 h-[1px] bg-border opacity-30" />
+          <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6 mb-16">
+             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-widest text-text-primary">System Core Features</h2>
+             <div className="flex-1 h-[1px] bg-border opacity-30 w-full md:w-auto" />
              <div className="flex items-center space-x-2 text-[10px] font-black uppercase opacity-40">
                 <Activity className="w-3 h-3 text-emerald-500" />
                 <span>Monitoring Active</span>
@@ -413,25 +413,25 @@ const Landing = () => {
           <div className="grid grid-cols-1 gap-8">
              
              {/* Main Hub Terminal Card */}
-             <div className="p-1 rounded-[48px] bg-gradient-to-br from-border/50 to-transparent pointer-events-auto shadow-3xl">
-                <div className="w-full h-full rounded-[44px] bg-background/80 backdrop-blur-3xl p-10 flex flex-col md:flex-row justify-between items-center border border-white/5 relative overflow-hidden group min-h-[450px]">
+             <div className="p-0.5 md:p-1 rounded-[32px] md:rounded-[48px] bg-gradient-to-br from-border/50 to-transparent pointer-events-auto shadow-3xl">
+                <div className="w-full h-full rounded-[30px] md:rounded-[44px] bg-background/80 backdrop-blur-3xl p-6 md:p-10 flex flex-col md:flex-row justify-between items-center border border-white/5 relative overflow-hidden group min-h-[400px] md:min-h-[450px]">
                    
-                   <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[150px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                   <div className="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-primary/5 blur-[100px] md:blur-[150px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                    
-                   <div className="max-w-2xl relative z-10">
+                   <div className="max-w-2xl relative z-10 text-center md:text-left">
                       <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[9px] font-black uppercase text-primary mb-6 inline-block tracking-widest">Global Graph v1.0</div>
-                      <h3 className="text-5xl md:text-6xl font-black mb-8 leading-tight">Visualizing 1.2M+ Memory Bridges</h3>
-                      <p className="text-xl text-text-secondary leading-relaxed opacity-70 mb-8 max-w-xl">
+                      <h3 className="text-3xl md:text-6xl font-black mb-6 md:mb-8 leading-tight">Visualizing 1.2M+ Memory Bridges</h3>
+                      <p className="text-lg md:text-xl text-text-secondary leading-relaxed opacity-70 mb-8 max-w-xl mx-auto md:mx-0">
                          Our proprietary force-directed engine maps your entire digital existence in real-time. No more folder trees. 
                          Just a floating consciousness of your own discoveries.
                       </p>
 
                    </div>
 
-                   <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto md:h-full rounded-[32px] overflow-hidden border border-border/40 bg-surface/10 group-hover:scale-[1.01] transition-transform duration-700 min-h-[300px] flex items-center justify-center">
+                   <div className="relative w-full md:w-1/2 aspect-video md:aspect-auto md:h-full rounded-[24px] md:rounded-[32px] overflow-hidden border border-border/40 bg-surface/10 group-hover:scale-[1.01] transition-transform duration-700 min-h-[220px] md:min-h-[300px] flex items-center justify-center mt-8 md:mt-0">
                       <div className="absolute inset-0 flex items-center justify-center opacity-40 mix-blend-screen">
                          <div className="w-full h-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]" />
-                         <Network className="w-48 h-48 text-primary animate-pulse opacity-20" />
+                         <Network className="w-24 md:w-48 h-24 md:h-48 text-primary animate-pulse opacity-20" />
                       </div>
                    </div>
                 </div>
@@ -452,14 +452,14 @@ const Landing = () => {
                    };
 
                    return (
-                      <div key={i} className={`p-10 rounded-[40px] bg-background/60 backdrop-blur-xl border border-border shadow-2xl pointer-events-auto group relative overflow-hidden flex flex-col h-full transform hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 ${hoverThemes[f.color]}`}>
+                      <div key={i} className={`p-8 md:p-10 rounded-[32px] md:rounded-[40px] bg-background/60 backdrop-blur-xl border border-border shadow-2xl pointer-events-auto group relative overflow-hidden flex flex-col h-full transform hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 ${hoverThemes[f.color]}`}>
                          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-40 group-hover:scale-125 transition-all duration-500">
                             {f.icon}
                          </div>
                          <div className={`px-3 py-1 border rounded-lg text-[9px] font-black uppercase tracking-widest mb-8 inline-block w-fit transition-colors duration-500 ${tagThemes[f.color]}`}>
                             {f.tag}
                          </div>
-                         <h4 className="text-3xl font-black mb-4 leading-tight transition-colors duration-500">{f.title}</h4>
+                         <h4 className="text-2xl md:text-3xl font-black mb-4 leading-tight transition-colors duration-500">{f.title}</h4>
                          <p className="text-base text-text-secondary leading-relaxed opacity-70 mb-8 flex-1">{f.desc}</p>
                       </div>
                    );
@@ -472,7 +472,7 @@ const Landing = () => {
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 4.5 FINAL SYSTEM CTA - NEURAL CONVERGENCE */}
-      <section className="relative z-10 w-full max-w-[1400px] mx-auto px-12 py-40 pointer-events-auto">
+      <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
           <motion.div 
              className="relative group text-center"
              initial={{ opacity: 0, y: 30 }}
@@ -483,35 +483,35 @@ const Landing = () => {
              
              {/* Deep Neural Glow System (Blue, Cyan, Amber) */}
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
-                <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-blue-500/10 blur-[120px] animate-pulse" />
-                <div className="absolute bottom-1/2 right-0 w-[400px] h-[400px] bg-cyan-500/10 blur-[120px] animate-pulse delay-700" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-amber-500/10 blur-[100px] animate-pulse delay-1000" />
+                <div className="absolute top-1/2 left-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-500/10 blur-[80px] md:blur-[120px] animate-pulse" />
+                <div className="absolute bottom-1/2 right-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-cyan-500/10 blur-[80px] md:blur-[120px] animate-pulse delay-700" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[250px] md:w-[300px] h-[250px] md:h-[300px] bg-amber-500/10 blur-[70px] md:blur-[100px] animate-pulse delay-1000" />
              </div>
              
              {/* THE CONVERGENCE CORE */}
-             <div className="mb-16 relative inline-flex items-center justify-center">
+             <div className="mb-12 md:mb-16 relative inline-flex items-center justify-center">
                 
                 {/* Rotating Rings (Asynchronous) */}
                 <motion.div 
-                   className="absolute w-48 h-48 rounded-full border-2 border-blue-500/20 border-t-blue-500/60"
+                   className="absolute w-36 md:w-48 h-36 md:h-48 rounded-full border-2 border-blue-500/20 border-t-blue-500/60"
                    animate={{ rotate: 360 }}
                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 />
                 <motion.div 
-                   className="absolute w-40 h-40 rounded-full border-2 border-cyan-500/20 border-b-cyan-500/60"
+                   className="absolute w-28 md:w-40 h-28 md:h-40 rounded-full border-2 border-cyan-500/20 border-b-cyan-500/60"
                    animate={{ rotate: -360 }}
                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
                 />
                 <motion.div 
-                   className="absolute w-32 h-32 rounded-full border-2 border-amber-500/20 border-l-amber-500/60"
+                   className="absolute w-20 md:w-32 h-20 md:h-32 rounded-full border-2 border-amber-500/20 border-l-amber-500/60"
                    animate={{ rotate: 360 }}
                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                 />
 
                 {/* Core Nucleus */}
-                <div className="w-24 h-24 rounded-3xl bg-background border border-white/10 flex items-center justify-center shadow-2xl relative z-10 overflow-hidden">
+                <div className="w-16 md:w-24 h-16 md:h-24 rounded-2xl md:rounded-3xl bg-background border border-white/10 flex items-center justify-center shadow-2xl relative z-10 overflow-hidden">
                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 animate-pulse" />
-                   <Cpu className="w-10 h-10 text-primary relative z-20" />
+                   <Cpu className="w-7 md:w-10 h-7 md:h-10 text-primary relative z-20" />
                 </div>
                 
                 {/* Floating Memories (Icons) */}
@@ -520,18 +520,18 @@ const Landing = () => {
                    animate={{ rotate: 360 }}
                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 >
-                   <Network className="absolute -top-32 -left-32 w-6 h-6 text-blue-400/30" />
-                   <Zap className="absolute -bottom-32 -right-32 w-6 h-6 text-amber-400/30" />
-                   <Globe className="absolute top-32 -right-32 w-6 h-6 text-cyan-400/30" />
+                   <Network className="absolute -top-24 md:-top-32 -left-24 md:-left-32 w-5 md:w-6 h-5 md:h-6 text-blue-400/30" />
+                   <Zap className="absolute -bottom-24 md:-bottom-32 -right-24 md:-right-32 w-5 md:w-6 h-5 md:h-6 text-amber-400/30" />
+                   <Globe className="absolute top-24 md:top-32 -right-24 md:-right-32 w-5 md:w-6 h-5 md:h-6 text-cyan-400/30" />
                 </motion.div>
              </div>
 
-             <h2 className="text-6xl md:text-8xl font-black mb-10 leading-[0.95] tracking-tighter max-w-5xl mx-auto drop-shadow-2xl">
+             <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.95] tracking-tighter max-w-5xl mx-auto drop-shadow-2xl">
                 Ready to <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-cyan-400 to-amber-500 animate-gradient">Evolve?</span><br/>
                 Initialize Your Second Brain.
              </h2>
              
-             <p className="text-xl text-text-secondary opacity-60 mb-16 max-w-3xl mx-auto leading-relaxed font-medium px-4">
+             <p className="text-lg md:text-xl text-text-secondary opacity-60 mb-12 md:mb-16 max-w-3xl mx-auto leading-relaxed font-medium px-4">
                 Stop the endless scroll. Start the neural siphoning. 
                 MindGraph is the first Intelligence OS designed for the research-intensive future. 
                 Initialize and deploy across every device you own. 
@@ -540,7 +540,7 @@ const Landing = () => {
              <div className="flex flex-col items-center space-y-12">
                 <button 
                    onClick={handleCTAClick}
-                   className="group/btn relative px-10 py-4 bg-text-primary text-background rounded-2xl font-black text-xl flex items-center space-x-4 overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-[0_0_60px_rgba(59,130,246,0.3)] active:scale-95 shadow-2xl"
+                   className="group/btn relative px-8 md:px-10 py-4 bg-text-primary text-background rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center space-x-4 overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-[0_0_60px_rgba(59,130,246,0.3)] active:scale-95 shadow-2xl"
                 >
                    <span className="relative z-10">{user ? 'Enter Neural Network' : 'Initialize Neural OS'}</span>
                    <ArrowRight className="w-5 h-5 relative z-10 group-hover/btn:translate-x-2 transition-transform duration-500" />
@@ -551,17 +551,17 @@ const Landing = () => {
                 </button>
 
                 {/* Platform HUD Badges */}
-                <div className="flex items-center space-x-12 px-10 py-5 bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-2xl opacity-40 hover:opacity-80 transition-all duration-700">
+                <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-12 px-10 py-8 md:py-5 bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-3xl md:rounded-2xl opacity-40 hover:opacity-80 transition-all duration-700 w-full md:w-auto">
                    <div className="flex items-center space-x-3">
                       <Globe className="w-5 h-5 text-cyan-500" />
                       <span className="text-[11px] font-black uppercase tracking-[0.3em]">Chrome Ext</span>
                    </div>
-                   <div className="w-[1px] h-4 bg-border/40" />
+                   <div className="hidden md:block w-[1px] h-4 bg-border/40" />
                    <div className="flex items-center space-x-3">
                       <Monitor className="w-5 h-5 text-blue-500" />
                       <span className="text-[11px] font-black uppercase tracking-[0.3em]">Desktop OS</span>
                    </div>
-                   <div className="w-[1px] h-4 bg-border/40" />
+                   <div className="hidden md:block w-[1px] h-4 bg-border/40" />
                    <div className="flex items-center space-x-3">
                       <Smartphone className="w-5 h-5 text-amber-500" />
                       <span className="text-[11px] font-black uppercase tracking-[0.3em]">Mobile HUD</span>
@@ -572,7 +572,7 @@ const Landing = () => {
       </section>
 
       {/* 5. FOOTER HUD UPGRADE */}
-      <footer className="relative z-10 border-t border-border bg-background/60 backdrop-blur-3xl px-12 py-16 pointer-events-auto">
+      <footer className="relative z-10 border-t border-border bg-background/60 backdrop-blur-3xl px-6 md:px-12 py-12 md:py-16 pointer-events-auto">
          <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-text-tertiary">
             
             <div className="md:col-span-1">
