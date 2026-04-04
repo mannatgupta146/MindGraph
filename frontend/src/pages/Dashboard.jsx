@@ -98,9 +98,11 @@ const Dashboard = () => {
       {/* Recent Saves Grid */}
       <section>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-          <div className="flex items-center space-x-3">
-            <div className="w-1.5 h-6 bg-primary rounded-full hidden md:block"></div>
-            <h2 className="text-xl md:text-2xl font-black tracking-tighter text-text-primary uppercase">
+          <div className="flex flex-col space-y-1">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-tertiary ">
+              Memory Protocol
+            </span>
+            <h2 className="text-xl md:text-3xl font-black tracking-tighter text-text-primary uppercase leading-tight">
               {selectedTag === 'All' ? 'Active Memories' : `Cluster: ${selectedTag}`}
             </h2>
           </div>
@@ -119,7 +121,7 @@ const Dashboard = () => {
               onClick={() => navigate('/archives')}
               className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-hover transition-colors hidden sm:block"
             >
-              View Vault
+              View Archive
             </button>
           </div>
         </div>

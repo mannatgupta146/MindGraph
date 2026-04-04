@@ -117,11 +117,10 @@ const Search = () => {
           </div>
         ) : results.length > 0 ? (
           <div className={`transition-opacity duration-300 ${isSearching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-            <div className="flex flex-col space-y-1 px-4 md:px-0 border-l-4 border-primary pl-6 mb-8">
+            <div className="flex flex-col space-y-1 px-4 md:px-0 mb-8">
                <div className="flex items-center justify-between text-text-tertiary text-[10px] font-black uppercase tracking-[0.3em]">
                  <span className="flex items-center">
-                   <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2 animate-pulse"></div>
-                   Semantic Rank
+                    Semantic Rank
                  </span>
                  <span className="hidden sm:inline">Research OS v1.02a</span>
                </div>
@@ -157,13 +156,13 @@ const Search = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 hover:opacity-100 transition-opacity duration-500">
             <div className="p-8 border border-border rounded-[2.5rem] bg-surface/20 relative group overflow-hidden hover:bg-surface/50 hover:shadow-xl hover:shadow-primary/5 hover:scale-[1.02] transition-all duration-300 transform cursor-pointer">
                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-colors duration-500"></div>
-               <span className="text-xs font-black text-primary mb-3 block uppercase tracking-[0.2em] relative z-10">Research Tip</span>
-               <p className="text-text-secondary leading-relaxed group-hover:text-text-primary transition-colors duration-300 relative z-10">Your search is <span className="font-bold text-text-primary">Semantic</span>—it understands ideas. Searching for "learning patterns" will find results about "Space repetition" or "Anki".</p>
+               <span className="text-xs font-black text-primary mb-3 block uppercase tracking-[0.2em] relative z-10">Semantic Intelligence</span>
+               <p className="text-text-secondary leading-relaxed group-hover:text-text-primary transition-colors duration-300 relative z-10">Your search is <span className="font-bold text-text-primary">Context Aware</span>: it interprets conceptual intent. Querying 'learning patterns' will automatically resurface 'Spaced Repetiton' or 'Anki' based on vector similarity.</p>
             </div>
             <div className="p-8 border border-border rounded-[2.5rem] bg-surface/20 relative group overflow-hidden hover:bg-surface/50 hover:shadow-xl hover:shadow-secondary/5 hover:scale-[1.02] transition-all duration-300 transform cursor-pointer">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-secondary/20 transition-colors duration-500"></div>
-               <span className="text-xs font-black text-secondary mb-3 block uppercase tracking-[0.2em] relative z-10">Deep Indexing</span>
-               <p className="text-text-secondary leading-relaxed group-hover:text-text-primary transition-colors duration-300 relative z-10">Your entire archive including <span className="font-bold text-text-primary">Tweets, PDFs, Videos, and Articles</span> is highly indexed. Don't be afraid to search broadly.</p>
+               <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-secondary/20 transition-all duration-500"></div>
+               <span className="text-xs font-black text-secondary mb-3 block uppercase tracking-[0.2em] relative z-10">Universal Indexing</span>
+               <p className="text-text-secondary leading-relaxed group-hover:text-text-primary transition-colors duration-300 relative z-10">The system deeply indexes <span className="font-bold text-text-primary">Tweets, PDFs, Videos, and Articles</span> simultaneously. Experience fluid cross-media discovery across your entire archive.</p>
             </div>
           </div>
         )}
