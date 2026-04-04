@@ -18,10 +18,10 @@
 
 :root {
   /* Light Theme */
-  --bg-color: #F8FAFC;
-  --surface-color: #FFFFFF;
-  --surface-hover-color: #F1F5F9;
-  --border-color: #E2E8F0;
+  --bg-color: #F3F4F6; /* Soft cool slate (Gray 100) */
+  --surface-color: #F9FAFB; /* Very gentle off-white (Gray 50) */
+  --surface-hover-color: #E5E7EB;
+  --border-color: #E5E7EB;
   --primary-color: #3B82F6;
   --primary-hover-color: #2563EB;
   --secondary-color: #06B6D4;
