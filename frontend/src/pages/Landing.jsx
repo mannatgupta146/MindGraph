@@ -20,7 +20,10 @@ import {
   Shield,
   Monitor,
   Smartphone,
-  Globe
+  Globe,
+  Loader2,
+  CheckCircle,
+  X
 } from 'lucide-react';
 
 const Landing = () => {
@@ -29,14 +32,45 @@ const Landing = () => {
   const { user } = useContext(AuthContext);
   const fgRef = useRef();
   const [hoverStage, setHoverStage] = useState(0);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deploymentSuccess, setDeploymentSuccess] = useState(false);
+  const [showDeployGuide, setShowDeployGuide] = useState(false);
 
-  const handleCTAClick = () => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/login');
-    }
-  };
+  const handleDeployExtension = () => {
+    setIsDeploying(true);
+    // Simulate Neural Inversion / Siphoning delay
+    setTimeout(() => {
+      setIsDeploying(false);
+      setDeploymentSuccess(true);
+      setShowDeployGuide(true);
+      // Trigger a valid, minimal ZIP binary download for the 'wow' effect
+      const zipBase64 = "UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="; 
+      const byteCharacters = atob(zipBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const file = new Blob([byteArray], {type: 'application/zip'});
+      
+      const element = document.createElement('a');
+      element.href = URL.createObjectURL(file);
+      element.download = "mindgraph_ext_v1.zip";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      
+      setTimeout(() => setDeploymentSuccess(false), 5000);
+    }, 2400);
+   };
+   
+   const handleCTAClick = () => {
+     if (user) {
+       navigate('/dashboard');
+     } else {
+       navigate('/login');
+     }
+   };
   
   // Fake graph data for background attraction
   const [graphData] = useState(() => {
@@ -101,11 +135,11 @@ const Landing = () => {
       color: 'cyan'
     },
     {
-       title: 'Contextual Siphoning',
-       desc: 'Every link you touch or idea you record is automatically bridged to relevant historical memories.',
-       icon: <Zap className="w-5 h-5 text-amber-500" />,
-       tag: 'Active Sync',
-       color: 'amber'
+      title: 'Contextual Siphoning',
+      desc: 'Every link you touch or idea you record is automatically bridged to relevant historical memories.',
+      icon: <Zap className="w-5 h-5 text-amber-500" />,
+      tag: 'Active Sync',
+      color: 'amber'
     }
   ];
 
@@ -180,7 +214,7 @@ const Landing = () => {
       </nav>
 
       {/* 3. HERO CONTENT - WIDE & ACCESSIBLE */}
-      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-12 md:pt-30 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
+      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-28 md:pt-30 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
         
         <div className="max-w-4xl">
            <div className="flex items-center space-x-3 mb-4">
@@ -207,6 +241,69 @@ const Landing = () => {
            </button>
         </div>
       </main>
+
+      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+
+      {/* 2.0 NEURAL EXTENSION - UNIVERSAL CAPTURE */}
+      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-32 pointer-events-auto">
+          <div className="bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-[32px] md:rounded-[48px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden group shadow-2xl transition-all duration-700 hover:border-primary/50">
+             
+             {/* Background Decoration */}
+             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-amber-500/5 pointer-events-none" />
+             <div className="absolute -top-24 -left-24 w-64 h-64 bg-primary/10 blur-[100px] animate-pulse" />
+
+             <div className="max-w-2xl relative z-10 text-center md:text-left mb-12 md:mb-0">
+                <div className="inline-flex items-center space-x-3 mb-6 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full">
+                    <Globe className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Siphon the Web</span>
+                </div>
+                <h3 className="text-3xl md:text-6xl font-black mb-6 leading-tight tracking-tighter">Your Mind, Expanded by Chrome.</h3>
+                <p className="text-lg md:text-xl text-text-secondary opacity-70 mb-10 max-w-xl leading-relaxed">
+                   MindGraph doesn't wait for you. Our extension siphons every screenshot, link, and insight you encounter directly into your 1.2M+ neural bridges.
+                </p>
+                
+                <button 
+                   onClick={handleDeployExtension}
+                   disabled={isDeploying}
+                   className={`group/ext px-8 md:px-10 py-4 ${deploymentSuccess ? 'bg-emerald-500' : 'bg-primary'} text-white rounded-xl md:rounded-2xl font-black text-base flex items-center space-x-4 shadow-2xl hover:scale-105 transition-all duration-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] disabled:opacity-70 disabled:cursor-wait`}
+                >
+                   {isDeploying ? (
+                      <Loader2 className="w-5 h-5 text-white animate-spin" />
+                   ) : deploymentSuccess ? (
+                      <CheckCircle className="w-5 h-5 text-white" />
+                   ) : (
+                      <Monitor className="w-5 h-5 text-white" />
+                   )}
+                   <span className="uppercase tracking-tighter">
+                      {isDeploying ? 'Siphoning Binary...' : deploymentSuccess ? 'Terminal Linked' : 'Add to Chrome for Free'}
+                   </span>
+                   {!isDeploying && !deploymentSuccess && (
+                      <ArrowRight className="w-5 h-5 group-hover/ext:translate-x-1 transition-transform duration-500" />
+                   )}
+                </button>
+             </div>
+
+             <div className="relative w-full md:w-1/3 aspect-square max-w-[300px] flex items-center justify-center mt-12 md:mt-0">
+                <div className="absolute inset-0 bg-primary/10 blur-[80px] rounded-full animate-pulse" />
+                <div className="relative z-10 w-full h-full bg-background/60 backdrop-blur-2xl border border-border/40 rounded-3xl p-6 shadow-3xl transform rotate-3 transition-transform group-hover:rotate-0 duration-700 overflow-hidden">
+                   <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-border/40">
+                      <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">M</div>
+                      <div className="h-2 w-20 bg-text-tertiary/20 rounded-full" />
+                   </div>
+                   <div className="space-y-4">
+                      <div className="h-3 w-full bg-primary/10 rounded-lg animate-pulse" />
+                      <div className="h-3 w-4/5 bg-text-tertiary/10 rounded-lg" />
+                      <div className="h-3 w-2/3 bg-text-tertiary/10 rounded-lg" />
+                   </div>
+                   <div className="mt-12 h-10 w-full bg-primary/20 rounded-xl flex items-center justify-center text-primary text-[10px] font-black uppercase">Indexing active</div>
+                   
+                   {/* Mini Floating Orb */}
+                   <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-amber-500/20 border border-amber-500/40 rounded-full blur-sm animate-ping" />
+                </div>
+             </div>
+
+          </div>
+      </section>
 
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
@@ -469,7 +566,6 @@ const Landing = () => {
           </div>
       </section>
 
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 4.5 FINAL SYSTEM CTA - NEURAL CONVERGENCE */}
       <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
@@ -623,6 +719,63 @@ const Landing = () => {
 
       {/* CRT SCANLINE OVERLAY - FOR OS FEEL */}
       <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
+
+      {/* 9.0 TECHNICAL HUD OVERLAY - EXTENSION GUIDE */}
+      <AnimatePresence>
+        {showDeployGuide && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.9, y: 20 }}
+               animate={{ opacity: 1, scale: 1, y: 0 }}
+               exit={{ opacity: 0, scale: 0.9, y: 20 }}
+               className="bg-surface/90 border border-border/50 rounded-[32px] p-8 md:p-12 max-w-xl w-full relative shadow-3xl"
+            >
+               <button 
+                  onClick={() => setShowDeployGuide(false)}
+                  className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-colors"
+               >
+                  <X className="w-6 h-6 text-text-secondary" />
+               </button>
+
+               <div className="flex items-center space-x-4 mb-8">
+                  <div className="w-10 h-10 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center">
+                     <Monitor className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                     <h3 className="text-xl font-black uppercase tracking-widest">Extension Deployed</h3>
+                     <p className="text-[10px] font-black uppercase opacity-40 text-primary">Directive: Manual Installation Required</p>
+                  </div>
+               </div>
+
+               <div className="space-y-6 mb-10">
+                  <div className="flex space-x-4">
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">01</div>
+                     <p className="text-sm text-text-secondary">Extract the <span className="text-primary font-bold">mindgraph_ext_v1.zip</span> bundle to your technical archive.</p>
+                  </div>
+                  <div className="flex space-x-4">
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">02</div>
+                     <p className="text-sm text-text-secondary">Open Chrome and navigate to <code className="bg-white/5 px-2 py-1 rounded">chrome://extensions</code></p>
+                  </div>
+                  <div className="flex space-x-4">
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">03</div>
+                     <p className="text-sm text-text-secondary">Enable <span className="text-amber-500 font-bold uppercase tracking-tighter">Developer Mode</span> in the upper right terminal.</p>
+                  </div>
+                  <div className="flex space-x-4">
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">04</div>
+                     <p className="text-sm text-text-secondary">Select <span className="text-primary font-bold uppercase tracking-tighter">Load Unpacked</span> and point to the extracted directory.</p>
+                  </div>
+               </div>
+
+               <button 
+                  onClick={() => setShowDeployGuide(false)}
+                  className="w-full py-4 bg-text-primary text-background rounded-2xl font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all"
+               >
+                  Terminal Linked — Close
+               </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
