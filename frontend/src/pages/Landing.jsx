@@ -180,7 +180,7 @@ const Landing = () => {
       </nav>
 
       {/* 3. HERO CONTENT - WIDE & ACCESSIBLE */}
-      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-28 md:pt-48 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
+      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-12 md:pt-30 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
         
         <div className="max-w-4xl">
            <div className="flex items-center space-x-3 mb-4">
@@ -521,8 +521,8 @@ const Landing = () => {
                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 >
                    <Network className="absolute -top-24 md:-top-32 -left-24 md:-left-32 w-5 md:w-6 h-5 md:h-6 text-blue-400/30" />
-                   <Zap className="absolute -bottom-24 md:-bottom-32 -right-24 md:-right-32 w-5 md:w-6 h-5 md:h-6 text-amber-400/30" />
-                   <Globe className="absolute top-24 md:top-32 -right-24 md:-right-32 w-5 md:w-6 h-5 md:h-6 text-cyan-400/30" />
+                   <Globe className="absolute -top-24 md:-top-32 -right-24 md:-right-32 w-5 md:w-6 h-5 md:h-6 text-cyan-400/30" />
+                   <Zap className="absolute top-24 md:top-32 -left-24 md:-left-32 w-5 md:w-6 h-5 md:h-6 text-amber-400/30" />
                 </motion.div>
              </div>
 
