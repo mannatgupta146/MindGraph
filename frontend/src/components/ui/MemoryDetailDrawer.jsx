@@ -259,6 +259,17 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                   </div>
                 </div>
 
+                {/* Image Embed Preview */}
+                {save.type === 'image' && save.fileUrl && (
+                  <div className="rounded-3xl overflow-hidden border border-border shadow-2xl bg-black/5 flex items-center justify-center relative group p-4">
+                     <img 
+                       src={save.fileUrl} 
+                       alt={save.title} 
+                       className="w-full h-auto object-contain max-h-[600px] rounded-xl" 
+                     />
+                  </div>
+                )}
+
                 {/* YouTube Embed Preview */}
                 {save.type === 'youtube' && save.url && (
                   <div className="rounded-3xl overflow-hidden border border-border shadow-2xl aspect-video bg-black/5">

@@ -40,15 +40,24 @@ export const createSave = async (req, res) => {
           return res.status(400).json({ message: 'Failed to process PDF file' });
         }
       } else if (isImage) {
-        if (!content) content = `Visual artifact indexed: ${req.file.originalname}`;
-        if (!title) title = req.file.originalname;
-        type = 'image';
+        try {
+          const Tesseract = await import('tesseract.js');
+          console.log(`Starting OCR for ${req.file.originalname}...`);
+          const { data: { text } } = await Tesseract.default.recognize(req.file.buffer, 'eng');
+          content = text.trim() ? text.trim() : `Visual artifact indexed: ${req.file.originalname}`;
+          if (!title) title = req.file.originalname;
+          type = 'image';
+        } catch (ocrError) {
+          console.error('Image OCR error:', ocrError);
+          content = `Visual artifact indexed (OCR Failed): ${req.file.originalname}`;
+          if (!title) title = req.file.originalname;
+          type = 'image';
+        }
+        // Convert the image directly to a Base64 Data URI.
+        // This allows the frontend to instantly preview the image statelessly 
+        // without needing to save ugly local files in a public/uploads folder.
+        fileUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
       }
-      
-      // Since we are in Production-Mode (Memory Storage), 
-      // we don't set a local fileUrl. 
-      // This keeps the server clean and ready for Cloudinary/S3.
-      fileUrl = null; 
     }
 
 
