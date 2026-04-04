@@ -238,7 +238,6 @@ const KnowledgeGraph = () => {
           </svg>
           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">Semantic Constellation</span>
         </div>
-        <h2 className="text-xl md:text-2xl font-black text-text-primary tracking-tight md:mb-1 uppercase">Neural Graph</h2>
         <p className="hidden md:block text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
           A living, breathing visual representation of your connected memories.
         </p>

@@ -37,7 +37,6 @@ const Resurface = () => {
             </svg>
             <span className="text-[10px] font-black uppercase tracking-[0.3em]">Anti-Library Synthesis</span>
           </div>
-          <h2 className="text-xl md:text-3xl font-black text-text-primary tracking-tight mb-2 uppercase">Neural Echo</h2>
           <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
             Serendipitous connections from your archive to spark new ideas and reflections. Discover hidden patterns through AI synthesis.
           </p>

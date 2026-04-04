@@ -54,7 +54,6 @@ const Archives = () => {
           </svg>
           <span className="text-[10px] font-black uppercase tracking-[0.3em]">Storage Vault</span>
         </div>
-        <h2 className="text-xl md:text-3xl font-black text-text-primary tracking-tight mb-2 uppercase">Neural Archive</h2>
         <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
           Everything you've hidden from your active brain. These memories are still searchable but won't clutter your graph or dashboard.
         </p>

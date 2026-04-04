@@ -48,7 +48,6 @@ const Collections = () => {
             </svg>
             <span className="text-[10px] font-black uppercase tracking-[0.3em]">Thematic Vaults</span>
           </div>
-          <h2 className="text-xl md:text-3xl font-black text-text-primary tracking-tight mb-2 uppercase">Neural Projects</h2>
           <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
             Organize your knowledge into thematic projects and structured topics. Curate custom vaults to group related research.
           </p>

@@ -60,7 +60,6 @@ const Inbox = () => {
             </svg>
             <span className="text-[10px] font-black uppercase tracking-[0.3em]">Capture Queue</span>
           </div>
-          <h2 className="text-xl md:text-3xl font-black text-text-primary tracking-tight mb-2 uppercase">Neural Siphon</h2>
           <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-2xl px-2 md:px-0">
             Unprocessed memories and thoughts. Review, categorize, and link them to your Knowledge Graph to make them permanent.
           </p>

@@ -98,9 +98,8 @@ const CollectionDetail = () => {
                     className="w-1.5 h-1.5 rounded-full" 
                     style={{ backgroundColor: collection.color }}
                   ></div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">Project Vault</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">Project Detail</span>
                 </div>
-                <h1 className="text-2xl md:text-4xl font-black text-text-primary tracking-tighter uppercase">{collection.title}</h1>
               </div>
             </div>
             <p className="text-base md:text-xl text-text-secondary max-w-2xl leading-relaxed font-medium opacity-70 px-1">

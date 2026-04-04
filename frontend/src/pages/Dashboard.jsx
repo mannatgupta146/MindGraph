@@ -65,7 +65,6 @@ const Dashboard = () => {
           </svg>
           <span className="text-[10px] font-black uppercase tracking-[0.3em]">Cognitive Center</span>
         </div>
-        <h2 className="text-xl md:text-3xl font-black text-text-primary tracking-tight mb-2 uppercase">Neural Overview</h2>
         <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl px-1">
           Welcome back. Here is a real-time overview of your active knowledge base and semantic explorations. Keep capturing ideas to watch your constellation grow.
         </p>

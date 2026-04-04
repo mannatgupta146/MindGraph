@@ -81,7 +81,7 @@ const Search = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="e.g. 'What was that theory about neural networks?'"
-            className="flex-1 bg-transparent border-none outline-none text-lg text-text-primary placeholder:text-text-tertiary/40 py-2 font-medium"
+            className="flex-1 bg-transparent border-none outline-none text-sm md:text-lg text-text-primary placeholder:text-xs md:placeholder:text-lg placeholder:text-text-tertiary/40 py-2 font-medium"
             autoFocus
           />
           {query && (
