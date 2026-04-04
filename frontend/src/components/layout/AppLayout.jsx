@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const AppLayout = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   // Global Shortcuts
   useEffect(() => {
@@ -32,12 +38,21 @@ const AppLayout = ({ children }) => {
   const title = base ? (base.charAt(0).toUpperCase() + base.slice(1)) : 'Dashboard';
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="ml-[260px] h-screen flex flex-col">
-        <TopBar title={title} />
-        <main className="flex-1 p-8 overflow-y-auto">
-          <div className="max-w-[1200px] mx-auto w-full">
+    <div className="min-h-screen bg-background flex">
+      {/* Overlay for mobile sidebar */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden transition-all duration-300"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      
+      <div className="flex-1 lg:ml-[260px] min-h-screen flex flex-col transition-all duration-300 overflow-x-hidden w-full">
+        <TopBar title={title} onToggleSidebar={() => setIsSidebarOpen(true)} />
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden">
+          <div className="max-w-[1400px] mx-auto w-full">
             {children}
           </div>
         </main>

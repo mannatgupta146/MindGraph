@@ -56,7 +56,7 @@ const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, onClick }) =>
       </div>
       
       <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-2 group-hover:text-primary transition-colors tracking-tight">{title}</h3>
-      <div className="text-sm text-text-secondary mb-4 flex-1 line-clamp-4 markdown-card-content leading-relaxed">
+      <div className="text-sm text-text-secondary mb-4 flex-1 line-clamp-4 markdown-card-content leading-relaxed overflow-hidden break-all">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {summary}
         </ReactMarkdown>

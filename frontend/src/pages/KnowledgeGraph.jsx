@@ -228,17 +228,18 @@ const KnowledgeGraph = () => {
   }, [id, hoverNode, isDark, graphData.links, selectedTag]);
 
   return (
-    <div className="h-[calc(100vh-160px)] min-h-[400px] flex flex-col space-y-6 animate-in fade-in duration-700">
+    <div className="h-[calc(100vh-140px)] min-h-[400px] flex flex-col space-y-4 md:space-y-6 animate-in fade-in duration-700">
       {/* Universal Header */}
-      <div className="relative pl-5 py-2 shrink-0">
+      <div className="relative pl-5 py-1 md:py-2 shrink-0">
         <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary/80 to-primary/20 rounded-full"></div>
         <div className="flex items-center space-x-2 text-text-tertiary mb-1">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Semantic Constellation</span>
+          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">Semantic Constellation</span>
         </div>
-        <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
+        <h2 className="text-xl md:text-2xl font-black text-text-primary tracking-tight md:mb-1 uppercase">Neural Graph</h2>
+        <p className="hidden md:block text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
           A living, breathing visual representation of your connected memories.
         </p>
       </div>
@@ -246,7 +247,7 @@ const KnowledgeGraph = () => {
       {/* Graph Canvas Container */}
       <div
         ref={containerRef}
-        className="relative w-full flex-1 bg-background rounded-3xl overflow-hidden border border-border group"
+        className="relative w-full flex-1 bg-background rounded-2xl md:rounded-3xl overflow-hidden border border-border group"
       >
 
       {/* Empty State Overlay */}
@@ -259,24 +260,22 @@ const KnowledgeGraph = () => {
           </div>
           <h2 className="text-xl font-bold text-text-primary mb-3 tracking-tight">Cosmic Void</h2>
           <p className="text-text-secondary max-w-sm leading-relaxed mb-8">
-            Your graph is currently empty. Capture articles, tweets, or thoughts into your Inbox and watch the AI weave them into a living semantic constellation.
+            Your graph is currently empty. Capture articles, tweets, or thoughts and watch the AI weave them into a living constellation.
           </p>
           <button 
             onClick={() => navigate('/dashboard')}
             className="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20"
           >
-            Start Capturing Knowledge
+            Initialize Memory
           </button>
         </div>
       )}
 
-      {/* Tag Discovery Bar Removed for compact UI */}
-
       {/* Control Buttons (Bottom Left) */}
-      <div className="absolute bottom-6 left-6 z-50 flex space-x-2">
+      <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-50 flex space-x-2">
         <button 
           onClick={fetchGraphData}
-          className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
+          className="p-2.5 md:p-3 bg-surface/80 backdrop-blur-md border border-border rounded-xl md:rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
           title="Refresh Graph"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -294,7 +293,7 @@ const KnowledgeGraph = () => {
               fgRef.current.zoomToFit(600, 100); 
             }
           }}
-          className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
+          className="p-2.5 md:p-3 bg-surface/80 backdrop-blur-md border border-border rounded-xl md:rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
           title="Recenter"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -304,10 +303,10 @@ const KnowledgeGraph = () => {
       </div>
 
       {/* Zoom Controls (Bottom Right) */}
-      <div className="absolute bottom-6 right-6 z-50 flex flex-col space-y-2">
+      <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col space-y-2">
         <button 
           onClick={handleZoomIn}
-          className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
+          className="p-2.5 md:p-3 bg-surface/80 backdrop-blur-md border border-border rounded-xl md:rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
           title="Zoom In"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -316,7 +315,7 @@ const KnowledgeGraph = () => {
         </button>
         <button 
           onClick={handleZoomOut}
-          className="p-3 bg-surface/80 backdrop-blur-md border border-border rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
+          className="p-2.5 md:p-3 bg-surface/80 backdrop-blur-md border border-border rounded-xl md:rounded-2xl text-text-secondary hover:text-primary transition-all shadow-lg hover:shadow-primary/20"
           title="Zoom Out"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

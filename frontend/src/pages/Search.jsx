@@ -102,31 +102,31 @@ const Search = () => {
         {isSearching && results.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[1, 2, 3, 4].map(n => (
-              <div key={n} className="min-h-[180px] p-4 bg-surface border border-border rounded-2xl flex flex-col justify-between">
+              <div key={n} className="min-h-[180px] p-4 bg-surface border border-border rounded-2xl flex flex-col justify-between animate-pulse">
                 <div>
-                  <div className="w-16 h-5 bg-border/50 rounded animate-pulse mb-3"></div>
-                  <div className="w-3/4 h-6 bg-border/30 rounded animate-pulse mb-2"></div>
-                  <div className="w-full h-8 bg-border/20 rounded-lg animate-pulse"></div>
+                  <div className="w-16 h-3 bg-border/50 rounded-full mb-3"></div>
+                  <div className="w-3/4 h-5 bg-border/30 rounded-full mb-2"></div>
+                  <div className="w-full h-8 bg-border/20 rounded-xl"></div>
                 </div>
                 <div className="flex space-x-2 mt-4">
-                  <div className="w-16 h-4 bg-border/50 rounded animate-pulse"></div>
-                  <div className="w-20 h-4 bg-border/50 rounded animate-pulse"></div>
+                  <div className="w-12 h-3 bg-border/50 rounded-full"></div>
+                  <div className="w-16 h-3 bg-border/50 rounded-full"></div>
                 </div>
               </div>
             ))}
           </div>
         ) : results.length > 0 ? (
           <div className={`transition-opacity duration-300 ${isSearching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-            <div className="flex flex-col space-y-1 px-2 border-l-4 border-primary pl-6 mb-6">
-               <div className="flex items-center justify-between text-text-tertiary text-[10px] font-black uppercase tracking-[0.2em]">
+            <div className="flex flex-col space-y-1 px-4 md:px-0 border-l-4 border-primary pl-6 mb-8">
+               <div className="flex items-center justify-between text-text-tertiary text-[10px] font-black uppercase tracking-[0.3em]">
                  <span className="flex items-center">
-                   <div className="w-2 h-2 rounded-full bg-primary mr-2"></div>
-                   AI Semantic Rank
+                   <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2 animate-pulse"></div>
+                   Semantic Rank
                  </span>
-                 <span>Synchronized Results</span>
+                 <span className="hidden sm:inline">Research OS v1.02a</span>
                </div>
-               <h2 className="text-2xl font-black text-text-primary">
-                 Found {results.length} related concepts for <span className="text-primary italic">"{query}"</span>
+               <h2 className="text-xl md:text-2xl font-black text-text-primary tracking-tight leading-tight">
+                 Found <span className="text-primary">{results.length}</span> matches for <span className="text-primary italic">"{query}"</span>
                </h2>
             </div>
             
@@ -142,14 +142,14 @@ const Search = () => {
             </div>
           </div>
         ) : hasSearched && !isSearching ? (
-          <div className="text-center py-24 bg-surface/30 border-2 border-dashed border-border rounded-[3rem] animate-in fade-in zoom-in-95">
-             <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6">
-               <svg className="w-10 h-10 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-20 px-6 bg-surface/30 border-2 border-dashed border-border rounded-[2.5rem] animate-in fade-in zoom-in-95">
+             <div className="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6">
+               <svg className="w-8 h-8 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                </svg>
              </div>
-             <h3 className="text-3xl font-black text-text-secondary mb-3">No conceptual matches found</h3>
-             <p className="text-text-tertiary max-w-md mx-auto leading-relaxed">
+             <h3 className="text-xl font-black text-text-secondary uppercase tracking-widest mb-3">No conceptual matches</h3>
+             <p className="text-text-tertiary max-w-sm mx-auto leading-relaxed text-sm">
                Try searching for a broader master pillar or different keywords. AI synthesis sometimes needs more context to find deep matches.
              </p>
           </div>
