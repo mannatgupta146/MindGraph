@@ -43,7 +43,7 @@ const Login = () => {
            <div className="inline-flex w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center text-primary mb-6 border border-primary/20">
               <Lock className="w-6 h-6" />
            </div>
-           <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-text-primary mb-2">Access Neural OS</h2>
+           <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-text-primary mb-2">Access MindGraph</h2>
            <p className="text-sm font-medium text-text-tertiary uppercase tracking-widest">Authentication Required</p>
         </div>
 
@@ -105,7 +105,7 @@ const Login = () => {
 
         <div className="mt-10 pt-8 border-t border-border/40 text-center">
            <p className="text-sm font-medium text-text-tertiary tracking-tight">
-             New to the Neural Network? <Link to="/register" className="text-primary font-black hover:underline cursor-pointer">Register Identity</Link>
+             New to MindGraph? <Link to="/register" className="text-primary font-black hover:underline cursor-pointer">Register Identity</Link>
            </p>
         </div>
       </div>

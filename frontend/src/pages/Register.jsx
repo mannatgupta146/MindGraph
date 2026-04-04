@@ -29,7 +29,7 @@ const Register = () => {
       
       {/* Decorative Neural Background Elements */}
       <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/10 blur-[100px] animate-pulse rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-secondary/10 blur-[100px] animate-pulse rounded-full pointer-events-none delay-700" />
+      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-primary/10 blur-[100px] animate-pulse rounded-full pointer-events-none delay-700" />
       
       <div className="absolute top-6 right-6">
         <ThemeToggle />
@@ -38,14 +38,14 @@ const Register = () => {
       <div className="w-full max-w-[480px] p-6 sm:p-10 bg-surface/60 backdrop-blur-2xl rounded-3xl border border-border transition-all duration-500 shadow-2xl relative z-10 group overflow-hidden">
         
         {/* Progress Bar Detail */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-primary animate-gradient" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-primary animate-gradient" />
 
         <div className="text-center mb-10">
-           <div className="inline-flex w-12 h-12 rounded-2xl bg-secondary/10 items-center justify-center text-secondary mb-6 border border-secondary/20">
+           <div className="inline-flex w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center text-primary mb-6 border border-primary/20">
               <ShieldCheck className="w-6 h-6" />
            </div>
            <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-text-primary mb-2">Register Identity</h2>
-           <p className="text-sm font-medium text-text-tertiary uppercase tracking-widest">Neural OS Initialization</p>
+           <p className="text-sm font-medium text-text-tertiary uppercase tracking-widest">MindGraph Registration</p>
         </div>
 
         {error && (
@@ -58,14 +58,14 @@ const Register = () => {
           <div className="space-y-2">
             <label className="block text-[11px] font-black uppercase tracking-widest text-text-tertiary ml-1">Directive: Full Name</label>
             <div className="relative group">
-               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-secondary transition-colors" />
+               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-primary transition-colors" />
                <input
                  type="text"
                  value={name}
                  onChange={(e) => setName(e.target.value)}
                  placeholder="Enter display name"
                  required
-                 className="w-full pl-12 pr-4 py-4 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-secondary/50 focus:bg-background/80 focus:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500"
+                 className="w-full pl-12 pr-4 py-4 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 focus:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-500"
                />
             </div>
           </div>
@@ -73,14 +73,14 @@ const Register = () => {
           <div className="space-y-2">
             <label className="block text-[11px] font-black uppercase tracking-widest text-text-tertiary ml-1">Directive: Email</label>
             <div className="relative group">
-               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-secondary transition-colors" />
+               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-primary transition-colors" />
                <input
                  type="email"
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
                  placeholder="Enter system identifier"
                  required
-                 className="w-full pl-12 pr-4 py-4 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-secondary/50 focus:bg-background/80 focus:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500"
+                 className="w-full pl-12 pr-4 py-4 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 focus:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-500"
                />
             </div>
           </div>
@@ -88,14 +88,14 @@ const Register = () => {
           <div className="space-y-2">
             <label className="block text-[11px] font-black uppercase tracking-widest text-text-tertiary ml-1">Directive: Password</label>
             <div className="relative group">
-               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-secondary transition-colors" />
+               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-primary transition-colors" />
                <input
                  type={showPassword ? "text" : "password"}
                  value={password}
                  onChange={(e) => setPassword(e.target.value)}
                  placeholder="Create access code"
                  required
-                 className="w-full pl-12 pr-12 py-4 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-secondary/50 focus:bg-background/80 focus:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500"
+                 className="w-full pl-12 pr-12 py-4 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 focus:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-500"
                />
                <button
                  type="button"
@@ -121,7 +121,7 @@ const Register = () => {
 
         <div className="mt-10 pt-8 border-t border-border/40 text-center">
            <p className="text-sm font-medium text-text-tertiary tracking-tight">
-             Identity already indexed? <Link to="/login" className="text-secondary font-black hover:underline cursor-pointer">Enter OS</Link>
+             Identity already indexed? <Link to="/login" className="text-primary font-black hover:underline cursor-pointer">Enter MindGraph</Link>
            </p>
         </div>
       </div>

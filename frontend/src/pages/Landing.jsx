@@ -185,7 +185,7 @@ const Landing = () => {
         <div className="max-w-4xl">
            <div className="flex items-center space-x-3 mb-4">
               <span className="w-12 h-[1px] bg-primary"></span>
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Intelligence OS v1.0</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">MindGraph v1.0</span>
            </div>
 
            <h1 className="text-4xl sm:text-6xl md:text-[108px] font-black mb-6 md:mb-8 leading-[0.95] md:leading-[0.85] tracking-tight pointer-events-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
@@ -533,7 +533,7 @@ const Landing = () => {
              
              <p className="text-lg md:text-xl text-text-secondary opacity-60 mb-12 md:mb-16 max-w-3xl mx-auto leading-relaxed font-medium px-4">
                 Stop the endless scroll. Start the neural siphoning. 
-                MindGraph is the first Intelligence OS designed for the research-intensive future. 
+                MindGraph is the first Memory OS designed for the research-intensive future. 
                 Initialize and deploy across every device you own. 
              </p>
 
@@ -542,7 +542,7 @@ const Landing = () => {
                    onClick={handleCTAClick}
                    className="group/btn relative px-8 md:px-10 py-4 bg-text-primary text-background rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center space-x-4 overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-[0_0_60px_rgba(59,130,246,0.3)] active:scale-95 shadow-2xl"
                 >
-                   <span className="relative z-10">{user ? 'Enter Neural Network' : 'Initialize Neural OS'}</span>
+                   <span className="relative z-10">{user ? 'Enter MindGraph' : 'Initialize MindGraph'}</span>
                    <ArrowRight className="w-5 h-5 relative z-10 group-hover/btn:translate-x-2 transition-transform duration-500" />
                    
                    {/* Particle Gloss & Inner Glow */}
