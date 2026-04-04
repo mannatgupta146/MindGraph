@@ -12,6 +12,7 @@ import Collections from './pages/Collections';
 import CollectionDetail from './pages/CollectionDetail';
 import Archives from './pages/Archives';
 import Resurface from './pages/Resurface';
+import Landing from './pages/Landing';
 import AppLayout from './components/layout/AppLayout';
 
 
@@ -36,7 +37,7 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Landing />} />
         
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/dashboard/:id" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
