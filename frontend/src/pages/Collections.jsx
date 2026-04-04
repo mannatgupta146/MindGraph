@@ -112,7 +112,7 @@ const Collections = () => {
           </p>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-10 py-4 bg-surface border-2 border-border text-text-primary font-black rounded-2xl hover:border-secondary transition-all hover:text-secondary group"
+            className="px-10 py-4 bg-surface border-2 border-border text-text-primary font-black rounded-2xl hover:border-primary transition-all hover:text-primary group"
           >
             Start Organizing
             <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
@@ -124,7 +124,7 @@ const Collections = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-surface w-full max-w-md rounded-2xl border border-border shadow-2xl p-6 relative overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="absolute top-0 left-0 w-full h-1 bg-secondary"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
             
             <h2 className="text-xl font-bold text-text-primary mb-6 tracking-tight">Create New Project</h2>
             
@@ -136,7 +136,7 @@ const Collections = () => {
                   required
                   type="text"
                   placeholder="e.g. AI Ethics Research"
-                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary focus:outline-none focus:border-secondary transition-all text-sm font-medium"
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary focus:outline-none focus:border-primary transition-all text-sm font-medium"
                   value={newCollection.title}
                   onChange={e => setNewCollection({...newCollection, title: e.target.value})}
                 />
@@ -147,7 +147,7 @@ const Collections = () => {
                   <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.2em] mb-1.5 ml-1">Icon (Emoji)</label>
                   <input 
                     type="text"
-                    className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-center text-lg focus:outline-none focus:border-secondary transition-all"
+                    className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-center text-lg focus:outline-none focus:border-primary transition-all"
                     value={newCollection.icon}
                     onChange={e => setNewCollection({...newCollection, icon: e.target.value})}
                   />
@@ -156,7 +156,7 @@ const Collections = () => {
                   <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.2em] mb-1.5 ml-1">Label Color</label>
                   <input 
                     type="color"
-                    className="w-full h-[46px] p-1.5 bg-background border border-border rounded-xl cursor-pointer focus:outline-none focus:border-secondary transition-all"
+                    className="w-full h-[46px] p-1.5 bg-background border border-border rounded-xl cursor-pointer focus:outline-none focus:border-primary transition-all"
                     value={newCollection.color}
                     onChange={e => setNewCollection({...newCollection, color: e.target.value})}
                   />
@@ -168,7 +168,7 @@ const Collections = () => {
                 <textarea 
                   rows="2"
                   placeholder="What is the goal of this collection?"
-                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary focus:outline-none focus:border-secondary transition-all resize-none font-medium text-sm text-text-secondary"
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary focus:outline-none focus:border-primary transition-all resize-none font-medium text-sm text-text-secondary"
                   value={newCollection.description}
                   onChange={e => setNewCollection({...newCollection, description: e.target.value})}
                 />
@@ -184,7 +184,7 @@ const Collections = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="flex-[2] py-2 bg-secondary text-white font-bold rounded-xl hover:bg-secondary/90 shadow-lg shadow-secondary/20 transition-all text-sm"
+                  className="flex-[2] py-2 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm"
                 >
                   Construct Project
                 </button>
