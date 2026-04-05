@@ -105,8 +105,8 @@ export const createSave = async (req, res) => {
       }
     }
 
-    // Handle extraction for YouTube/Tweets if content is missing
-    if (!content && url) {
+    // Handle extraction for YouTube/Tweets if content is missing OR if we want to prioritize high-fidelity data
+    if (url) {
       if (type === 'youtube' && ytId) {
         try {
           // Resiliency Layer 1: OEmbed for Title/Metadata (Fast & Reliable)
@@ -114,9 +114,8 @@ export const createSave = async (req, res) => {
           const oembedResponse = await fetch(oembedUrl);
           const oembedData = await oembedResponse.json();
           
-          // Neural Title Sanitization: Favor real video titles over "ff" or "YouTube"
-          const isGenericTitle = !title || title.toLowerCase() === 'ff' || title.toLowerCase() === 'youtube' || title.length < 3;
-          if (isGenericTitle && oembedData.title) title = oembedData.title;
+          // Absolute Title Priority: Discard "Extension Junk" (like 'fdf', 'ff') and use real title
+          if (oembedData.title) title = oembedData.title;
 
           let transcriptText = '';
           let description = '';
@@ -132,24 +131,27 @@ export const createSave = async (req, res) => {
               console.warn(`[Neural Extraction] Captions unavailable for ${ytId}`); 
             }
           } catch (yError) {
-            console.warn(`[Neural Extraction] YTDL failed for ${ytId}, using OEmbed fallback.`);
+            console.warn(`[Neural Extraction] YTDL failed for ${ytId}, falling back to Meta Scraper.`);
           }
 
-          // Resiliency Layer 3: Meta Scraper (Fallback for Description if YTDL fails)
+          // Resiliency Layer 3: Bot-Resistant Meta Scraper
           if (!description) {
             try {
-              const pageResponse = await fetch(url);
+              const pageResponse = await fetch(url, {
+                headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
+              });
               const html = await pageResponse.text();
               const metaDescription = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
               description = metaDescription || '';
             } catch (pError) { console.error('[Meta Scraper Error]'); }
           }
 
-          content = `Video: ${title || oembedData.title || 'Unknown Video'}\nAuthor: ${oembedData.author_name || 'N/A'}\n\nTranscript: ${transcriptText || 'N/A'}\n\nDescription: ${description || 'N/A'}`;
+          // Absolute Content Displacement: Discard extension-provided junk content for YouTube
+          content = `Video: ${title || oembedData.title}\nAuthor: ${oembedData.author_name || 'N/A'}\n\nTranscript: ${transcriptText || 'N/A'}\n\nDescription: ${description || 'N/A'}`;
         } catch (yError) { 
           console.error('[YT Extraction Total Failure]', yError); 
         }
-      } else if (type === 'tweet') {
+      } else if (type === 'tweet' && !content) {
         try {
           const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`;
           const response = await fetch(oembedUrl);
