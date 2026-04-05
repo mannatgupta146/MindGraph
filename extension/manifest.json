@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "MindGraph Neural Siphon",
-  "version": "2.0.2",
+  "name": "MindGraph Helper",
+  "version": "2.0.15",
   "description": "Unified Intelligence Ingestion. Instant Save for the MindGraph platform.",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
   "permissions": [
     "activeTab",
     "storage",
@@ -19,6 +24,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "assets/icon.svg"
   }
 }

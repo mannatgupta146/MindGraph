@@ -23,7 +23,8 @@ import {
   Globe,
   Loader2,
   CheckCircle,
-  X
+  X,
+  Download
 } from 'lucide-react';
 
 const Landing = () => {
@@ -45,8 +46,8 @@ const Landing = () => {
       setShowDeployGuide(true);
       
       const element = document.createElement('a');
-      element.href = '/mindgraph_extension.zip';
-      element.download = 'mindgraph_extension.zip';
+      element.href = '/mindgraph_helper.zip';
+      element.download = 'mindgraph_helper.zip';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -210,7 +211,7 @@ const Landing = () => {
         <div className="max-w-4xl">
            <div className="flex items-center space-x-3 mb-4">
               <span className="w-12 h-[1px] bg-primary"></span>
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">MindGraph v1.0</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">MindGraph v2.0</span>
            </div>
 
            <h1 className="text-4xl sm:text-6xl md:text-[108px] font-black mb-6 md:mb-8 leading-[0.95] md:leading-[0.85] tracking-tight pointer-events-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
@@ -235,7 +236,7 @@ const Landing = () => {
 
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
-      {/* 2.0 NEURAL EXTENSION - UNIVERSAL CAPTURE */}
+      {/* 2.0 NEURAL HELPER - UNIVERSAL CAPTURE */}
       <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-32 pointer-events-auto">
           <div className="bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-[32px] md:rounded-[48px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden group shadow-2xl transition-all duration-700 hover:border-primary/50">
              
@@ -248,9 +249,9 @@ const Landing = () => {
                     <Globe className="w-4 h-4 text-primary" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary">Siphon the Web</span>
                 </div>
-                <h3 className="text-3xl md:text-6xl font-black mb-6 leading-tight tracking-tighter">Your Mind, Expanded by Chrome.</h3>
+                <h3 className="text-3xl md:text-6xl font-black mb-6 leading-tight tracking-tighter">Your Mind, Expanded by Helper.</h3>
                 <p className="text-lg md:text-xl text-text-secondary opacity-70 mb-10 max-w-xl leading-relaxed">
-                   MindGraph doesn't wait for you. Our extension siphons every screenshot, link, and insight you encounter directly into your 1.2M+ neural bridges.
+                   MindGraph doesn't wait for you. The Helper siphons every screenshot, link, and insight you encounter directly into your 1.2M+ neural bridges.
                 </p>
                 
                 <button 
@@ -263,10 +264,10 @@ const Landing = () => {
                    ) : deploymentSuccess ? (
                       <CheckCircle className="w-5 h-5 text-white" />
                    ) : (
-                      <Monitor className="w-5 h-5 text-white" />
+                      <Download className="w-5 h-5 text-white" />
                    )}
                    <span className="uppercase tracking-tighter">
-                      {isDeploying ? 'Siphoning Binary...' : deploymentSuccess ? 'Terminal Linked' : 'Add to Chrome for Free'}
+                      {isDeploying ? 'Siphoning Binary...' : deploymentSuccess ? 'Terminal Linked' : 'Download MindGraph Helper'}
                    </span>
                    {!isDeploying && !deploymentSuccess && (
                       <ArrowRight className="w-5 h-5 group-hover/ext:translate-x-1 transition-transform duration-500" />
@@ -641,7 +642,7 @@ const Landing = () => {
                 <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-12 px-10 py-8 md:py-5 bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-3xl md:rounded-2xl opacity-40 hover:opacity-80 transition-all duration-700 w-full md:w-auto">
                    <div className="flex items-center space-x-3">
                       <Globe className="w-5 h-5 text-cyan-500" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Chrome Ext</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Web Helper</span>
                    </div>
                    <div className="hidden md:block w-[1px] h-4 bg-border/40" />
                    <div className="flex items-center space-x-3">
@@ -699,7 +700,7 @@ const Landing = () => {
                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10B981]" />
                   </div>
                   <div className="flex items-center space-x-6 text-text-tertiary">
-                     <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">v1.02a</span>
+                     <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">v2.0.10</span>
                      <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">© 2026 MG</span>
                   </div>
                </div>
@@ -711,7 +712,7 @@ const Landing = () => {
       {/* CRT SCANLINE OVERLAY - FOR OS FEEL */}
       <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
 
-      {/* 9.0 TECHNICAL HUD OVERLAY - EXTENSION GUIDE */}
+      {/* 9.0 TECHNICAL HUD OVERLAY - HANDSHAKE GUIDE */}
       <AnimatePresence>
         {showDeployGuide && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
@@ -733,27 +734,23 @@ const Landing = () => {
                      <Monitor className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                     <h3 className="text-xl font-black uppercase tracking-widest">Extension Deployed</h3>
-                     <p className="text-[10px] font-black uppercase opacity-40 text-primary">Directive: Manual Installation Required</p>
+                     <h3 className="text-xl font-black uppercase tracking-widest">MindGraph Helper</h3>
+                     <p className="text-[10px] font-black uppercase opacity-60 text-primary">Status: Ready for Handshake</p>
                   </div>
                </div>
 
                <div className="space-y-6 mb-10">
                   <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">01</div>
-                     <p className="text-sm text-text-secondary">Extract the <span className="text-primary font-bold">mindgraph_ext_v1.zip</span> bundle to your technical archive.</p>
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">01</div>
+                     <p className="text-sm text-text-secondary">Extract the downloaded <span className="text-primary font-bold">mindgraph_helper.zip</span> folder.</p>
                   </div>
                   <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">02</div>
-                     <p className="text-sm text-text-secondary">Open Chrome and navigate to <code className="bg-white/5 px-2 py-1 rounded">chrome://extensions</code></p>
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">02</div>
+                     <p className="text-sm text-text-secondary">Authorize Developer Mode in your browser settings HUD.</p>
                   </div>
                   <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">03</div>
-                     <p className="text-sm text-text-secondary">Enable <span className="text-amber-500 font-bold uppercase tracking-tighter">Developer Mode</span> in the upper right terminal.</p>
-                  </div>
-                  <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-border/40 flex items-center justify-center text-[10px] font-black">04</div>
-                     <p className="text-sm text-text-secondary">Select <span className="text-primary font-bold uppercase tracking-tighter">Load Unpacked</span> and point to the extracted directory.</p>
+                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">03</div>
+                     <p className="text-sm text-text-secondary">Click <span className="text-primary font-bold uppercase tracking-tighter">Load Unpacked</span> and select the extracted folder.</p>
                   </div>
                </div>
 
@@ -761,7 +758,7 @@ const Landing = () => {
                   onClick={() => setShowDeployGuide(false)}
                   className="w-full py-4 bg-text-primary text-background rounded-2xl font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all"
                >
-                  Terminal Linked — Close
+                  Neural Link Established - Continue
                </button>
             </motion.div>
           </div>
