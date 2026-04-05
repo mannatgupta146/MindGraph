@@ -1,6 +1,6 @@
-# 🧬 MindGraph: The Neural Second Brain
+# 🧬 MindGraph: The Universal Memory Engine
 
-**MindGraph** is a high-fidelity SaaS-style knowledge ecosystem designed to solve digital information overload. It establishes a seamless "Neural Link" between your browser and a centralized, cloud-persistent database, allowing you to siphon, index, and resurface insights with 100% resolution-independent precision.
+**MindGraph** is a high-fidelity, cognitive operating system designed to solve the burden of digital information overload. It establishes a seamless **Neural Link** between your browser and a centralized, cloud-persistent vault—allowing you to **Siphon**, **Index**, and **Resurface** the world's intelligence with 100% resolution-independent precision.
 
 ---
 
@@ -113,9 +113,15 @@ Import the `extension` folder into `chrome://extensions` using the **Load Unpack
 
 ---
 
-## 🤝 Collaborations & Contributions
+## 🤝 Community Protocol: Build the Future
 
-MindGraph is a vision-driven project, open to high-fidelity collaborations!
-1. **Fork** | 2. **Branch** | 3. **Commit** | 4. **Push** | 5. **Pull Request**.
+MindGraph is a vision-driven project, and I'm officially open to high-fidelity collaborations from the open-source intelligence community.
+
+### 🛡️ Contribution Framework
+- **🛰️ Fork the Vault**: Create your own high-fidelity copy of the MindGraph repository.
+- **🌱 Establish Neural Branch**: Use `git checkout -b feature/neural-improvement` to begin your session.
+- **💎 Commit with Precision**: Use clear, architectural commit messages to document your neural refinements.
+- **🚀 Push to the Cloud**: Synchronize your branch to your remote vault.
+- **🤝 Open Pull Request**: Every submission conducts a surgical architectural review to maintain the "Neural Gold" standard.
 
 _Let's build the future of collective intelligence together._ 🚀🧠💎🌻
