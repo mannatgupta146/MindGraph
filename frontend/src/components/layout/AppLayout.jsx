@@ -49,9 +49,9 @@ const AppLayout = ({ children }) => {
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <div className="flex-1 lg:ml-[260px] min-h-screen flex flex-col transition-all duration-300 overflow-x-hidden w-full">
+      <div className="flex-1 lg:ml-[260px] min-h-screen flex flex-col transition-all duration-300 overflow-x-hidden w-full relative">
         <TopBar title={title} onToggleSidebar={() => setIsSidebarOpen(true)} />
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden">
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden h-[calc(100vh-80px)]">
           <div className="max-w-[1400px] mx-auto w-full">
             {children}
           </div>
