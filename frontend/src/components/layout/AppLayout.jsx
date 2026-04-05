@@ -51,7 +51,8 @@ const AppLayout = ({ children }) => {
       
       <div className="flex-1 lg:ml-[260px] min-h-screen flex flex-col transition-all duration-300 overflow-x-hidden w-full relative">
         <TopBar title={title} onToggleSidebar={() => setIsSidebarOpen(true)} />
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden h-[calc(100vh-80px)]">
+        {/* We use pt-20 to account for the 80px fixed TopBar */}
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden h-screen pt-20 mt-0">
           <div className="max-w-[1400px] mx-auto w-full">
             {children}
           </div>

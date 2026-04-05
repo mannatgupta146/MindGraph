@@ -8,7 +8,7 @@ const TopBar = ({ title, onToggleSidebar }) => {
 
   return (
     <>
-      <div className="h-20 shrink-0 border-b border-border bg-background flex items-center px-6 md:px-8 justify-between sticky top-0 z-30">
+      <div className="h-20 fixed top-0 right-0 left-0 lg:left-[260px] border-b border-border bg-background flex items-center px-6 md:px-8 justify-between z-[40]">
         <div className="flex items-center">
           <button 
             onClick={onToggleSidebar}
