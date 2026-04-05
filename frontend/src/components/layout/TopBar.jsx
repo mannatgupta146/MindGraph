@@ -19,14 +19,13 @@ const TopBar = ({ title, onToggleSidebar }) => {
           <h2 className="text-lg md:text-xl font-bold tracking-tight text-text-primary uppercase truncate max-w-[200px] sm:max-w-none">{title}</h2>
         </div>
         
-        <div className="flex items-center space-x-3 md:space-x-5">
+        <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-5">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group tracking-widest uppercase"
+            className="flex items-center px-3 py-2 sm:px-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group tracking-widest uppercase"
           >
-            <Download className="w-3.5 h-3.5 mr-2" />
+            <Download className="w-3.5 h-3.5 sm:mr-2" />
             <span className="hidden sm:inline">Download Extension</span>
-            <span className="sm:hidden">Extension</span>
           </button>
           <ThemeToggle />
         </div>

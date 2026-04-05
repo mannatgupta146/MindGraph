@@ -51,8 +51,8 @@ const AppLayout = ({ children }) => {
       
       <div className="flex-1 min-h-screen flex flex-col transition-all duration-300 w-full relative overflow-x-hidden lg:pl-[260px]">
         <TopBar title={title} onToggleSidebar={() => setIsSidebarOpen(true)} />
-        {/* pt-20 for fixed TopBar, window scroll enabled, horizontal lockdown active */}
-        <main className="flex-1 p-4 md:p-8 pt-24 min-h-screen">
+        {/* mt-20 (80px) perfectly clears the h-20 fixed TopBar */}
+        <main className="flex-1 p-6 md:p-10 mt-20 min-h-[calc(100vh-80px)]">
           <div className="max-w-[1400px] mx-auto w-full">
             {children}
           </div>
