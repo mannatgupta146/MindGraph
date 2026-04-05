@@ -17,7 +17,22 @@ export const createSave = async (req, res) => {
     let { title, content, type, url, source, domain, imageUrl, pdfUrl, tags: userTags } = req.body;
     const userId = req.user.id;
 
-    // 1. Atomic Duplicate Handling: If URL exists for this user, we perform a 'Neural Update'
+    // Robust ID Parsing Utility
+    const getYoutubeID = (url) => {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    };
+
+    // 1. Canonical Normalization: Ensure 100% duplicate detection resolution
+    const ytId = getYoutubeID(url);
+    if (ytId) {
+      url = `https://www.youtube.com/watch?v=${ytId}`;
+      type = 'youtube'; // Auto-detect for precision
+    }
+
+    // 2. Atomic Duplicate Handling: If URL exists for this user, we perform a 'Neural Update'
     if (url) {
       const existingSave = await Save.findOne({ url, user: userId });
       if (existingSave) {
@@ -30,16 +45,19 @@ export const createSave = async (req, res) => {
         existingSave.imageUrl = imageUrl || existingSave.imageUrl;
         existingSave.pdfUrl = pdfUrl || existingSave.pdfUrl;
         
-        // Re-trigger AI for updated content or if existing content was a legacy fallback
-        const isFallback = existingSave.content?.startsWith('Neural Link established:');
+        // Re-trigger AI for updated content or legacy fallback remediation
+        const currentContent = existingSave.content || '';
+        const isFallback = currentContent.startsWith('Neural Link established:') || 
+                          currentContent.startsWith('Multimedia Artifact Captured:');
+                          
         if ((content && content !== existingSave.content) || isFallback) {
-          const summary = await generateAISummary(content || existingSave.content);
-          const aiTags = await generateAITags(content || existingSave.content);
-          const embedding = await generateMistralEmbedding(content || existingSave.content);
+          const summary = await generateAISummary(content || currentContent);
+          const aiTags = await generateAITags(content || currentContent);
+          const embedding = await generateMistralEmbedding(content || currentContent);
           existingSave.summary = summary;
           existingSave.tags = [...new Set([...(userTags || []), ...aiTags])];
           existingSave.embedding = embedding;
-          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), content || existingSave.content, { user: userId.toString() });
+          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), content || currentContent, { user: userId.toString() });
         }
         
         await existingSave.save();
@@ -49,7 +67,7 @@ export const createSave = async (req, res) => {
 
     let fileUrl = null;
 
-    // Handle File upload (PDF/Image) - Legacy Support for Dashboard
+    // Handle File upload (PDF/Image)
     if (req.file) {
       const isPDF = req.file.mimetype === 'application/pdf';
       const isImage = req.file.mimetype.startsWith('image/');
@@ -80,35 +98,22 @@ export const createSave = async (req, res) => {
       }
     }
 
-    // Handle extraction only if content is missing (Smart Fallback)
+    // Handle extraction for YouTube/Tweets if content is missing
     if (!content && url) {
-      if (type === 'youtube') {
+      if (type === 'youtube' && ytId) {
         try {
-          // Robust ID Parsing & URL Normalization
-          const getYoutubeID = (url) => {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-          };
-
-          const videoID = getYoutubeID(url);
-          if (videoID) {
-            const info = await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${videoID}`);
-            if (!title) title = info.videoDetails.title;
-            
-            // Normalize URL to primary format for consistent duplicate checking
-            url = `https://www.youtube.com/watch?v=${videoID}`;
-            
-            let transcriptText = '';
-            try {
-              const captions = await getSubtitles({ videoID, lang: 'en' });
-              transcriptText = captions.map(c => c.text).join(' ');
-            } catch (tError) { 
-              console.warn(`[Neural Extraction] Transcript unavailable for ${videoID}, using description fallback.`); 
-              transcriptText = info.videoDetails.description?.substring(0, 500) || '';
-            }
-            content = `Video: ${info.videoDetails.title}\n\nDescription/Transcript: ${transcriptText || 'N/A'}`;
+          const info = await ytdl.getBasicInfo(url);
+          if (!title) title = info.videoDetails.title;
+          
+          let transcriptText = '';
+          try {
+            const captions = await getSubtitles({ videoID: ytId, lang: 'en' });
+            transcriptText = captions.map(c => c.text).join(' ');
+          } catch (tError) { 
+            console.warn(`[Neural Extraction] Captions unavailable for ${ytId}, falling back to description.`); 
+            transcriptText = info.videoDetails.description?.substring(0, 800) || '';
           }
+          content = `Video: ${info.videoDetails.title}\n\nTranscript/Description: ${transcriptText || 'N/A'}`;
         } catch (yError) { 
           console.error('[YT Extraction Error]', yError); 
         }
@@ -123,8 +128,8 @@ export const createSave = async (req, res) => {
       }
     }
 
-    // Semantic Clarity: Use a descriptive fallback that doesn't confuse the AI
-    if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled Content'} (Reference: ${url})`;
+    // Final Fallback: Descriptive Metadata Anchor
+    if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled'} (Reference: ${url})`;
 
     // Generate AI enhancements
     const summary = await generateAISummary(content);
