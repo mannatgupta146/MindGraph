@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MindGraph Neural Siphon</title>
+  <link rel="stylesheet" href="popup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container glass">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-group">
+        <div class="neural-orb"></div>
+        <h1 class="brand">MindGraph</h1>
+      </div>
+      <div class="status-indicator" id="status-dot"></div>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="mode-nav">
+      <button class="mode-btn active" data-mode="auto" title="Auto Save">Auto</button>
+      <button class="mode-btn" data-mode="manual" title="Paste Link">Link</button>
+      <button class="mode-btn" data-mode="file" title="Upload File">File</button>
+    </div>
+
+    <!-- Main Content -->
+    <div id="capture-interface" class="content-view hidden">
+      
+      <!-- Auto Mode -->
+      <div id="section-auto" class="capture-section">
+        <div class="tab-preview">
+          <div id="tab-image" class="preview-img"></div>
+          <div class="tab-info">
+            <h2 id="tab-title">Analyzing Page...</h2>
+            <p id="tab-url">Checking Web Address...</p>
+            <span id="tab-type" class="badge">Detecting</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Custom Title (Optional)</label>
+          <input type="text" id="auto-title" placeholder="Rename this capture" class="neural-input">
+        </div>
+      </div>
+
+      <!-- Manual Mode -->
+      <div id="section-manual" class="capture-section hidden">
+        <div class="input-group">
+          <label>Website URL</label>
+          <input type="text" id="manual-url" placeholder="https://example.com" class="neural-input">
+        </div>
+        <div class="input-group">
+          <label>Item Title (Optional)</label>
+          <input type="text" id="manual-title" placeholder="Name this link" class="neural-input">
+        </div>
+      </div>
+
+      <!-- File Mode -->
+      <div id="section-file" class="capture-section hidden">
+        <div class="input-group" style="margin-bottom: 20px;">
+          <label>File Title (Optional)</label>
+          <input type="text" id="file-title" placeholder="Name this document" class="neural-input">
+        </div>
+        <div class="file-zone" id="file-drop-zone">
+          <div class="file-icon">📂</div>
+          <p>Drop PDF or Image here</p>
+          <input type="file" id="file-input" class="hidden-file" accept=".pdf,image/*">
+          <button id="browse-btn" class="browse-btn">Select from Computer</button>
+        </div>
+        <p id="file-name" class="file-status">No file selected</p>
+      </div>
+
+      <button id="save-btn" class="siphon-btn">
+        <span class="btn-text">Save to MindGraph</span>
+        <div class="btn-glow"></div>
+      </button>
+
+      <p id="message" class="feedback"></p>
+    </div>
+
+    <!-- Auth Required Content -->
+    <div id="auth-interface" class="content-view hidden">
+      <div class="auth-message">
+        <div class="lock-icon">🛰️</div>
+        <h2>Sync with MindGraph</h2>
+        <p>Enter the 6-digit code from your Dashboard Sidebar to connect.</p>
+        
+        <div class="pin-pairing-section">
+          <input type="text" id="pairing-pin-input" maxlength="6" placeholder="000000" class="neural-pin-input">
+          <button id="verify-pin-btn" class="auth-btn">Connect Instantly</button>
+        </div>
+        
+        <p class="small-text mt-4">Don't have a code? Open MindGraph and click "Get Sync Code".</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span class="version">MindGraph Helper v2.0.2</span>
+      <span class="secure">Secure Connection</span>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

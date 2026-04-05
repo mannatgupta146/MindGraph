@@ -93,9 +93,67 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+// @desc    Generate a 6-digit pairing PIN
+// @route   POST /api/auth/generate-pin
+// @access  Private
+const generatePairingPin = async (req, res) => {
+  try {
+    // req.user is already populated by the 'protect' middleware
+    if (!req.user) return res.status(401).json({ message: 'User not authenticated' });
+
+    // Generate random 6-digit PIN
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
+    req.user.pairingPin = pin;
+    req.user.pairingPinExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins expiry
+
+    await req.user.save();
+    res.status(200).json({ pin });
+  } catch (error) {
+    console.error('❌ Sync Code Generation Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Verify PIN & return token
+// @route   POST /api/auth/verify-pin
+// @access  Public
+const verifyPairingPin = async (req, res) => {
+  try {
+    const { pin } = req.body;
+    if (!pin) return res.status(400).json({ message: 'PIN is required' });
+
+    const user = await User.findOne({
+      pairingPin: pin,
+      pairingPinExpires: { $gt: Date.now() }
+    });
+
+    if (user) {
+      // Clear the PIN after successful use for security
+      user.pairingPin = null;
+      user.pairingPinExpires = null;
+      await user.save();
+
+      // IMPORTANT: Instead of just setting a cookie, we return the token directly 
+      // because the extension needs to store it in local storage.
+      const token = generateToken(res, user._id, true); // Modified to return token
+
+      res.status(200).json({
+        token,
+        user: { _id: user._id, name: user.name, email: user.email }
+      });
+    } else {
+      res.status(401).json({ message: 'Invalid or expired PIN' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   loginUser,
   registerUser,
   logoutUser,
   getUserProfile,
+  generatePairingPin,
+  verifyPairingPin,
 };

@@ -1,10 +1,44 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { X, LogOut } from 'lucide-react';
+import { X, LogOut, Link, RefreshCcw } from 'lucide-react';
+import axios from 'axios';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user, logout } = useContext(AuthContext);
+  const [pairingPin, setPairingPin] = useState(null);
+  const [loadingPin, setLoadingPin] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && pairingPin) {
+      setPairingPin(null);
+    }
+    return () => clearInterval(interval);
+  }, [timeLeft, pairingPin]);
+
+  const generatePin = async () => {
+    setLoadingPin(true);
+    try {
+      const { data } = await axios.post('http://localhost:3000/api/auth/generate-pin', {}, { withCredentials: true });
+      setPairingPin(data.pin);
+      setTimeLeft(600); // 10 Minutes
+    } catch (err) {
+      console.error('Failed to generate sync code');
+    }
+    setLoadingPin(false);
+  };
+
+  const formatTime = (seconds) => {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+  };
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: 'M4 6h16M4 10h16M4 14h16M4 18h16' },
@@ -50,6 +84,31 @@ const Sidebar = ({ isOpen, onClose }) => {
       </nav>
 
       <div className="p-4 border-t border-border/40 mt-auto bg-surface/50 backdrop-blur-sm">
+        {/* 🔗 SYNC OVERLAY */}
+        <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/20">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] uppercase font-bold text-primary tracking-widest">Extension Sync</span>
+            {pairingPin && <span className="text-[10px] text-primary font-bold">Expires in {formatTime(timeLeft)}</span>}
+          </div>
+          
+          {pairingPin ? (
+            <div className="flex items-center justify-between bg-background/60 p-2 rounded-lg border border-primary/30">
+              <span className="text-xl font-black text-primary tracking-[0.2em] ml-2">{pairingPin}</span>
+              <button onClick={() => setPairingPin(null)} className="p-1 hover:bg-surface rounded-md text-text-tertiary"><X className="w-4 h-4"/></button>
+            </div>
+          ) : (
+            <button 
+              onClick={generatePin}
+              disabled={loadingPin}
+              className="w-full flex items-center justify-center p-2 rounded-lg bg-primary text-white text-xs font-bold hover:brightness-110 transition-all disabled:opacity-50"
+            >
+              {loadingPin ? <RefreshCcw className="w-3 h-3 animate-spin mr-2" /> : <Link className="w-3 h-3 mr-2" />}
+              {loadingPin ? 'Generating...' : 'Get Sync Code'}
+            </button>
+          )}
+          <p className="mt-2 text-[9px] text-text-tertiary text-center font-medium opacity-80 uppercase tracking-tighter">Code unique to account • Valid for 10m</p>
+        </div>
+
         <div className="flex items-center p-3 rounded-xl bg-background/40 border border-border/40 group hover:border-border transition-colors">
           <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black text-sm mr-3 border border-primary/10">
             {user?.name?.charAt(0) || 'U'}

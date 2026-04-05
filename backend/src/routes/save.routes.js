@@ -19,6 +19,7 @@ const upload = multer({
 router.use(protect);
 
 router.post('/', upload.single('file'), createSave);
+router.post('/save', upload.single('file'), createSave);
 router.get('/', getSaves);
 router.get('/inbox', getInbox);
 router.get('/archived', getArchivedSaves);

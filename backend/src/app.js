@@ -13,7 +13,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    const allowed = [process.env.FRONTEND_URL || 'http://localhost:5173'];
+    if (!origin || allowed.includes(origin) || origin.startsWith('chrome-extension://')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
@@ -24,6 +31,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/saves', saveRoutes);
+app.use('/api/items', saveRoutes);
 app.use('/api/collections', collectionRoutes);
 
 export default app;

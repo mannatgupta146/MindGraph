@@ -43,19 +43,10 @@ const Landing = () => {
       setIsDeploying(false);
       setDeploymentSuccess(true);
       setShowDeployGuide(true);
-      // Trigger a valid, minimal ZIP binary download for the 'wow' effect
-      const zipBase64 = "UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="; 
-      const byteCharacters = atob(zipBase64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const file = new Blob([byteArray], {type: 'application/zip'});
       
       const element = document.createElement('a');
-      element.href = URL.createObjectURL(file);
-      element.download = "mindgraph_ext_v1.zip";
+      element.href = '/mindgraph_extension.zip';
+      element.download = 'mindgraph_extension.zip';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);

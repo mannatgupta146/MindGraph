@@ -14,12 +14,41 @@ const { getSubtitles } = require('youtube-captions-scraper');
 
 export const createSave = async (req, res) => {
   try {
-    let { title, content, type, url, tags: userTags } = req.body;
+    let { title, content, type, url, source, domain, imageUrl, pdfUrl, tags: userTags } = req.body;
     const userId = req.user.id;
+
+    // 1. Atomic Duplicate Handling: If URL exists for this user, we perform a 'Neural Update'
+    if (url) {
+      const existingSave = await Save.findOne({ url, user: userId });
+      if (existingSave) {
+        console.log(`[Neural Update] Refreshing metadata for: ${url}`);
+        existingSave.title = title || existingSave.title;
+        existingSave.content = content || existingSave.content;
+        existingSave.type = type || existingSave.type;
+        existingSave.source = source || existingSave.source;
+        existingSave.domain = domain || existingSave.domain;
+        existingSave.imageUrl = imageUrl || existingSave.imageUrl;
+        existingSave.pdfUrl = pdfUrl || existingSave.pdfUrl;
+        
+        // Re-trigger AI for updated content
+        if (content && content !== existingSave.content) {
+          const summary = await generateAISummary(content);
+          const aiTags = await generateAITags(content);
+          const embedding = await generateMistralEmbedding(content);
+          existingSave.summary = summary;
+          existingSave.tags = [...new Set([...(userTags || []), ...aiTags])];
+          existingSave.embedding = embedding;
+          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), content, { user: userId.toString() });
+        }
+        
+        await existingSave.save();
+        return res.status(200).json(existingSave);
+      }
+    }
 
     let fileUrl = null;
 
-    // Handle File upload (PDF/Image)
+    // Handle File upload (PDF/Image) - Legacy Support for Dashboard
     if (req.file) {
       const isPDF = req.file.mimetype === 'application/pdf';
       const isImage = req.file.mimetype.startsWith('image/');
@@ -29,104 +58,58 @@ export const createSave = async (req, res) => {
           const dataBuffer = req.file.buffer;
           const data = await pdf(dataBuffer);
           content = data.text || 'No text content extracted from PDF';
-
-          
-          if (!title) {
-            title = content.split('\n')[0].substring(0, 50).trim() || req.file.originalname;
-          }
+          if (!title) title = content.split('\n')[0].substring(0, 50).trim() || req.file.originalname;
           type = 'pdf';
         } catch (pdfError) {
-          console.error('PDF Parse error:', pdfError);
           return res.status(400).json({ message: 'Failed to process PDF file' });
         }
       } else if (isImage) {
         try {
           const Tesseract = await import('tesseract.js');
-          console.log(`Starting OCR for ${req.file.originalname}...`);
           const { data: { text } } = await Tesseract.default.recognize(req.file.buffer, 'eng');
           content = text.trim() ? text.trim() : `Visual artifact indexed: ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
         } catch (ocrError) {
-          console.error('Image OCR error:', ocrError);
           content = `Visual artifact indexed (OCR Failed): ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
         }
-        // Convert the image directly to a Base64 Data URI.
-        // This allows the frontend to instantly preview the image statelessly 
-        // without needing to save ugly local files in a public/uploads folder.
         fileUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
       }
     }
 
-
-    // Handle YouTube metadata extraction
-    if (type === 'youtube' && url) {
-      try {
-        const info = await ytdl.getBasicInfo(url);
-        const videoTitle = info.videoDetails.title;
-        const videoDescription = info.videoDetails.description;
-        
-        if (!title) title = videoTitle;
-        
-        let transcriptText = '';
+    // Handle extraction only if content is missing (Smart Fallback)
+    if (!content && url) {
+      if (type === 'youtube') {
         try {
-          // Extract Video ID properly
-          const videoID = ytdl.getVideoID(url);
-          const captions = await getSubtitles({
-            videoID,
-            lang: 'en'
-          });
-          transcriptText = captions.map(c => c.text).join(' ');
-        } catch (tError) {
-          console.warn('Transcript not available for this video:', tError.message);
-        }
-
-        content = `Video Title: ${videoTitle}\n\nDescription: ${videoDescription}\n\nTranscript: ${transcriptText || 'No transcript available'}`;
-      } catch (yError) {
-        console.error('YouTube extraction error:', yError.message);
-        // Fallback to manual content if provided, otherwise error
-        if (!content) {
-          return res.status(400).json({ message: 'Failed to fetch YouTube metadata. Please provide a valid link or enter content manually.' });
-        }
+          const info = await ytdl.getBasicInfo(url);
+          if (!title) title = info.videoDetails.title;
+          let transcriptText = '';
+          try {
+            const videoID = ytdl.getVideoID(url);
+            const captions = await getSubtitles({ videoID, lang: 'en' });
+            transcriptText = captions.map(c => c.text).join(' ');
+          } catch (tError) { console.warn('Transcript unavailable'); }
+          content = `Video: ${info.videoDetails.title}\n\nTranscript: ${transcriptText || 'N/A'}`;
+        } catch (yError) { console.error('YT Error'); }
+      } else if (type === 'tweet') {
+        try {
+          const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`;
+          const response = await fetch(oembedUrl);
+          const data = await response.json();
+          if (!title) title = `Tweet by ${data.author_name}`;
+          content = data.html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        } catch (tError) { console.error('Tweet Error'); }
       }
     }
 
-    // Handle Tweet metadata extraction
-    if (type === 'tweet' && url) {
-      try {
-        const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`;
-        const response = await fetch(oembedUrl);
-        if (!response.ok) throw new Error('Failed to fetch tweet info');
-        
-        const data = await response.json();
-        const authorName = data.author_name;
-        const html = data.html; // Contains the tweet text inside <p>
-        
-        // Strip HTML tags to get clean text
-        const cleanText = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-        
-        if (!title) title = `Tweet by ${authorName}`;
-        content = cleanText;
-      } catch (tError) {
-        console.error('Tweet extraction error:', tError.message);
-        if (!content) {
-          return res.status(400).json({ message: 'Failed to fetch tweet content. Please ensure the link is valid or enter content manually.' });
-        }
-      }
-    }
+    if (!content) content = `Neural Link established: ${url || title}`;
 
-    if (!content) {
-      return res.status(400).json({ message: 'Content or PDF file is required' });
-    }
-
-    // 1. Generate AI enhancements
+    // Generate AI enhancements
     const summary = await generateAISummary(content);
     const aiTags = await generateAITags(content);
     const embedding = await generateMistralEmbedding(content);
-
-    // Combine user tags with AI tags
     const combinedTags = [...new Set([...(userTags || []), ...aiTags])];
 
     const newSave = await Save.create({
@@ -135,16 +118,17 @@ export const createSave = async (req, res) => {
       content,
       type,
       url,
+      source: source || 'Chrome',
+      domain,
+      imageUrl,
+      pdfUrl,
       tags: combinedTags,
       summary,
-      // Store the 1024-dim embedding for graph visualization
       embedding, 
       fileUrl
     });
 
-    // 2. Index in Pinecone for semantic search (chunks)
     await pineconeService.upsertMemoryToPinecone(newSave._id.toString(), content, { user: userId.toString() });
-
 
     res.status(201).json(newSave);
 

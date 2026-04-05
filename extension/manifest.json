@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "MindGraph Neural Siphon",
+  "version": "2.0.2",
+  "description": "Unified Intelligence Ingestion. Instant Save for the MindGraph platform.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:5173/*"]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
