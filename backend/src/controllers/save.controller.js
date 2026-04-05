@@ -195,24 +195,27 @@ export const semanticSearch = async (req, res) => {
     // Use Pinecone for semantic search
     const pineconeResults = await pineconeService.queryPinecone(query, userId.toString(), 15);
     
-    if (pineconeResults.length === 0) {
-      // Fallback or empty
+    // Neural Filter: Only include high-fidelity matches (> 0.70)
+    const highMatchResults = pineconeResults.filter(r => r.score >= 0.70);
+
+    if (highMatchResults.length === 0) {
+      console.log(`[PINECONE] No high-match results for: "${query}"`);
       return res.json([]);
     }
 
     // Hydrate results from MongoDB
-    const saveIds = [...new Set(pineconeResults.map(r => r.saveId))];
+    const saveIds = [...new Set(highMatchResults.map(r => r.saveId))];
     const saves = await Save.find({ _id: { $in: saveIds } })
       .select('title summary type tags createdAt')
       .lean();
 
     // Map scores back and sort
     const finalResults = saves.map(save => {
-      const match = pineconeResults.find(r => r.saveId === save._id.toString());
+      const match = highMatchResults.find(r => r.saveId === save._id.toString());
       return { ...save, score: match ? match.score : 0 };
     }).sort((a, b) => b.score - a.score);
 
-    console.log(`[PINECONE SEARCH] Query: "${query}" | Results: ${finalResults.length}`);
+    console.log(`[PINECONE SEARCH] Query: "${query}" | High Matches: ${finalResults.length}/${pineconeResults.length}`);
 
     res.json(finalResults);
 

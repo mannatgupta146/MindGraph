@@ -21,7 +21,9 @@ const Search = () => {
     setIsSearching(true);
     setHasSearched(true);
     try {
-      const { data } = await axios.get(`https://mindgraph.onrender.com/api/saves/search?query=${encodeURIComponent(searchTerm)}`, {
+      // Dynamic API Bridge for 100% resolution-independent connectivity
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const { data } = await axios.get(`${API_URL}/saves/search?query=${encodeURIComponent(searchTerm)}`, {
         withCredentials: true
       });
       setResults(data);
@@ -60,10 +62,10 @@ const Search = () => {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Semantic Intelligence</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Neural Match Engine</span>
         </div>
         <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
-          Ask anything in natural language. We use vector-based AI to find the deepest conceptual matches in your archive.
+          Search your neural archive with 100% conceptual resolution. Only high-fidelity matches are resurfaced.
         </p>
       </div>
 
@@ -80,7 +82,7 @@ const Search = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="e.g. 'What was that theory about neural networks?'"
+            placeholder="Search conceptual intent..."
             className="flex-1 bg-transparent border-none outline-none text-sm md:text-lg text-text-primary placeholder:text-xs md:placeholder:text-lg placeholder:text-text-tertiary/40 py-2 font-medium"
             autoFocus
           />
@@ -120,12 +122,12 @@ const Search = () => {
             <div className="flex flex-col space-y-1 px-4 md:px-0 mb-8">
                <div className="flex items-center justify-between text-text-tertiary text-[10px] font-black uppercase tracking-[0.3em]">
                  <span className="flex items-center">
-                    Semantic Rank
+                    Neural Rank ( {">"} 0.70 )
                  </span>
-                 <span className="hidden sm:inline">Research OS v1.02a</span>
+                 <span className="hidden sm:inline text-primary">High Fidelity Protocol</span>
                </div>
                <h2 className="text-xl md:text-2xl font-black text-text-primary tracking-tight leading-tight">
-                 Found <span className="text-primary">{results.length}</span> matches for <span className="text-primary italic">"{query}"</span>
+                 Found <span className="text-primary">{results.length}</span> high-fidelity matches for <span className="text-primary italic">"{query}"</span>
                </h2>
             </div>
             
@@ -134,6 +136,7 @@ const Search = () => {
                 <MemoryCard 
                   key={result._id} 
                   {...result} 
+                  score={result.score}
                   date={result.createdAt} 
                   onClick={() => navigate(`/search/${result._id}`)}
                 />

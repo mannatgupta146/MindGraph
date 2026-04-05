@@ -3,14 +3,26 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 
-const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, onClick }) => {
+const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, score, onClick }) => {
+  const matchPercentage = score ? Math.round(score * 100) : null;
+
   return (
     <div 
       onClick={onClick}
-      className="bg-surface rounded-xl p-5 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-64 group"
+      className="bg-surface rounded-xl p-5 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-64 group relative overflow-hidden"
     >
-      <div className="flex justify-between items-start mb-2">
+      {/* Neural Background Glow for High Matches */}
+      {matchPercentage >= 70 && (
+        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none group-hover:bg-primary/10 transition-colors duration-500"></div>
+      )}
+
+      <div className="flex justify-between items-start mb-2 relative z-10">
         <div className="flex items-center space-x-1.5">
+          {matchPercentage && (
+            <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 animate-in fade-in zoom-in duration-300">
+              <span className="text-[9px] font-black uppercase tracking-tight">{matchPercentage}% Match</span>
+            </div>
+          )}
           {type === 'article' && (
             <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-secondary/10 text-secondary border border-secondary/20">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
