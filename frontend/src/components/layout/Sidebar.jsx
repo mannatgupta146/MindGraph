@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { X, LogOut, Link, RefreshCcw } from 'lucide-react';
+import { X, LogOut, Link, RefreshCcw, Download } from 'lucide-react';
 import axios from 'axios';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -84,6 +84,16 @@ const Sidebar = ({ isOpen, onClose }) => {
       </nav>
 
       <div className="p-4 border-t border-border/40 mt-auto bg-surface/50 backdrop-blur-sm">
+        {/* 🚀 DOWNLOAD EXTENSION BLOCK */}
+        <a 
+          href="/mindgraph_helper.zip" 
+          download 
+          className="mb-4 w-full flex items-center justify-center p-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group tracking-widest uppercase"
+        >
+          <Download className="w-3.5 h-3.5 mr-2" />
+          Download Extension
+        </a>
+
         {/* 🔗 SYNC OVERLAY */}
         <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/20">
           <div className="flex items-center justify-between mb-2">
