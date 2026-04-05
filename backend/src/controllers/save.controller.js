@@ -30,15 +30,16 @@ export const createSave = async (req, res) => {
         existingSave.imageUrl = imageUrl || existingSave.imageUrl;
         existingSave.pdfUrl = pdfUrl || existingSave.pdfUrl;
         
-        // Re-trigger AI for updated content
-        if (content && content !== existingSave.content) {
-          const summary = await generateAISummary(content);
-          const aiTags = await generateAITags(content);
-          const embedding = await generateMistralEmbedding(content);
+        // Re-trigger AI for updated content or if existing content was a legacy fallback
+        const isFallback = existingSave.content?.startsWith('Neural Link established:');
+        if ((content && content !== existingSave.content) || isFallback) {
+          const summary = await generateAISummary(content || existingSave.content);
+          const aiTags = await generateAITags(content || existingSave.content);
+          const embedding = await generateMistralEmbedding(content || existingSave.content);
           existingSave.summary = summary;
           existingSave.tags = [...new Set([...(userTags || []), ...aiTags])];
           existingSave.embedding = embedding;
-          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), content, { user: userId.toString() });
+          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), content || existingSave.content, { user: userId.toString() });
         }
         
         await existingSave.save();
@@ -83,16 +84,34 @@ export const createSave = async (req, res) => {
     if (!content && url) {
       if (type === 'youtube') {
         try {
-          const info = await ytdl.getBasicInfo(url);
-          if (!title) title = info.videoDetails.title;
-          let transcriptText = '';
-          try {
-            const videoID = ytdl.getVideoID(url);
-            const captions = await getSubtitles({ videoID, lang: 'en' });
-            transcriptText = captions.map(c => c.text).join(' ');
-          } catch (tError) { console.warn('Transcript unavailable'); }
-          content = `Video: ${info.videoDetails.title}\n\nTranscript: ${transcriptText || 'N/A'}`;
-        } catch (yError) { console.error('YT Error'); }
+          // Robust ID Parsing & URL Normalization
+          const getYoutubeID = (url) => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+          };
+
+          const videoID = getYoutubeID(url);
+          if (videoID) {
+            const info = await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${videoID}`);
+            if (!title) title = info.videoDetails.title;
+            
+            // Normalize URL to primary format for consistent duplicate checking
+            url = `https://www.youtube.com/watch?v=${videoID}`;
+            
+            let transcriptText = '';
+            try {
+              const captions = await getSubtitles({ videoID, lang: 'en' });
+              transcriptText = captions.map(c => c.text).join(' ');
+            } catch (tError) { 
+              console.warn(`[Neural Extraction] Transcript unavailable for ${videoID}, using description fallback.`); 
+              transcriptText = info.videoDetails.description?.substring(0, 500) || '';
+            }
+            content = `Video: ${info.videoDetails.title}\n\nDescription/Transcript: ${transcriptText || 'N/A'}`;
+          }
+        } catch (yError) { 
+          console.error('[YT Extraction Error]', yError); 
+        }
       } else if (type === 'tweet') {
         try {
           const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`;
@@ -104,7 +123,8 @@ export const createSave = async (req, res) => {
       }
     }
 
-    if (!content) content = `Neural Link established: ${url || title}`;
+    // Semantic Clarity: Use a descriptive fallback that doesn't confuse the AI
+    if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled Content'} (Reference: ${url})`;
 
     // Generate AI enhancements
     const summary = await generateAISummary(content);
