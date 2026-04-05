@@ -4,7 +4,11 @@ import User from '../models/user.model.js';
 const protect = async (req, res, next) => {
   let token;
 
-  token = req.cookies.jwt;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  } else {
+    token = req.cookies.jwt;
+  }
 
   if (token) {
     try {
