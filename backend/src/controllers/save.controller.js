@@ -12,6 +12,8 @@ import ytdl from '@distube/ytdl-core';
 const { getSubtitles } = require('youtube-captions-scraper');
 
 
+import Tesseract from 'tesseract.js';
+
 export const createSave = async (req, res) => {
   try {
     let { title, content, type, url, source, domain, imageUrl, pdfUrl, tags: userTags } = req.body;
@@ -25,14 +27,14 @@ export const createSave = async (req, res) => {
       return (match && match[2].length === 11) ? match[2] : null;
     };
 
-    // 1. Canonical Normalization: Ensure 100% duplicate detection resolution
+    // 1. Canonical Normalization
     const ytId = getYoutubeID(url);
     if (ytId) {
       url = `https://www.youtube.com/watch?v=${ytId}`;
-      type = 'youtube'; // Auto-detect for precision
+      type = 'youtube';
     }
 
-    // 2. Atomic Duplicate Handling: If URL exists for this user, we perform a 'Neural Update'
+    // 2. Atomic Duplicate Handling & Update Optimization
     if (url) {
       const existingSave = await Save.findOne({ url, user: userId });
       if (existingSave) {
@@ -45,19 +47,23 @@ export const createSave = async (req, res) => {
         existingSave.imageUrl = imageUrl || existingSave.imageUrl;
         existingSave.pdfUrl = pdfUrl || existingSave.pdfUrl;
         
-        // Re-trigger AI for updated content or legacy fallback remediation
+        // Parallel AI Pulse for existing artifacts
         const currentContent = existingSave.content || '';
         const isFallback = currentContent.startsWith('Neural Link established:') || 
                           currentContent.startsWith('Multimedia Artifact Captured:');
                           
         if ((content && content !== existingSave.content) || isFallback) {
-          const summary = await generateAISummary(content || currentContent);
-          const aiTags = await generateAITags(content || currentContent);
-          const embedding = await generateMistralEmbedding(content || currentContent);
+          const contentToProcess = content || currentContent;
+          const [summary, aiTags, embedding] = await Promise.all([
+            generateAISummary(contentToProcess),
+            generateAITags(contentToProcess),
+            generateMistralEmbedding(contentToProcess)
+          ]);
+
           existingSave.summary = summary;
           existingSave.tags = [...new Set([...(userTags || []), ...aiTags])];
           existingSave.embedding = embedding;
-          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), content || currentContent, { user: userId.toString() });
+          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), contentToProcess, { user: userId.toString() });
         }
         
         await existingSave.save();
@@ -67,7 +73,7 @@ export const createSave = async (req, res) => {
 
     let fileUrl = null;
 
-    // Handle File upload (PDF/Image)
+    // Handle File upload (PDF/Image) - Higher Fidelity Extraction
     if (req.file) {
       const isPDF = req.file.mimetype === 'application/pdf';
       const isImage = req.file.mimetype.startsWith('image/');
@@ -84,12 +90,13 @@ export const createSave = async (req, res) => {
         }
       } else if (isImage) {
         try {
-          const Tesseract = await import('tesseract.js');
-          const { data: { text } } = await Tesseract.default.recognize(req.file.buffer, 'eng');
+          // Optimized Singleton OCR Handshake
+          const { data: { text } } = await Tesseract.recognize(req.file.buffer, 'eng');
           content = text.trim() ? text.trim() : `Visual artifact indexed: ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
         } catch (ocrError) {
+          console.error('[OCR Error]', ocrError);
           content = `Visual artifact indexed (OCR Failed): ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
@@ -131,10 +138,13 @@ export const createSave = async (req, res) => {
     // Final Fallback: Descriptive Metadata Anchor
     if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled'} (Reference: ${url})`;
 
-    // Generate AI enhancements
-    const summary = await generateAISummary(content);
-    const aiTags = await generateAITags(content);
-    const embedding = await generateMistralEmbedding(content);
+    // AI Neural Pulse: Trigger all synthesis models in parallel for 100% speed resolution
+    const [summary, aiTags, embedding] = await Promise.all([
+      generateAISummary(content),
+      generateAITags(content),
+      generateMistralEmbedding(content)
+    ]);
+
     const combinedTags = [...new Set([...(userTags || []), ...aiTags])];
 
     const newSave = await Save.create({
