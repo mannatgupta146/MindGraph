@@ -18,7 +18,7 @@ app.use(cors({
     if (!origin || allowed.includes(origin) || origin.startsWith('chrome-extension://')) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(null, false);
     }
   },
   credentials: true,
