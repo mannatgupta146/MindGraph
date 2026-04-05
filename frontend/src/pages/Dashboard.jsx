@@ -22,7 +22,7 @@ const Dashboard = () => {
   const fetchSaves = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:3000/api/saves', { withCredentials: true });
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/saves', { withCredentials: true });
       setSaves(data);
     } catch (error) {
       console.error('Error fetching saves:', error);

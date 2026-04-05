@@ -14,7 +14,7 @@
       loginBtn: document.getElementById('login-redirect-btn')
     };
 
-    const API_BASE = 'http://localhost:3000/api';
+    const API_BASE = 'https://mindgraph.onrender.com/api';
     
     // 🛡️ NEURAL CONTEXT GUARD (Resilient Storage Bridge)
     const storage = (typeof chrome !== 'undefined' && chrome.storage) ? chrome.storage.local : {

@@ -17,7 +17,7 @@ const Archives = () => {
   const fetchArchives = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:3000/api/saves/archived', { withCredentials: true });
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/saves/archived', { withCredentials: true });
       setSaves(data);
     } catch (error) {
       console.error('Error fetching archives:', error);

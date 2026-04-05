@@ -16,7 +16,7 @@ const CollectionDetail = () => {
   const fetchCollectionDetail = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:3000/api/collections/${id}`);
+      const { data } = await axios.get(`https://mindgraph.onrender.com/api/collections/${id}`);
       setCollection(data);
     } catch (error) {
       console.error('Error fetching collection detail:', error);
@@ -37,7 +37,7 @@ const CollectionDetail = () => {
   const handleDeleteCollection = async () => {
     if (window.confirm("Are you sure you want to permanently delete this project? Your captured memories will remain safely in your inbox.")) {
       try {
-        await axios.delete(`http://localhost:3000/api/collections/${id}`, { withCredentials: true });
+        await axios.delete(`https://mindgraph.onrender.com/api/collections/${id}`, { withCredentials: true });
         navigate('/collections');
       } catch (error) {
         console.error('Error deleting collection:', error);

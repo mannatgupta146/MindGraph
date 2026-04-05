@@ -11,7 +11,7 @@ const Resurface = () => {
   const fetchResurface = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:3000/api/saves/resurface', { withCredentials: true });
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/saves/resurface', { withCredentials: true });
       setData(data);
     } catch (err) {
       console.error(err);

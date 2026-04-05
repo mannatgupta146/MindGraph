@@ -22,7 +22,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
       
       const fetchCollections = async () => {
         try {
-          const { data } = await axios.get('http://localhost:3000/api/collections');
+          const { data } = await axios.get('https://mindgraph.onrender.com/api/collections');
           setCollections(data);
         } catch (error) {
           console.error('Error fetching collections:', error);
@@ -52,7 +52,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
         formData.append('content', content);
       }
 
-      const { data } = await axios.post('http://localhost:3000/api/saves', formData, {
+      const { data } = await axios.post('https://mindgraph.onrender.com/api/saves', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -61,7 +61,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
 
       if (selectedCollection) {
         try {
-          await axios.post('http://localhost:3000/api/collections/add', {
+          await axios.post('https://mindgraph.onrender.com/api/collections/add', {
             collectionId: selectedCollection,
             saveId: data._id
           }, { withCredentials: true });

@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkUserLoggedIn = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3000/api/auth/profile');
+        const { data } = await axios.get('https://mindgraph.onrender.com/api/auth/profile');
         setUser(data);
         // Silently sync if user found
         if (data.token) syncWithExtension(data.token);
@@ -51,21 +51,21 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const { data } = await axios.post('http://localhost:3000/api/auth/login', { email, password });
+    const { data } = await axios.post('https://mindgraph.onrender.com/api/auth/login', { email, password });
     setUser(data);
     if (data.token) syncWithExtension(data.token);
     return data;
   };
 
   const register = async (name, email, password) => {
-    const { data } = await axios.post('http://localhost:3000/api/auth/register', { name, email, password });
+    const { data } = await axios.post('https://mindgraph.onrender.com/api/auth/register', { name, email, password });
     setUser(data);
     if (data.token) syncWithExtension(data.token);
     return data;
   };
 
   const logout = async () => {
-    await axios.post('http://localhost:3000/api/auth/logout');
+    await axios.post('https://mindgraph.onrender.com/api/auth/logout');
     setUser(null);
     // Optional: Clear extension token on logout
     syncWithExtension(null);

@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const generatePin = async () => {
     setLoadingPin(true);
     try {
-      const { data } = await axios.post('http://localhost:3000/api/auth/generate-pin', {}, { withCredentials: true });
+      const { data } = await axios.post('https://mindgraph.onrender.com/api/auth/generate-pin', {}, { withCredentials: true });
       setPairingPin(data.pin);
       setTimeLeft(600); // 10 Minutes
     } catch (err) {

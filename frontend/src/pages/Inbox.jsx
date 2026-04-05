@@ -22,7 +22,7 @@ const Inbox = () => {
   const fetchInbox = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:3000/api/saves/inbox');
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/saves/inbox');
       setSaves(data);
     } catch (error) {
       console.error('Error fetching inbox:', error);

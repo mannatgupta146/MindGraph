@@ -38,7 +38,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
   const fetchSaveDetails = async (id) => {
     setIsFetching(true);
     try {
-      const { data } = await axios.get(`http://localhost:3000/api/saves/${id}`, {
+      const { data } = await axios.get(`https://mindgraph.onrender.com/api/saves/${id}`, {
         withCredentials: true
       });
       setSave(data);
@@ -52,7 +52,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
 
   const fetchCollections = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3000/api/collections');
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/collections');
       setCollections(data);
     } catch (err) {
       console.error('Error fetching collections:', err);
@@ -89,7 +89,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
     setIsDeleting(true);
     setError(null);
     try {
-      await axios.delete(`http://localhost:3000/api/saves/${save._id}`, {
+      await axios.delete(`https://mindgraph.onrender.com/api/saves/${save._id}`, {
         withCredentials: true
       });
       onDeleteSuccess();
@@ -105,7 +105,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
     setIsUpdating(true);
     setError(null);
     try {
-      await axios.patch(`http://localhost:3000/api/saves/${save._id}`, 
+      await axios.patch(`https://mindgraph.onrender.com/api/saves/${save._id}`, 
         { status: newStatus },
         { withCredentials: true }
       );
@@ -123,7 +123,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
     setIsAddingToCollection(true);
     setError(null);
     try {
-      await axios.post('http://localhost:3000/api/collections/add', {
+      await axios.post('https://mindgraph.onrender.com/api/collections/add', {
         collectionId,
         saveId: save._id
       }, { withCredentials: true });
@@ -141,7 +141,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
     setIsAddingToCollection(true);
     setError(null);
     try {
-      await axios.post('http://localhost:3000/api/collections/remove', {
+      await axios.post('https://mindgraph.onrender.com/api/collections/remove', {
         collectionId,
         saveId: save._id
       }, { withCredentials: true });

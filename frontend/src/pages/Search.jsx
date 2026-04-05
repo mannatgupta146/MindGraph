@@ -21,7 +21,7 @@ const Search = () => {
     setIsSearching(true);
     setHasSearched(true);
     try {
-      const { data } = await axios.get(`http://localhost:3000/api/saves/search?query=${encodeURIComponent(searchTerm)}`, {
+      const { data } = await axios.get(`https://mindgraph.onrender.com/api/saves/search?query=${encodeURIComponent(searchTerm)}`, {
         withCredentials: true
       });
       setResults(data);

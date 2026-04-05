@@ -11,7 +11,7 @@ const Collections = () => {
 
   const fetchCollections = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3000/api/collections');
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/collections');
       setCollections(data);
     } catch (error) {
       console.error('Error fetching collections:', error);
@@ -27,7 +27,7 @@ const Collections = () => {
   const handleCreateCollection = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/api/collections', newCollection);
+      await axios.post('https://mindgraph.onrender.com/api/collections', newCollection);
       setNewCollection({ title: '', description: '', icon: '📁', color: '#0F92D4' });
       setIsModalOpen(false);
       fetchCollections();

@@ -59,7 +59,7 @@ const KnowledgeGraph = () => {
   // Fetch data
   const fetchGraphData = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3000/api/saves/graph', { withCredentials: true });
+      const { data } = await axios.get('https://mindgraph.onrender.com/api/saves/graph', { withCredentials: true });
       setGraphData(data);
     } catch (err) {
       console.error(err);
@@ -83,7 +83,7 @@ const KnowledgeGraph = () => {
         fgRef.current.zoom(2.2, 800);
         
         if (!selectedSave || selectedSave._id !== id) {
-          axios.get(`http://localhost:3000/api/saves/${id}`, { withCredentials: true })
+          axios.get(`https://mindgraph.onrender.com/api/saves/${id}`, { withCredentials: true })
             .then(({ data }) => setSelectedSave(data))
             .catch(err => console.error(err));
         }
