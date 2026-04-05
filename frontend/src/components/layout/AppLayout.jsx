@@ -49,10 +49,10 @@ const AppLayout = ({ children }) => {
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <div className="flex-1 lg:ml-[260px] min-h-screen flex flex-col transition-all duration-300 w-full relative">
+      <div className="flex-1 min-h-screen flex flex-col transition-all duration-300 w-full relative overflow-x-hidden lg:pl-[260px]">
         <TopBar title={title} onToggleSidebar={() => setIsSidebarOpen(true)} />
-        {/* We use pt-20 to account for the 80px fixed TopBar and let the window handle the scroll */}
-        <main className="flex-1 p-4 md:p-8 pt-20">
+        {/* pt-20 for fixed TopBar, window scroll enabled, horizontal lockdown active */}
+        <main className="flex-1 p-4 md:p-8 pt-24 min-h-screen">
           <div className="max-w-[1400px] mx-auto w-full">
             {children}
           </div>

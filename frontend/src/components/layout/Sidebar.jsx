@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { X, LogOut, Link, RefreshCcw } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE } from '../../api/config';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user, logout } = useContext(AuthContext);
@@ -25,7 +26,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const generatePin = async () => {
     setLoadingPin(true);
     try {
-      const { data } = await axios.post('https://mindgraph.onrender.com/api/auth/generate-pin', {}, { withCredentials: true });
+      const { data } = await axios.post(`${API_BASE}/auth/generate-pin`, {}, { withCredentials: true });
       setPairingPin(data.pin);
       setTimeLeft(600); // 10 Minutes
     } catch (err) {
