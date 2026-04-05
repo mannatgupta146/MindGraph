@@ -109,20 +109,45 @@ export const createSave = async (req, res) => {
     if (!content && url) {
       if (type === 'youtube' && ytId) {
         try {
-          const info = await ytdl.getBasicInfo(url);
-          if (!title) title = info.videoDetails.title;
+          // Resiliency Layer 1: OEmbed for Title/Metadata (Fast & Reliable)
+          const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+          const oembedResponse = await fetch(oembedUrl);
+          const oembedData = await oembedResponse.json();
           
+          // Neural Title Sanitization: Favor real video titles over "ff" or "YouTube"
+          const isGenericTitle = !title || title.toLowerCase() === 'ff' || title.toLowerCase() === 'youtube' || title.length < 3;
+          if (isGenericTitle && oembedData.title) title = oembedData.title;
+
           let transcriptText = '';
+          let description = '';
+
+          // Resiliency Layer 2: YTDL for detailed info & transcription
           try {
-            const captions = await getSubtitles({ videoID: ytId, lang: 'en' });
-            transcriptText = captions.map(c => c.text).join(' ');
-          } catch (tError) { 
-            console.warn(`[Neural Extraction] Captions unavailable for ${ytId}, falling back to description.`); 
-            transcriptText = info.videoDetails.description?.substring(0, 800) || '';
+            const info = await ytdl.getBasicInfo(url);
+            description = info.videoDetails.description || '';
+            try {
+              const captions = await getSubtitles({ videoID: ytId, lang: 'en' });
+              transcriptText = captions.map(c => c.text).join(' ');
+            } catch (tError) { 
+              console.warn(`[Neural Extraction] Captions unavailable for ${ytId}`); 
+            }
+          } catch (yError) {
+            console.warn(`[Neural Extraction] YTDL failed for ${ytId}, using OEmbed fallback.`);
           }
-          content = `Video: ${info.videoDetails.title}\n\nTranscript/Description: ${transcriptText || 'N/A'}`;
+
+          // Resiliency Layer 3: Meta Scraper (Fallback for Description if YTDL fails)
+          if (!description) {
+            try {
+              const pageResponse = await fetch(url);
+              const html = await pageResponse.text();
+              const metaDescription = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
+              description = metaDescription || '';
+            } catch (pError) { console.error('[Meta Scraper Error]'); }
+          }
+
+          content = `Video: ${title || oembedData.title || 'Unknown Video'}\nAuthor: ${oembedData.author_name || 'N/A'}\n\nTranscript: ${transcriptText || 'N/A'}\n\nDescription: ${description || 'N/A'}`;
         } catch (yError) { 
-          console.error('[YT Extraction Error]', yError); 
+          console.error('[YT Extraction Total Failure]', yError); 
         }
       } else if (type === 'tweet') {
         try {
