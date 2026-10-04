@@ -28,7 +28,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background transition-colors duration-500 relative px-4 overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen bg-background transition-colors duration-500 relative px-4 py-12 overflow-hidden">
       
       {/* Background Glow */}
       <div className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/10 blur-[100px] animate-pulse rounded-full pointer-events-none" />
@@ -38,25 +38,25 @@ const Login = () => {
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-120 p-6 sm:p-10 bg-surface/60 backdrop-blur-2xl rounded-3xl border border-border transition-all duration-500 shadow-2xl relative z-10 group overflow-hidden">
+      <div className="w-full max-w-md my-8 p-6 sm:p-8 bg-surface/60 backdrop-blur-2xl rounded-3xl border border-border transition-all duration-500 shadow-2xl relative z-10 group overflow-hidden">
         
-        <div className="text-center mb-8">
-           <div className="inline-flex w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center text-primary mb-4 border border-primary/20">
+        <div className="text-center mb-6">
+           <div className="inline-flex w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center text-primary mb-3 border border-primary/20">
               <Lock className="w-6 h-6" />
            </div>
            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-text-primary mb-1">Welcome Back</h2>
-           <p className="text-sm sm:text-base font-medium text-text-tertiary">Log in to access your MindGraph vault</p>
+           <p className="text-xs sm:text-sm font-medium text-text-tertiary">Log in to access your MindGraph vault</p>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm sm:text-base font-bold p-4 rounded-xl text-center mb-6 animate-shake">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs sm:text-sm font-bold p-3.5 rounded-xl text-center mb-5 animate-shake">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-sm font-bold text-text-secondary ml-1">Email Address</label>
+            <label className="block text-xs sm:text-sm font-bold text-text-secondary ml-1">Email Address</label>
             <div className="relative group">
                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-primary transition-colors" />
                <input
@@ -66,13 +66,13 @@ const Login = () => {
                  placeholder="your.email@example.com"
                  required
                  disabled={loading}
-                 className="w-full pl-12 pr-4 py-3.5 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 transition-all text-base"
+                 className="w-full pl-12 pr-4 py-3 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 transition-all text-sm sm:text-base"
                />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-sm font-bold text-text-secondary ml-1">Password</label>
+            <label className="block text-xs sm:text-sm font-bold text-text-secondary ml-1">Password</label>
             <div className="relative group">
                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-primary transition-colors" />
                <input
@@ -82,7 +82,7 @@ const Login = () => {
                  placeholder="Enter your password"
                  required
                  disabled={loading}
-                 className="w-full pl-12 pr-12 py-3.5 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 transition-all text-base"
+                 className="w-full pl-12 pr-12 py-3 bg-background/40 border border-border/40 rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary/50 focus:bg-background/80 transition-all text-sm sm:text-base"
                />
                <button
                  type="button"
@@ -97,7 +97,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="group/btn w-full py-4 px-6 mt-2 bg-primary text-white font-bold text-base sm:text-lg rounded-2xl flex items-center justify-center space-x-2 transition-all duration-300 hover:brightness-110 active:scale-95 disabled:opacity-50 shadow-lg shadow-primary/20 cursor-pointer"
+            className="group/btn w-full py-3.5 px-6 mt-2 bg-primary text-white font-bold text-sm sm:text-base rounded-2xl flex items-center justify-center space-x-2 transition-all duration-300 hover:brightness-110 active:scale-95 disabled:opacity-50 shadow-lg shadow-primary/20 cursor-pointer"
           >
             {loading ? (
               <>
@@ -113,8 +113,8 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-border/40 text-center">
-           <p className="text-sm sm:text-base font-medium text-text-tertiary">
+        <div className="mt-6 pt-5 border-t border-border/40 text-center">
+           <p className="text-xs sm:text-sm font-medium text-text-tertiary">
              Don't have an account? <Link to="/register" className="text-primary font-bold hover:underline cursor-pointer">Create Account</Link>
            </p>
         </div>

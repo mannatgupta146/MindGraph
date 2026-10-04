@@ -105,32 +105,32 @@ const Landing = () => {
   }, []);
 
   const stats = [
-    { label: 'Latency', val: '12ms', icon: <Zap className="w-3 h-3" /> },
+    { label: 'Speed', val: '12ms', icon: <Zap className="w-3 h-3" /> },
     { label: 'Uptime', val: '99.9%', icon: <Activity className="w-3 h-3" /> },
-    { label: 'Neural Nodes', val: '1.2M+', icon: <Network className="w-3 h-3" /> },
-    { label: 'System', val: 'Active', icon: <Command className="w-3 h-3" /> }
+    { label: 'Saved Items', val: '1.2M+', icon: <Network className="w-3 h-3" /> },
+    { label: 'Status', val: 'Active', icon: <Command className="w-3 h-3" /> }
   ];
 
   const features = [
     {
-      title: 'Neural Discovery',
-      desc: 'Semantically navigate your entire archive as a living, interconnected constellation of thoughts.',
+      title: 'Visual Knowledge Graph',
+      desc: 'Explore your entire library as an interactive, interconnected web of thoughts and ideas.',
       icon: <Network className="w-5 h-5 text-blue-500" />,
-      tag: 'OS Core',
+      tag: 'Core Feature',
       color: 'blue'
     },
     {
-      title: 'Vision-First Engine',
-      desc: 'Automated OCR and Image Captioning turn static screen-captures into searchable intelligence.',
+      title: 'Smart Text & Image OCR',
+      desc: 'Automatic text recognition turns your screenshots, images, and documents into searchable notes.',
       icon: <Cpu className="w-5 h-5 text-cyan-500" />,
-      tag: 'Neural Logic',
+      tag: 'Smart AI',
       color: 'cyan'
     },
     {
-      title: 'Contextual Siphoning',
-      desc: 'Every link you touch or idea you record is automatically bridged to relevant historical memories.',
+      title: 'One-Click Web Collector',
+      desc: 'Save any web link, text snippet, or image instantly and link it to your existing collection.',
       icon: <Zap className="w-5 h-5 text-amber-500" />,
-      tag: 'Active Sync',
+      tag: 'Auto Sync',
       color: 'amber'
     }
   ];
@@ -139,7 +139,7 @@ const Landing = () => {
     <div className={`relative min-h-screen ${theme === 'dark' ? 'bg-black text-white' : 'bg-gray-50 text-gray-900'} overflow-x-hidden transition-colors duration-500`}>
       
       {/* 1. INTERACTIVE NEURAL BACKGROUND (FULL SCREEN & DYNAMNIC) */}
-      <div className="absolute inset-0 z-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]">
+      <div className="absolute inset-0 z-0 opacity-50 mask-[radial-gradient(ellipse_at_center,black_70%,transparent_100%)]">
         <ForceGraph2D
           ref={fgRef}
           graphData={graphData}
@@ -179,7 +179,7 @@ const Landing = () => {
 
       {/* 2. COMMAND HEADER NAVIGATION */}
       <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
-        <div className="max-w-[1600px] mx-auto flex justify-between items-center relative">
+        <div className="max-w-400 mx-auto flex justify-between items-center relative">
           
           {/* LEFT: Logo */}
           <div className="flex items-center space-x-3 bg-background/60 backdrop-blur-xl border border-border px-4 md:px-5 py-2 md:py-2.5 rounded-xl md:rounded-2xl shadow-xl pointer-events-auto">
@@ -206,52 +206,52 @@ const Landing = () => {
       </nav>
 
       {/* 3. HERO CONTENT - WIDE & ACCESSIBLE */}
-      <main className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 pt-28 md:pt-30 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
+      <main className="relative z-10 w-full max-w-400 mx-auto px-6 md:px-12 pt-40 md:pt-48 pb-20 md:pb-40 flex flex-col items-start text-left pointer-events-none">
         
         <div className="max-w-4xl">
            <div className="flex items-center space-x-3 mb-4">
-              <span className="w-12 h-[1px] bg-primary"></span>
+              <span className="w-12 h-px bg-primary"></span>
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">MindGraph v2.0</span>
            </div>
 
            <h1 className="text-4xl sm:text-6xl md:text-[108px] font-black mb-6 md:mb-8 leading-[0.95] md:leading-[0.85] tracking-tight pointer-events-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
              Experience Your <br className="hidden md:block"/>
-             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary animate-gradient">Total Memory.</span>
+             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-secondary to-primary animate-gradient">Total Memory.</span>
            </h1>
 
            <p className="max-w-2xl text-lg md:text-xl text-text-secondary mb-10 md:mb-12 font-medium leading-relaxed pointer-events-auto opacity-70">
-             MindGraph builds neural bridges between every link, image, and discovery you encounter. 
-             Stop searching. Start discovering your personal knowledge constellation.
+             MindGraph connects your links, images, and notes automatically. 
+             Stop searching endlessly. Start discovering your personal digital workspace.
            </p>
 
            <button 
               onClick={handleCTAClick}
-              className="group pointer-events-auto px-10 md:px-12 py-4 md:py-5 bg-text-primary text-background font-black rounded-xl md:rounded-2xl flex items-center shadow-2xl hover:scale-105 transition-all text-sm md:text-base"
+              className="group pointer-events-auto px-10 md:px-12 py-4 md:py-5 bg-text-primary text-background font-black rounded-xl md:rounded-2xl flex items-center shadow-2xl hover:scale-105 transition-all text-sm md:text-base cursor-pointer"
            >
-              {user ? 'Resume Brain Sync' : 'Sync Consciousness'}
-              <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {user ? 'Open Workspace' : 'Get Started Free'}
+              <ArrowRight className="ml-3 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
            </button>
         </div>
       </main>
 
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+      <div className="h-px w-full bg-linear-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 2.0 NEURAL HELPER - UNIVERSAL CAPTURE */}
-      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-32 pointer-events-auto">
-          <div className="bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-[32px] md:rounded-[48px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden group shadow-2xl transition-all duration-700 hover:border-primary/50">
+      <section className="relative z-10 w-full max-w-400 mx-auto px-6 md:px-12 py-20 md:py-32 pointer-events-auto">
+          <div className="bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-4xl md:rounded-6xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden group shadow-2xl transition-all duration-700 hover:border-primary/50">
              
              {/* Background Decoration */}
-             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-amber-500/5 pointer-events-none" />
+             <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-primary/5 via-transparent to-amber-500/5 pointer-events-none" />
              <div className="absolute -top-24 -left-24 w-64 h-64 bg-primary/10 blur-[100px] animate-pulse" />
 
              <div className="max-w-2xl relative z-10 text-center md:text-left mb-12 md:mb-0">
                 <div className="inline-flex items-center space-x-3 mb-6 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full">
                     <Globe className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Siphon the Web</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Web Extension</span>
                 </div>
-                <h3 className="text-3xl md:text-6xl font-black mb-6 leading-tight tracking-tighter">Your Mind, Expanded by Helper.</h3>
+                <h3 className="text-3xl md:text-6xl font-black mb-6 leading-tight tracking-tighter">Save Anything from the Web.</h3>
                 <p className="text-lg md:text-xl text-text-secondary opacity-70 mb-10 max-w-xl leading-relaxed">
-                   MindGraph doesn't wait for you. The Helper siphons every screenshot, link, and insight you encounter directly into your 1.2M+ neural bridges.
+                   MindGraph works where you work. Save articles, screenshots, and bookmarks directly into your personal library with one click.
                 </p>
                 
                 <button 
@@ -267,7 +267,7 @@ const Landing = () => {
                       <Download className="w-5 h-5 text-white" />
                    )}
                    <span className="uppercase tracking-tighter">
-                      {isDeploying ? 'Siphoning Binary...' : deploymentSuccess ? 'Terminal Linked' : 'Download MindGraph Helper'}
+                      {isDeploying ? 'Preparing Download...' : deploymentSuccess ? 'Downloaded!' : 'Download Web Extension'}
                    </span>
                    {!isDeploying && !deploymentSuccess && (
                       <ArrowRight className="w-5 h-5 group-hover/ext:translate-x-1 transition-transform duration-500" />
@@ -275,7 +275,7 @@ const Landing = () => {
                 </button>
              </div>
 
-             <div className="relative w-full md:w-1/3 aspect-square max-w-[300px] flex items-center justify-center mt-12 md:mt-0">
+             <div className="relative w-full md:w-1/3 aspect-square max-w-75 flex items-center justify-center mt-12 md:mt-0">
                 <div className="absolute inset-0 bg-primary/10 blur-[80px] rounded-full animate-pulse" />
                 <div className="relative z-10 w-full h-full bg-background/60 backdrop-blur-2xl border border-border/40 rounded-3xl p-6 shadow-3xl transform rotate-3 transition-transform group-hover:rotate-0 duration-700 overflow-hidden">
                    <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-border/40">
@@ -297,15 +297,15 @@ const Landing = () => {
           </div>
       </section>
 
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+      <div className="h-px w-full bg-linear-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 3.1 ENAGAGING 'HOW IT WORKS' - NEURAL LIFECYCLE */}
-      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
-         <div className="text-center w-full max-w-[1400px] mx-auto">
+      <section className="relative z-10 w-full max-w-400 mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
+         <div className="text-center w-full max-w-350 mx-auto">
             <div className="flex items-center justify-center space-x-6 mb-12 animate-fade-in opacity-40">
-               <div className="w-12 h-[1px] bg-primary/20"></div>
+               <div className="w-12 h-px bg-primary/20"></div>
                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary whitespace-nowrap">Neural Lifecycle</span>
-               <div className="w-12 h-[1px] bg-primary/20"></div>
+               <div className="w-12 h-px bg-primary/20"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
@@ -316,11 +316,11 @@ const Landing = () => {
                   onMouseEnter={() => setHoverStage(1)}
                   onMouseLeave={() => setHoverStage(0)}
                >
-                  <div className="p-6 md:p-8 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-primary/50 border-t-primary/20 overflow-hidden will-change-transform">
+                  <div className="p-6 md:p-8 rounded-4xl bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-primary/50 border-t-primary/20 overflow-hidden will-change-transform">
                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[60px] group-hover:bg-primary/20 transition-all pointer-events-none" />
                      
                      {/* SIPHON ANIMATION BOX */}
-                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
+                     <div className="w-full aspect-video rounded-3xl bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
                         {/* Neural Core */}
                         <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.5)] z-20 animate-pulse relative">
                            <Cpu className="w-8 h-8 text-white" />
@@ -372,11 +372,11 @@ const Landing = () => {
                   onMouseEnter={() => setHoverStage(2)}
                   onMouseLeave={() => setHoverStage(0)}
                >
-                  <div className="p-6 md:p-8 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-secondary/50 border-t-secondary/20 overflow-hidden will-change-transform">
+                  <div className="p-6 md:p-8 rounded-4xl bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-secondary/50 border-t-secondary/20 overflow-hidden will-change-transform">
                      <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 blur-[60px] group-hover:bg-secondary/20 transition-all pointer-events-none" />
                      
                      {/* BRIDGING ANIMATION BOX */}
-                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
+                     <div className="w-full aspect-video rounded-3xl bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
                         <svg className="absolute inset-0 w-full h-full p-12">
                            {/* Central Node */}
                            <circle cx="50%" cy="50%" r="8" className="fill-secondary shadow-lg" />
@@ -424,11 +424,11 @@ const Landing = () => {
                   onMouseEnter={() => setHoverStage(3)}
                   onMouseLeave={() => setHoverStage(0)}
                >
-                  <div className="p-6 md:p-8 rounded-[32px] bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-amber-500/50 border-t-amber-500/20 overflow-hidden will-change-transform">
+                  <div className="p-6 md:p-8 rounded-4xl bg-background/40 backdrop-blur-3xl border border-border/50 shadow-3xl flex flex-col items-center h-full transform transition-all duration-700 group-hover:scale-[1.02] group-hover:border-amber-500/50 border-t-amber-500/20 overflow-hidden will-change-transform">
                      <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[60px] group-hover:bg-amber-500/20 transition-all pointer-events-none" />
                      
                      {/* DISCOVERY ANIMATION BOX */}
-                     <div className="w-full aspect-video rounded-[24px] bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
+                     <div className="w-full aspect-video rounded-3xl bg-surface/20 border border-border/30 mb-6 relative overflow-hidden flex items-center justify-center pointer-events-none">
                         {/* Pulsing Cluster */}
                         <div className="relative">
                            <motion.div 
@@ -460,7 +460,7 @@ const Landing = () => {
                         
                         {/* Scanner Effect */}
                         <motion.div 
-                           className="absolute w-full h-[2px] bg-amber-500/30 blur-sm pointer-events-none"
+                           className="absolute w-full h-0.5 bg-amber-500/30 blur-sm pointer-events-none"
                            initial={{ opacity: 0 }}
                            animate={{ 
                               top: hoverStage === 3 ? ['0%', '100%', '0%'] : '50%',
@@ -485,39 +485,39 @@ const Landing = () => {
          </div>
       </section>
 
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+      <div className="h-px w-full bg-linear-to-r from-transparent via-border/20 to-transparent" />
 
       {/* 4. HIGH-FIDELITY BENTO DASHBOARD */}
-      <section className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-none">
+      <section className="relative z-10 w-full max-w-400 mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-none">
           
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6 mb-16">
-             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-widest text-text-primary">System Core Features</h2>
-             <div className="flex-1 h-[1px] bg-border opacity-30 w-full md:w-auto" />
+             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-widest text-text-primary">Core Platform Features</h2>
+             <div className="flex-1 h-px bg-border opacity-30 w-full md:w-auto" />
              <div className="flex items-center space-x-2 text-[10px] font-black uppercase opacity-40">
                 <Activity className="w-3 h-3 text-emerald-500" />
-                <span>Monitoring Active</span>
+                <span>System Online</span>
              </div>
           </div>
 
           <div className="grid grid-cols-1 gap-8">
              
              {/* Main Hub Terminal Card */}
-             <div className="p-0.5 md:p-1 rounded-[32px] md:rounded-[48px] bg-gradient-to-br from-border/50 to-transparent pointer-events-auto shadow-3xl">
-                <div className="w-full h-full rounded-[30px] md:rounded-[44px] bg-background/80 backdrop-blur-3xl p-6 md:p-10 flex flex-col md:flex-row justify-between items-center border border-white/5 relative overflow-hidden group min-h-[400px] md:min-h-[450px]">
+             <div className="p-0.5 md:p-1 rounded-4xl md:rounded-6xl bg-linear-to-br from-border/50 to-transparent pointer-events-auto shadow-3xl">
+                <div className="w-full h-full rounded-[30px] md:rounded-[44px] bg-background/80 backdrop-blur-3xl p-6 md:p-10 flex flex-col md:flex-row justify-between items-center border border-white/5 relative overflow-hidden group min-h-100 md:min-h-112.5">
                    
-                   <div className="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-primary/5 blur-[100px] md:blur-[150px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                   <div className="absolute top-0 right-0 w-100 md:w-150 h-100 md:h-150 bg-primary/5 blur-[100px] md:blur-[150px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                    
                    <div className="max-w-2xl relative z-10 text-center md:text-left">
-                      <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[9px] font-black uppercase text-primary mb-6 inline-block tracking-widest">Global Graph v1.0</div>
-                      <h3 className="text-3xl md:text-6xl font-black mb-6 md:mb-8 leading-tight">Visualizing 1.2M+ Memory Bridges</h3>
+                      <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[9px] font-black uppercase text-primary mb-6 inline-block tracking-widest">Interactive Knowledge Graph</div>
+                      <h3 className="text-3xl md:text-6xl font-black mb-6 md:mb-8 leading-tight">Visualize All Your Saved Content</h3>
                       <p className="text-lg md:text-xl text-text-secondary leading-relaxed opacity-70 mb-8 max-w-xl mx-auto md:mx-0">
-                         Our proprietary force-directed engine maps your entire digital existence in real-time. No more folder trees. 
-                         Just a floating consciousness of your own discoveries.
+                         Our interactive visual map connects your notes, links, and documents automatically. 
+                         Find what you need without digging through complex folder structures.
                       </p>
 
                    </div>
 
-                   <div className="relative w-full md:w-1/2 aspect-video md:aspect-auto md:h-full rounded-[24px] md:rounded-[32px] overflow-hidden border border-border/40 bg-surface/10 group-hover:scale-[1.01] transition-transform duration-700 min-h-[220px] md:min-h-[300px] flex items-center justify-center mt-8 md:mt-0">
+                   <div className="relative w-full md:w-1/2 aspect-video md:aspect-auto md:h-full rounded-3xl md:rounded-4xl overflow-hidden border border-border/40 bg-surface/10 group-hover:scale-[1.01] transition-transform duration-700 min-h-55 md:min-h-75 flex items-center justify-center mt-8 md:mt-0">
                       <div className="absolute inset-0 flex items-center justify-center opacity-40 mix-blend-screen">
                          <div className="w-full h-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]" />
                          <Network className="w-24 md:w-48 h-24 md:h-48 text-primary animate-pulse opacity-20" />
@@ -541,7 +541,7 @@ const Landing = () => {
                    };
 
                    return (
-                      <div key={i} className={`p-8 md:p-10 rounded-[32px] md:rounded-[40px] bg-background/60 backdrop-blur-xl border border-border shadow-2xl pointer-events-auto group relative overflow-hidden flex flex-col h-full transform hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 ${hoverThemes[f.color]}`}>
+                      <div key={i} className={`p-8 md:p-10 rounded-4xl md:rounded-[40px] bg-background/60 backdrop-blur-xl border border-border shadow-2xl pointer-events-auto group relative overflow-hidden flex flex-col h-full transform hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 ${hoverThemes[f.color]}`}>
                          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-40 group-hover:scale-125 transition-all duration-500">
                             {f.icon}
                          </div>
@@ -560,7 +560,7 @@ const Landing = () => {
 
 
       {/* 4.5 FINAL SYSTEM CTA - NEURAL CONVERGENCE */}
-      <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
+      <section className="relative z-10 w-full max-w-350 mx-auto px-6 md:px-12 py-20 md:py-40 pointer-events-auto">
           <motion.div 
              className="relative group text-center"
              initial={{ opacity: 0, y: 30 }}
@@ -571,9 +571,9 @@ const Landing = () => {
              
              {/* Deep Neural Glow System (Blue, Cyan, Amber) */}
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
-                <div className="absolute top-1/2 left-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-500/10 blur-[80px] md:blur-[120px] animate-pulse" />
-                <div className="absolute bottom-1/2 right-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-cyan-500/10 blur-[80px] md:blur-[120px] animate-pulse delay-700" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[250px] md:w-[300px] h-[250px] md:h-[300px] bg-amber-500/10 blur-[70px] md:blur-[100px] animate-pulse delay-1000" />
+                <div className="absolute top-1/2 left-0 w-75 md:w-100 h-75 md:h-100 bg-blue-500/10 blur-[80px] md:blur-[120px] animate-pulse" />
+                <div className="absolute bottom-1/2 right-0 w-75 md:w-100 h-75 md:h-100 bg-cyan-500/10 blur-[80px] md:blur-[120px] animate-pulse delay-700" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-62.5 md:w-75 h-62.5 md:h-75 bg-amber-500/10 blur-[70px] md:blur-[100px] animate-pulse delay-1000" />
              </div>
              
              {/* THE CONVERGENCE CORE */}
@@ -598,7 +598,7 @@ const Landing = () => {
 
                 {/* Core Nucleus */}
                 <div className="w-16 md:w-24 h-16 md:h-24 rounded-2xl md:rounded-3xl bg-background border border-white/10 flex items-center justify-center shadow-2xl relative z-10 overflow-hidden">
-                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 animate-pulse" />
+                   <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-secondary/20 animate-pulse" />
                    <Cpu className="w-7 md:w-10 h-7 md:h-10 text-primary relative z-20" />
                 </div>
                 
@@ -615,44 +615,41 @@ const Landing = () => {
              </div>
 
              <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.95] tracking-tighter max-w-5xl mx-auto drop-shadow-2xl">
-                Ready to <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-cyan-400 to-amber-500 animate-gradient">Evolve?</span><br/>
-                Initialize Your Second Brain.
+                Ready to <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-500 via-cyan-400 to-amber-500 animate-gradient">Organize</span> Your Knowledge?
              </h2>
              
              <p className="text-lg md:text-xl text-text-secondary opacity-60 mb-12 md:mb-16 max-w-3xl mx-auto leading-relaxed font-medium px-4">
-                Stop the endless scroll. Start the neural siphoning. 
-                MindGraph is the first Memory OS designed for the research-intensive future. 
-                Initialize and deploy across every device you own. 
+                Stop losing important links and ideas. MindGraph keeps your research, bookmarks, and notes connected in one place.
              </p>
 
              <div className="flex flex-col items-center space-y-12">
                 <button 
                    onClick={handleCTAClick}
-                   className="group/btn relative px-8 md:px-10 py-4 bg-text-primary text-background rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center space-x-4 overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-[0_0_60px_rgba(59,130,246,0.3)] active:scale-95 shadow-2xl"
+                   className="group/btn relative px-8 md:px-10 py-4 bg-text-primary text-background rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex items-center space-x-4 overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-[0_0_60px_rgba(59,130,246,0.3)] active:scale-95 shadow-2xl cursor-pointer"
                 >
-                   <span className="relative z-10">{user ? 'Enter MindGraph' : 'Initialize MindGraph'}</span>
+                   <span className="relative z-10">{user ? 'Go to Dashboard' : 'Get Started Free'}</span>
                    <ArrowRight className="w-5 h-5 relative z-10 group-hover/btn:translate-x-2 transition-transform duration-500" />
                    
                    {/* Particle Gloss & Inner Glow */}
-                   <div className="absolute inset-x-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] -translate-x-[200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
+                   <div className="absolute inset-x-0 h-full w-full bg-linear-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] -translate-x-[200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000" />
                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
                 </button>
 
-                {/* Platform HUD Badges */}
+                {/* Platform Badges */}
                 <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-12 px-10 py-8 md:py-5 bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-3xl md:rounded-2xl opacity-40 hover:opacity-80 transition-all duration-700 w-full md:w-auto">
                    <div className="flex items-center space-x-3">
                       <Globe className="w-5 h-5 text-cyan-500" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Web Helper</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Web Extension</span>
                    </div>
-                   <div className="hidden md:block w-[1px] h-4 bg-border/40" />
+                   <div className="hidden md:block w-px h-4 bg-border/40" />
                    <div className="flex items-center space-x-3">
                       <Monitor className="w-5 h-5 text-blue-500" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Desktop OS</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Desktop App</span>
                    </div>
-                   <div className="hidden md:block w-[1px] h-4 bg-border/40" />
+                   <div className="hidden md:block w-px h-4 bg-border/40" />
                    <div className="flex items-center space-x-3">
                       <Smartphone className="w-5 h-5 text-amber-500" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Mobile HUD</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em]">Mobile Friendly</span>
                    </div>
                 </div>
              </div>
@@ -661,7 +658,7 @@ const Landing = () => {
 
       {/* 5. FOOTER HUD UPGRADE */}
       <footer className="relative z-10 border-t border-border bg-background/60 backdrop-blur-3xl px-6 md:px-12 py-12 md:py-16 pointer-events-auto">
-         <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-text-tertiary">
+         <div className="max-w-400 mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-text-tertiary">
             
             <div className="md:col-span-1">
                <div className="flex items-center space-x-3 mb-8">
@@ -669,39 +666,39 @@ const Landing = () => {
                   <span className="font-black text-lg text-text-primary tracking-tighter">MindGraph</span>
                </div>
                <p className="normal-case opacity-50 font-medium tracking-normal text-sm leading-relaxed max-w-xs">
-                  MindGraph is a next-generation Memory Operating System designed for the research-intensive future. 
+                  MindGraph is a smart knowledge workspace designed to save, organize, and visually connect your digital notes and bookmarks.
                </p>
             </div>
 
             <div>
-               <h5 className="text-text-secondary mb-8">Directives</h5>
+               <h5 className="text-text-secondary mb-8">Navigation</h5>
                <ul className="space-y-4">
-                  <li><a href="#" className="hover:text-primary transition-colors">Neural Sync</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Memory Core</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Visual Nodes</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Terminal Access</a></li>
+                  <li><a href="/dashboard" className="hover:text-primary transition-colors">Dashboard</a></li>
+                  <li><a href="/collections" className="hover:text-primary transition-colors">Collections</a></li>
+                  <li><a href="/inbox" className="hover:text-primary transition-colors">Inbox Queue</a></li>
+                  <li><a href="/graph" className="hover:text-primary transition-colors">Knowledge Graph</a></li>
                </ul>
             </div>
 
             <div>
-               <h5 className="text-text-secondary mb-8">Security</h5>
+               <h5 className="text-text-secondary mb-8">Features</h5>
                <ul className="space-y-4">
-                  <li><a href="#" className="hover:text-primary transition-colors">Neural Privacy</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Data Sovereignty</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Encryption Logic</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Visual Graph</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Text & Image OCR</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">One-Click Extension</a></li>
                </ul>
             </div>
 
             <div>
-               <h5 className="text-text-secondary mb-8">System Status</h5>
+               <h5 className="text-text-secondary mb-8">Server Status</h5>
                <div className="space-y-6">
                   <div className="p-4 rounded-2xl bg-surface border border-border flex items-center justify-between">
-                     <span>Core Pulse</span>
+                     <span>Status: Online</span>
                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10B981]" />
                   </div>
                   <div className="flex items-center space-x-6 text-text-tertiary">
-                     <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">v2.0.10</span>
-                     <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">© 2026 MG</span>
+                     <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">v2.0</span>
+                     <span className="opacity-40 hover:opacity-100 hover:text-primary transition-all duration-300 cursor-default">© 2026 MindGraph</span>
                   </div>
                </div>
             </div>
@@ -710,17 +707,17 @@ const Landing = () => {
       </footer>
 
       {/* CRT SCANLINE OVERLAY - FOR OS FEEL */}
-      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
+      <div className="fixed inset-0 pointer-events-none z-100 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-size-[100%_2px,3px_100%]"></div>
 
       {/* 9.0 TECHNICAL HUD OVERLAY - HANDSHAKE GUIDE */}
       <AnimatePresence>
         {showDeployGuide && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-200 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
             <motion.div 
                initial={{ opacity: 0, scale: 0.9, y: 20 }}
                animate={{ opacity: 1, scale: 1, y: 0 }}
                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-               className="bg-surface/90 border border-border/50 rounded-[32px] p-8 md:p-12 max-w-xl w-full relative shadow-3xl"
+               className="bg-surface/90 border border-border/50 rounded-4xl p-8 md:p-12 max-w-xl w-full relative shadow-3xl"
             >
                <button 
                   onClick={() => setShowDeployGuide(false)}
@@ -734,31 +731,31 @@ const Landing = () => {
                      <Monitor className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                     <h3 className="text-xl font-black uppercase tracking-widest">MindGraph Helper</h3>
-                     <p className="text-[10px] font-black uppercase opacity-60 text-primary">Status: Ready for Handshake</p>
+                     <h3 className="text-xl font-black uppercase tracking-widest">MindGraph Web Extension</h3>
+                     <p className="text-[10px] font-black uppercase opacity-60 text-primary">Status: Ready to Install</p>
                   </div>
                </div>
 
                <div className="space-y-6 mb-10">
                   <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">01</div>
+                     <div className="shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">01</div>
                      <p className="text-sm text-text-secondary">Extract the downloaded <span className="text-primary font-bold">mindgraph_helper.zip</span> folder.</p>
                   </div>
                   <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">02</div>
-                     <p className="text-sm text-text-secondary">Authorize Developer Mode in your browser settings HUD.</p>
+                     <div className="shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">02</div>
+                     <p className="text-sm text-text-secondary">Enable <span className="text-primary font-bold">Developer Mode</span> in your browser extension settings.</p>
                   </div>
                   <div className="flex space-x-4">
-                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">03</div>
+                     <div className="shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">03</div>
                      <p className="text-sm text-text-secondary">Click <span className="text-primary font-bold uppercase tracking-tighter">Load Unpacked</span> and select the extracted folder.</p>
                   </div>
                </div>
 
                <button 
                   onClick={() => setShowDeployGuide(false)}
-                  className="w-full py-4 bg-text-primary text-background rounded-2xl font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all"
+                  className="w-full py-4 bg-text-primary text-background rounded-2xl font-black uppercase tracking-tighter hover:scale-105 active:scale-95 transition-all cursor-pointer"
                >
-                  Neural Link Established - Continue
+                  Got It - Continue
                </button>
             </motion.div>
           </div>
