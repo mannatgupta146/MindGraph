@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/config';
 import MemoryCard from '../components/ui/MemoryCard';
 import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
-import { Search as SearchIcon, X, Sparkles, FileText, Layers, Tag, Filter } from 'lucide-react';
+import { Search as SearchIcon, X, Sparkles, FileText, Layers } from 'lucide-react';
 
 const Search = () => {
   const { id } = useParams();
@@ -12,7 +12,6 @@ const Search = () => {
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [selectedTypeFilter, setSelectedTypeFilter] = useState('all');
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
@@ -64,19 +63,6 @@ const Search = () => {
     navigate('/search');
   };
 
-  const typeFilters = [
-    { id: 'all', label: 'All Types' },
-    { id: 'article', label: 'Articles' },
-    { id: 'tweet', label: 'Tweets' },
-    { id: 'pdf', label: 'PDFs' },
-    { id: 'youtube', label: 'Videos' },
-    { id: 'image', label: 'Images' }
-  ];
-
-  const filteredResults = selectedTypeFilter === 'all' 
-    ? results 
-    : results.filter(item => item.type === selectedTypeFilter);
-
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header & Hero */}
@@ -126,29 +112,6 @@ const Search = () => {
         </div>
       </div>
 
-      {/* Media Type Filter Ribbon (Visible when searching or when results exist) */}
-      {hasSearched && (
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none border-b border-border/40 mb-6">
-          <div className="flex items-center text-text-tertiary mr-2 shrink-0">
-            <Filter className="w-3.5 h-3.5 mr-1" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">Filter:</span>
-          </div>
-          {typeFilters.map((filter) => (
-            <button
-              key={filter.id}
-              onClick={() => setSelectedTypeFilter(filter.id)}
-              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 active:scale-95 border ${
-                selectedTypeFilter === filter.id
-                  ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                  : 'bg-surface border-border text-text-secondary hover:text-text-primary hover:border-text-primary/30'
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Results Area */}
       <div className="pt-2">
         {isSearching && results.length === 0 ? (
@@ -167,11 +130,11 @@ const Search = () => {
               </div>
             ))}
           </div>
-        ) : filteredResults.length > 0 ? (
+        ) : results.length > 0 ? (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
               <h2 className="text-lg md:text-xl font-black text-text-primary tracking-tight">
-                Found <span className="text-primary">{filteredResults.length}</span> {filteredResults.length === 1 ? 'match' : 'matches'} for <span className="text-primary italic">"{query}"</span>
+                Found <span className="text-primary">{results.length}</span> {results.length === 1 ? 'match' : 'matches'} for <span className="text-primary italic">"{query}"</span>
               </h2>
               <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                 Smart Conceptual Search
@@ -179,7 +142,7 @@ const Search = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500">
-              {filteredResults.map((result) => (
+              {results.map((result) => (
                 <MemoryCard 
                   key={result._id} 
                   {...result} 
@@ -197,10 +160,10 @@ const Search = () => {
             </div>
             <h3 className="text-xl font-black text-text-primary uppercase tracking-wider mb-2">No Matching Content</h3>
             <p className="text-text-secondary text-sm leading-relaxed mb-6 max-w-md mx-auto">
-              We couldn't find items matching <span className="font-bold text-text-primary">"{query}"</span>. Try adjusting your query or selecting a different filter.
+              We couldn't find items matching <span className="font-bold text-text-primary">"{query}"</span>. Try adjusting your query or searching for a different keyword.
             </p>
             <button 
-              onClick={() => { setQuery(''); setResults([]); setHasSearched(false); setSelectedTypeFilter('all'); }}
+              onClick={() => { setQuery(''); setResults([]); setHasSearched(false); }}
               className="px-6 py-2.5 bg-surface border border-border text-text-primary font-bold text-xs uppercase tracking-widest rounded-xl hover:border-text-primary/40 transition-all shadow-md active:scale-95"
             >
               Reset Search
