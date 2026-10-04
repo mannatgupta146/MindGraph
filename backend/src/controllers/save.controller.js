@@ -279,59 +279,81 @@ export const semanticSearch = async (req, res) => {
 
     const cleanQuery = query.trim();
     const searchRegex = new RegExp(cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    const words = cleanQuery.split(/\s+/).filter(w => w.length > 1);
 
     // 1. Vector Search via Pinecone
     let pineconeResults = [];
     try {
-      pineconeResults = await pineconeService.queryPinecone(cleanQuery, userId.toString(), 20);
+      pineconeResults = await pineconeService.queryPinecone(cleanQuery, userId.toString(), 25);
     } catch (pcErr) {
-      console.error('[PINECONE] Search error, falling back to database keyword search:', pcErr);
+      console.error('[PINECONE] Vector search error, using database keyword search:', pcErr);
     }
 
     // Map of saveId -> score
     const scoreMap = new Map();
 
-    // Add vector matches with threshold >= 0.35
+    // Add all vector matches (score >= 0.15)
     pineconeResults.forEach(r => {
-      if (r.saveId && r.score >= 0.35) {
+      if (r.saveId && typeof r.score === 'number' && r.score >= 0.15) {
         scoreMap.set(r.saveId.toString(), r.score);
       }
     });
 
     // 2. Lookup Collections by Name
-    const matchingCollections = await Collection.find({
-      user: userId,
-      title: searchRegex
-    }).select('_id').lean();
-    const collectionIds = matchingCollections.map(c => c._id);
+    let collectionIds = [];
+    try {
+      const matchingCollections = await Collection.find({
+        user: userId,
+        title: searchRegex
+      }).select('_id').lean();
+      collectionIds = matchingCollections.map(c => c._id);
+    } catch (colErr) {
+      console.error('Error fetching matching collections:', colErr);
+    }
 
-    // 3. MongoDB Keyword & Name Search (Title/Name, Domain, URL, Type, Summary, Content, Tags, Collection Name)
+    // 3. Build MongoDB Keyword & Name Search Conditions
+    const orConditions = [
+      { title: searchRegex },
+      { domain: searchRegex },
+      { url: searchRegex },
+      { fileUrl: searchRegex },
+      { type: searchRegex },
+      { tags: searchRegex },
+      { summary: searchRegex },
+      { content: searchRegex }
+    ];
+
+    if (collectionIds.length > 0) {
+      orConditions.push({ collection: { $in: collectionIds } });
+    }
+
+    // Include multi-word token matches
+    words.forEach(w => {
+      const wRegex = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      orConditions.push(
+        { title: wRegex },
+        { tags: wRegex },
+        { summary: wRegex },
+        { content: wRegex }
+      );
+    });
+
     const keywordMatches = await Save.find({
       user: userId,
-      $or: [
-        { title: searchRegex },
-        { domain: searchRegex },
-        { url: searchRegex },
-        { fileUrl: searchRegex },
-        { type: searchRegex },
-        { tags: { $in: [searchRegex] } },
-        { summary: searchRegex },
-        { content: searchRegex },
-        ...(collectionIds.length > 0 ? [{ collection: { $in: collectionIds } }] : [])
-      ]
+      $or: orConditions
     }).select('_id title summary type tags createdAt content domain url fileUrl collection').lean();
 
-    // Boost scores for name & title keyword matches
+    // Boost scores for keyword/name matches
     keywordMatches.forEach(item => {
       const idStr = item._id.toString();
       const existingScore = scoreMap.get(idStr) || 0;
       
       let keywordScore = 0.65;
       
-      // Exact / Regex match on Item Title / Name gives high score (0.92)
+      // Title/Name match gets highest boost
       if (item.title && searchRegex.test(item.title)) {
         keywordScore = 0.92;
-      } else if (item.tags && item.tags.some(t => searchRegex.test(t))) {
+      } else if (item.tags && Array.isArray(item.tags) && item.tags.some(t => searchRegex.test(t))) {
         keywordScore = 0.85;
       } else if (item.domain && searchRegex.test(item.domain)) {
         keywordScore = 0.80;
@@ -339,7 +361,7 @@ export const semanticSearch = async (req, res) => {
         keywordScore = 0.80;
       }
 
-      // Hybrid score combining vector + name/keyword match
+      // Hybrid score combining vector + keyword match
       const finalScore = Math.min(1.0, Math.max(existingScore, keywordScore) + (existingScore && keywordScore ? 0.1 : 0));
       scoreMap.set(idStr, finalScore);
     });
@@ -359,7 +381,7 @@ export const semanticSearch = async (req, res) => {
       score: scoreMap.get(save._id.toString()) || 0.5
     })).sort((a, b) => b.score - a.score);
 
-    console.log(`[HYBRID SEARCH] Query: "${cleanQuery}" | Vector: ${pineconeResults.length} | Name/Keyword: ${keywordMatches.length} | Total Final: ${finalResults.length}`);
+    console.log(`[HYBRID SEARCH] Query: "${cleanQuery}" | Vector: ${pineconeResults.length} | Name/Keyword: ${keywordMatches.length} | Final Results: ${finalResults.length}`);
 
     res.json(finalResults);
 

@@ -64,11 +64,6 @@ const Search = () => {
     navigate('/search');
   };
 
-  const handleChipClick = (suggestion) => {
-    setQuery(suggestion);
-    performSearch(suggestion);
-  };
-
   const typeFilters = [
     { id: 'all', label: 'All Types' },
     { id: 'article', label: 'Articles' },
@@ -76,14 +71,6 @@ const Search = () => {
     { id: 'pdf', label: 'PDFs' },
     { id: 'youtube', label: 'Videos' },
     { id: 'image', label: 'Images' }
-  ];
-
-  const quickSuggestions = [
-    'Artificial Intelligence',
-    'System Design',
-    'Database Optimization',
-    'Research Papers',
-    'React & Frontend'
   ];
 
   const filteredResults = selectedTypeFilter === 'all' 
@@ -104,12 +91,12 @@ const Search = () => {
         </p>
       </div>
 
-      {/* Main Search Bar Section */}
-      <div className="max-w-3xl mx-auto space-y-4">
+      {/* Main Search Bar Section (Full Width, Left-Aligned) */}
+      <div className="w-full space-y-4 mb-8">
         <div className="relative group">
           <div className="absolute -inset-1 bg-linear-to-r from-primary/30 to-secondary/30 rounded-3xl blur-md opacity-20 group-focus-within:opacity-100 transition-opacity duration-500"></div>
           
-          <div className="relative flex items-center bg-surface border-2 border-border group-focus-within:border-primary/50 rounded-2xl px-5 py-3.5 shadow-xl transition-all">
+          <div className="relative flex items-center bg-surface border-2 border-border group-focus-within:border-primary/50 rounded-2xl px-5 py-4 shadow-xl transition-all">
             <SearchIcon className={`w-5 h-5 mr-3 shrink-0 transition-colors ${isSearching ? 'text-primary animate-pulse' : 'text-text-tertiary group-focus-within:text-primary'}`} />
             
             <input
@@ -137,25 +124,11 @@ const Search = () => {
             )}
           </div>
         </div>
-
-        {/* Quick Suggestion Chips */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-[11px] font-bold text-text-tertiary uppercase tracking-wider mr-1">Try:</span>
-          {quickSuggestions.map((suggestion) => (
-            <button
-              key={suggestion}
-              onClick={() => handleChipClick(suggestion)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-surface border border-border text-text-secondary hover:text-primary hover:border-primary/40 transition-all active:scale-95 shadow-xs"
-            >
-              {suggestion}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Media Type Filter Ribbon (Visible when searching or when results exist) */}
       {hasSearched && (
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none border-b border-border/40">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none border-b border-border/40 mb-6">
           <div className="flex items-center text-text-tertiary mr-2 shrink-0">
             <Filter className="w-3.5 h-3.5 mr-1" />
             <span className="text-[10px] font-bold uppercase tracking-wider">Filter:</span>
@@ -218,12 +191,12 @@ const Search = () => {
             </div>
           </div>
         ) : hasSearched && !isSearching ? (
-          <div className="text-center py-20 px-6 bg-surface/30 border-2 border-dashed border-border rounded-3xl animate-in fade-in zoom-in-95 max-w-xl mx-auto">
+          <div className="text-center py-20 px-6 bg-surface/30 border-2 border-dashed border-border rounded-[2.5rem] w-full animate-in fade-in zoom-in-95">
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-5 text-primary">
               <SearchIcon className="w-8 h-8" />
             </div>
             <h3 className="text-xl font-black text-text-primary uppercase tracking-wider mb-2">No Matching Content</h3>
-            <p className="text-text-secondary text-sm leading-relaxed mb-6">
+            <p className="text-text-secondary text-sm leading-relaxed mb-6 max-w-md mx-auto">
               We couldn't find items matching <span className="font-bold text-text-primary">"{query}"</span>. Try adjusting your query or selecting a different filter.
             </p>
             <button 
