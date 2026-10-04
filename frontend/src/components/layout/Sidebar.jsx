@@ -107,7 +107,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               {loadingPin ? 'Generating...' : 'Get Sync Code'}
             </button>
           )}
-          <p className="mt-2.5 text-[11px] text-text-secondary text-center font-semibold leading-snug">Code unique to account • Valid for 10m</p>
+          <p className="mt-2 text-[10px] text-text-secondary text-center font-medium tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Account code • Valid for 10m</p>
         </div>
 
         <div className="flex items-center p-3 rounded-xl bg-background/40 border border-border/40 group hover:border-border transition-colors">

@@ -27,9 +27,9 @@ export const useStore = create(
       setGraphData: (graphData) => set({ graphData }),
 
       // Fetchers with Background Sync (Stale-While-Revalidate pattern)
-      fetchSaves: async () => {
+      fetchSaves: async (force = false) => {
         const currentSaves = get().saves;
-        if (currentSaves.length === 0) {
+        if (force || currentSaves.length === 0) {
           set({ loadingSaves: true });
         }
         try {
@@ -42,9 +42,9 @@ export const useStore = create(
         }
       },
 
-      fetchInbox: async () => {
+      fetchInbox: async (force = false) => {
         const currentInbox = get().inboxSaves;
-        if (currentInbox.length === 0) {
+        if (force || currentInbox.length === 0) {
           set({ loadingInbox: true });
         }
         try {
@@ -57,9 +57,9 @@ export const useStore = create(
         }
       },
 
-      fetchArchives: async () => {
+      fetchArchives: async (force = false) => {
         const currentArchives = get().archivedSaves;
-        if (currentArchives.length === 0) {
+        if (force || currentArchives.length === 0) {
           set({ loadingArchives: true });
         }
         try {
@@ -72,9 +72,9 @@ export const useStore = create(
         }
       },
 
-      fetchCollections: async () => {
+      fetchCollections: async (force = false) => {
         const currentCollections = get().collections;
-        if (currentCollections.length === 0) {
+        if (force || currentCollections.length === 0) {
           set({ loadingCollections: true });
         }
         try {
@@ -87,9 +87,9 @@ export const useStore = create(
         }
       },
 
-      fetchGraphData: async () => {
+      fetchGraphData: async (force = false) => {
         const currentGraph = get().graphData;
-        if (!currentGraph.nodes || currentGraph.nodes.length === 0) {
+        if (force || !currentGraph.nodes || currentGraph.nodes.length === 0) {
           set({ loadingGraph: true });
         }
         try {

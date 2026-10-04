@@ -12,6 +12,14 @@ const Collections = () => {
   const [newCollection, setNewCollection] = useState({ title: '', description: '', icon: '📁', color: '#0F92D4' });
   const navigate = useNavigate();
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchCollections(true);
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
+
   useEffect(() => {
     fetchCollections();
   }, []);
@@ -47,14 +55,15 @@ const Collections = () => {
 
         <div className="flex items-center space-x-3 shrink-0">
           <button
-            onClick={() => fetchCollections(true)}
-            className="px-4 py-3.5 bg-surface border border-border text-text-primary hover:border-primary/50 text-xs font-bold rounded-2xl flex items-center justify-center shadow-md active:scale-95 transition-all"
+            onClick={handleRefresh}
+            disabled={isRefreshing || loading}
+            className="px-4 py-3.5 bg-surface border border-border text-text-primary hover:border-primary/50 text-xs font-bold rounded-2xl flex items-center justify-center shadow-md active:scale-95 transition-all cursor-pointer disabled:opacity-75"
             title="Refresh Collections"
           >
-            <svg className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className={`w-4 h-4 mr-2 ${isRefreshing || loading ? 'animate-spin text-primary' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>{loading ? 'Syncing...' : 'Refresh'}</span>
+            <span>{isRefreshing || loading ? 'Syncing...' : 'Refresh'}</span>
           </button>
           
           <button 

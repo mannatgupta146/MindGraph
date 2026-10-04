@@ -18,9 +18,16 @@ const Dashboard = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState('All');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Find the selected save from local store for instant access
   const selectedSave = id ? saves.find(s => s._id === id) : null;
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchSaves(true);
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
 
   const handleDeleteSuccess = () => {
     if (id) removeSaveFromAll(id);
@@ -55,14 +62,15 @@ const Dashboard = () => {
         </div>
 
         <button
-          onClick={() => fetchSaves(true)}
-          className="self-start md:self-auto px-4 py-2.5 bg-surface border border-border text-text-primary hover:border-primary/50 text-xs font-bold rounded-xl flex items-center shadow-sm active:scale-95 transition-all"
+          onClick={handleRefresh}
+          disabled={isRefreshing || loading}
+          className="self-start md:self-auto px-4 py-2.5 bg-surface border border-border text-text-primary hover:border-primary/50 text-xs font-bold rounded-xl flex items-center shadow-sm active:scale-95 transition-all cursor-pointer disabled:opacity-75"
           title="Refresh Dashboard"
         >
-          <svg className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className={`w-4 h-4 mr-2 ${isRefreshing || loading ? 'animate-spin text-primary' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <span>{loading ? 'Syncing...' : 'Refresh'}</span>
+          <span>{isRefreshing || loading ? 'Syncing...' : 'Refresh'}</span>
         </button>
       </div>
 
@@ -98,7 +106,7 @@ const Dashboard = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-tertiary">
               Saved Content
             </span>
-            <h2 className="text-xl md:text-3xl font-black tracking-tight text-text-primary uppercase leading-tight">
+            <h2 className="text-lg md:text-xl font-bold tracking-tight text-text-primary leading-snug">
               {selectedTag === 'All' ? 'Saved Items' : `Category: ${selectedTag}`}
             </h2>
           </div>
