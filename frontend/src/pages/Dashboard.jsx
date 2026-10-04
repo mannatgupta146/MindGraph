@@ -73,7 +73,7 @@ const Dashboard = () => {
           <div className="h-px flex-1 bg-linear-to-r from-border to-transparent"></div>
         </div>
         <div className="relative">
-          <div className="flex items-center space-x-2 overflow-x-auto pb-4 pt-1 scrollbar-none scroll-smooth mask-horizontal">
+          <div className="flex items-center space-x-2 overflow-x-auto pb-4 pt-1 scrollbar-none scroll-smooth">
             {allTags.map(tag => (
               <button
                 key={tag}

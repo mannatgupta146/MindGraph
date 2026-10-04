@@ -107,3 +107,31 @@ export const generateAITags = async (content) => {
     return foundTags.slice(0, 5).length > 0 ? foundTags.slice(0, 5) : ['General'];
   }
 };
+
+/**
+ * AI Content Refiner & OCR Cleaner.
+ * Transforms raw, noisy, or unorganized OCR text (e.g. ID cards, receipts, documents)
+ * into clean, structured Markdown key-value pairs and readable sections.
+ */
+export const structureAndCleanContent = async (content) => {
+  if (!content || content.length < 10) return content;
+  
+  try {
+    const model = new ChatMistralAI({
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: "mistral-small-latest",
+      temperature: 0,
+    });
+
+    const response = await model.invoke([
+      ["system", "You are a universal AI Information Structurer and Content Refiner. Your goal is to analyze any input text—whether raw OCR scans, digital clippings, web saves, transcripts, or personal notes—and transform it into clean, beautifully organized, professional Markdown.\n\nGuidelines:\n1. Automatically infer the core domain/type of the document (e.g., Identity Card, Invoice/Receipt, Code Snippet, Technical Note, Article Excerpt, Media Transcript).\n2. Correct obvious OCR artifacts, broken line breaks, and typos while preserving 100% of authentic facts, numbers, names, URLs, and dates.\n3. Organize structured details using clear headers (###), bold key-value pairs (- **Field**: Value), and bullet points where appropriate.\n4. If the text is already coherent prose (like an article or essay), retain its original narrative style while cleaning up structural formatting.\n5. Output ONLY the refined Markdown content without meta-commentary or conversational intros."],
+      ["user", `Raw Extracted Content:\n${content.substring(0, 4000)}`]
+    ]);
+
+    return response.content.trim();
+  } catch (error) {
+    console.error('Error structuring AI content:', error);
+    return content;
+  }
+};
+

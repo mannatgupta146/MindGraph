@@ -52,9 +52,10 @@ const Sidebar = ({ isOpen, onClose }) => {
   return (
     <aside className={`fixed inset-y-0 left-0 z-50 w-65 bg-surface border-r border-border flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
       <div className="p-6 flex items-center justify-between">
-        <h1 className="text-2xl font-black text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary tracking-tighter">
-          MindGraph
-        </h1>
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-black text-sm shadow-md">M</div>
+          <span className="font-black text-xl tracking-tighter uppercase text-text-primary">MindGraph</span>
+        </div>
         <button onClick={onClose} className="lg:hidden p-2 text-text-tertiary hover:text-text-primary transition-colors">
           <X className="w-5 h-5" />
         </button>

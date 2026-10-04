@@ -98,8 +98,8 @@ input:-webkit-autofill:active {
 
 /* Premium Neural OS Utilities */
 .mask-horizontal {
-  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 .scrollbar-none::-webkit-scrollbar {

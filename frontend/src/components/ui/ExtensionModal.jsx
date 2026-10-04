@@ -46,7 +46,7 @@ const ExtensionModal = ({ isOpen, onClose }) => {
         <div className="p-6 border-b border-border/40 bg-surface/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white mr-4 shadow-lg shadow-primary/20">
+              <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white mr-4 shadow-lg shadow-primary/20">
                 <Shield className="w-5 h-5" />
               </div>
               <h2 className="text-xl font-black text-text-primary tracking-tight">MindGraph Installation</h2>

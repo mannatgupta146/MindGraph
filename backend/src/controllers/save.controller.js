@@ -2,7 +2,7 @@ import fs from 'fs';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import Save from '../models/save.model.js';
-import { generateAISummary, generateAITags, generateMistralEmbedding } from '../services/ai.service.js';
+import { generateAISummary, generateAITags, generateMistralEmbedding, structureAndCleanContent } from '../services/ai.service.js';
 import * as pineconeService from '../services/pinecone.service.js';
 import pdf from 'pdf-parse-fork';
 import ytdl from '@distube/ytdl-core';
@@ -166,6 +166,12 @@ export const createSave = async (req, res) => {
 
     // Final Fallback: Descriptive Metadata Anchor
     if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled'} (Reference: ${url || 'Upload'})`;
+
+    // AI Content Refiner & OCR Sanitizer: Clean garbled OCR text into structured Markdown key-value pairs
+    if (content && (type === 'image' || type === 'pdf' || content.length > 20)) {
+      const structuredContent = await withTimeout(structureAndCleanContent(content), 5000, content);
+      if (structuredContent) content = structuredContent;
+    }
 
     // AI Neural Pulse: Trigger all synthesis models in parallel with a strict 6s timeout
     const [summary, aiTags, embedding] = await Promise.all([
