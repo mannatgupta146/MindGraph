@@ -9,7 +9,7 @@ const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, score, onClic
   return (
     <div 
       onClick={onClick}
-      className="bg-surface rounded-xl p-5 border border-border hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-64 group relative overflow-hidden"
+      className="bg-surface rounded-2xl p-5 border border-border hover:border-text-primary/30 hover:bg-surface/90 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-64 group relative overflow-hidden"
     >
       {/* Neural Background Glow for High Matches */}
       {matchPercentage >= 70 && (
@@ -67,7 +67,7 @@ const MemoryCard = ({ title, summary, sourceUrl, type, date, tags, score, onClic
         <span className="text-text-tertiary text-[10px] font-medium">{new Date(date).toLocaleDateString()}</span>
       </div>
       
-      <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-2 group-hover:text-primary transition-colors tracking-tight">{title}</h3>
+      <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-2 transition-colors tracking-tight">{title}</h3>
       <div className="text-sm text-text-secondary mb-4 flex-1 line-clamp-4 markdown-card-content leading-relaxed overflow-hidden break-all">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {summary}

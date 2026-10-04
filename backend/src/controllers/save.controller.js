@@ -100,18 +100,31 @@ export const createSave = async (req, res) => {
         }
       } else if (isImage) {
         try {
-          // Optimized Singleton OCR Handshake with 5s timeout
+          // Optimized Singleton OCR Handshake with 12s timeout
           const ocrText = await withTimeout(
             Tesseract.recognize(req.file.buffer, 'eng').then(res => res?.data?.text),
-            5000,
+            12000,
             null
           );
-          content = ocrText && ocrText.trim() ? ocrText.trim() : `Visual artifact indexed: ${req.file.originalname}`;
+          
+          const extractedText = ocrText ? ocrText.trim() : '';
+          const userNote = req.body.content ? req.body.content.trim() : '';
+
+          if (extractedText && userNote) {
+            content = `${userNote}\n\n### Extracted Image Text:\n${extractedText}`;
+          } else if (extractedText) {
+            content = extractedText;
+          } else if (userNote) {
+            content = userNote;
+          } else {
+            content = `Image Memory: ${title || req.file.originalname}\nFile: ${req.file.originalname}\nVisual artifact indexed in knowledge base.`;
+          }
+
           if (!title) title = req.file.originalname;
           type = 'image';
         } catch (ocrError) {
           console.error('[OCR Error]', ocrError?.message || ocrError);
-          content = `Visual artifact indexed: ${req.file.originalname}`;
+          content = req.body.content || `Image Memory: ${title || req.file.originalname}\nFile: ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
         }
@@ -260,34 +273,93 @@ export const semanticSearch = async (req, res) => {
     const { query } = req.query;
     const userId = req.user.id;
 
-    if (!query) {
+    if (!query || !query.trim()) {
       return res.status(400).json({ message: 'Search query is required' });
     }
 
-    // Use Pinecone for semantic search
-    const pineconeResults = await pineconeService.queryPinecone(query, userId.toString(), 15);
-    
-    // Neural Filter: Only include high-fidelity matches (> 0.70)
-    const highMatchResults = pineconeResults.filter(r => r.score >= 0.70);
+    const cleanQuery = query.trim();
+    const searchRegex = new RegExp(cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
 
-    if (highMatchResults.length === 0) {
-      console.log(`[PINECONE] No high-match results for: "${query}"`);
+    // 1. Vector Search via Pinecone
+    let pineconeResults = [];
+    try {
+      pineconeResults = await pineconeService.queryPinecone(cleanQuery, userId.toString(), 20);
+    } catch (pcErr) {
+      console.error('[PINECONE] Search error, falling back to database keyword search:', pcErr);
+    }
+
+    // Map of saveId -> score
+    const scoreMap = new Map();
+
+    // Add vector matches with threshold >= 0.35
+    pineconeResults.forEach(r => {
+      if (r.saveId && r.score >= 0.35) {
+        scoreMap.set(r.saveId.toString(), r.score);
+      }
+    });
+
+    // 2. Lookup Collections by Name
+    const matchingCollections = await Collection.find({
+      user: userId,
+      title: searchRegex
+    }).select('_id').lean();
+    const collectionIds = matchingCollections.map(c => c._id);
+
+    // 3. MongoDB Keyword & Name Search (Title/Name, Domain, URL, Type, Summary, Content, Tags, Collection Name)
+    const keywordMatches = await Save.find({
+      user: userId,
+      $or: [
+        { title: searchRegex },
+        { domain: searchRegex },
+        { url: searchRegex },
+        { fileUrl: searchRegex },
+        { type: searchRegex },
+        { tags: { $in: [searchRegex] } },
+        { summary: searchRegex },
+        { content: searchRegex },
+        ...(collectionIds.length > 0 ? [{ collection: { $in: collectionIds } }] : [])
+      ]
+    }).select('_id title summary type tags createdAt content domain url fileUrl collection').lean();
+
+    // Boost scores for name & title keyword matches
+    keywordMatches.forEach(item => {
+      const idStr = item._id.toString();
+      const existingScore = scoreMap.get(idStr) || 0;
+      
+      let keywordScore = 0.65;
+      
+      // Exact / Regex match on Item Title / Name gives high score (0.92)
+      if (item.title && searchRegex.test(item.title)) {
+        keywordScore = 0.92;
+      } else if (item.tags && item.tags.some(t => searchRegex.test(t))) {
+        keywordScore = 0.85;
+      } else if (item.domain && searchRegex.test(item.domain)) {
+        keywordScore = 0.80;
+      } else if (collectionIds.some(cid => cid.toString() === item.collection?.toString())) {
+        keywordScore = 0.80;
+      }
+
+      // Hybrid score combining vector + name/keyword match
+      const finalScore = Math.min(1.0, Math.max(existingScore, keywordScore) + (existingScore && keywordScore ? 0.1 : 0));
+      scoreMap.set(idStr, finalScore);
+    });
+
+    if (scoreMap.size === 0) {
       return res.json([]);
     }
 
-    // Hydrate results from MongoDB
-    const saveIds = [...new Set(highMatchResults.map(r => r.saveId))];
+    // Hydrate all matching documents from MongoDB
+    const saveIds = Array.from(scoreMap.keys());
     const saves = await Save.find({ _id: { $in: saveIds } })
-      .select('title summary type tags createdAt')
+      .select('title summary type tags createdAt url fileUrl content domain')
       .lean();
 
-    // Map scores back and sort
-    const finalResults = saves.map(save => {
-      const match = highMatchResults.find(r => r.saveId === save._id.toString());
-      return { ...save, score: match ? match.score : 0 };
-    }).sort((a, b) => b.score - a.score);
+    const finalResults = saves.map(save => ({
+      ...save,
+      score: scoreMap.get(save._id.toString()) || 0.5
+    })).sort((a, b) => b.score - a.score);
 
-    console.log(`[PINECONE SEARCH] Query: "${query}" | High Matches: ${finalResults.length}/${pineconeResults.length}`);
+    console.log(`[HYBRID SEARCH] Query: "${cleanQuery}" | Vector: ${pineconeResults.length} | Name/Keyword: ${keywordMatches.length} | Total Final: ${finalResults.length}`);
 
     res.json(finalResults);
 

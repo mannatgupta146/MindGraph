@@ -177,7 +177,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                   </span>
                 </>
               )}
-              {!save && isFetching && <span className="text-text-tertiary text-sm">Loading memory...</span>}
+              {!save && isFetching && <span className="text-text-tertiary text-sm">Loading item...</span>}
             </div>
             <button 
               onClick={onClose} 
@@ -202,7 +202,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                   </div>
                 </div>
                 <p className="mt-4 text-text-primary font-bold text-sm tracking-widest uppercase animate-pulse">
-                  {isDeleting ? 'Deleting Forever...' : 'Syncing Brain...'}
+                  {isDeleting ? 'Deleting Forever...' : 'Saving...'}
                 </p>
               </div>
             )}
@@ -243,7 +243,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                         rel="noopener noreferrer" 
                         className={`inline-flex items-center text-secondary hover:text-secondary-hover group bg-secondary/5 px-3 py-1.5 rounded-lg border border-secondary/10 transition-colors ${isDeleting || isUpdating ? 'pointer-events-none opacity-30' : ''}`}
                       >
-                        <span className="truncate max-w-sm text-sm font-medium">Original Artifact</span>
+                        <span className="truncate max-w-sm text-sm font-medium">Original File</span>
                         <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
@@ -293,7 +293,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                   </div>
                 )}
 
-                {/* AI Synthesis Block */}
+                {/* AI Summary Block */}
                 {save.summary && (
                   <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 relative group overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
@@ -303,7 +303,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
-                      <span className="font-bold text-[10px] uppercase tracking-[0.2em]">AI Synthesis</span>
+                      <span className="font-bold text-[10px] uppercase tracking-[0.2em]">AI Summary</span>
                     </div>
                     <div className="text-text-primary text-base leading-relaxed opacity-95 markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -324,7 +324,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
 
                 {/* Collections */}
                 <div className="pt-4 border-t border-border/50">
-                  <h3 className="text-text-tertiary text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Relate to Project</h3>
+                  <h3 className="text-text-tertiary text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Add to Collection</h3>
                   <div className="flex flex-wrap gap-2">
                     {collections.map(col => {
                       const isInCollection = col.saves.some(s => s._id === save._id || s === save._id);
@@ -411,7 +411,7 @@ const MemoryDetailDrawer = ({ save: initialSave, saveId, isOpen, onClose, onDele
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                   </svg>
                   <span>
-                    {isUpdating ? 'Wait...' : (save.status === 'archived' ? 'Restore to Dashboard' : 'Archive Memory')}
+                    {isUpdating ? 'Wait...' : (save.status === 'archived' ? 'Restore to Dashboard' : 'Archive Item')}
                   </span>
                 </button>
 

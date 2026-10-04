@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/config';
-
 import MemoryCard from '../components/ui/MemoryCard';
 import MemoryDetailDrawer from '../components/ui/MemoryDetailDrawer';
+import { Search as SearchIcon, X, Sparkles, FileText, Layers, Tag, Filter } from 'lucide-react';
 
 const Search = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const inputRef = useRef(null);
+
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState('all');
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
-  // Find the selected save from the local results list if it exists
+  // Selected save for detail drawer
   const selectedSave = id ? results.find(r => r._id === id) : null;
 
   const performSearch = async (searchTerm) => {
@@ -39,96 +42,171 @@ const Search = () => {
         setResults([]);
         setHasSearched(false);
       }
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
+
+  // Keyboard shortcut: Press "/" to focus search input
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === '/' && document.activeElement !== inputRef.current && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleDeleteSuccess = () => {
     setResults(prev => prev.filter(s => s._id !== id));
     navigate('/search');
   };
 
+  const handleChipClick = (suggestion) => {
+    setQuery(suggestion);
+    performSearch(suggestion);
+  };
+
+  const typeFilters = [
+    { id: 'all', label: 'All Types' },
+    { id: 'article', label: 'Articles' },
+    { id: 'tweet', label: 'Tweets' },
+    { id: 'pdf', label: 'PDFs' },
+    { id: 'youtube', label: 'Videos' },
+    { id: 'image', label: 'Images' }
+  ];
+
+  const quickSuggestions = [
+    'Artificial Intelligence',
+    'System Design',
+    'Database Optimization',
+    'Research Papers',
+    'React & Frontend'
+  ];
+
+  const filteredResults = selectedTypeFilter === 'all' 
+    ? results 
+    : results.filter(item => item.type === selectedTypeFilter);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Search Header */}
-      <div className="relative pl-5 py-2 mb-10">
+      {/* Header & Hero */}
+      <div className="relative pl-5 py-2 mb-6">
         <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-linear-to-b from-primary/80 to-primary/20 rounded-full"></div>
         <div className="flex items-center space-x-2 text-text-tertiary mb-1">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Smart Search</span>
+          <SearchIcon className="w-4 h-4 text-primary" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em]">Search & Discover</span>
         </div>
-        <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
-          Search your saved memories and notes by keyword or concept.
+        <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-2xl">
+          Search your saved content by topic, keyword, or concept with smart AI indexing.
         </p>
       </div>
 
-      {/* Modern Search Bar */}
-      <div className="relative max-w-2xl mx-auto group">
-        <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-secondary/20 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-        <div className="relative flex items-center bg-surface border-2 border-border group-focus-within:border-primary/40 rounded-2xl p-1.5 transition-all shadow-xl">
-          <div className="pl-4 pr-2 flex items-center">
-            <svg className={`w-5 h-5 transition-colors ${isSearching ? 'text-primary animate-pulse' : 'text-text-tertiary group-focus-within:text-primary'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+      {/* Main Search Bar Section */}
+      <div className="max-w-3xl mx-auto space-y-4">
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-linear-to-r from-primary/30 to-secondary/30 rounded-3xl blur-md opacity-20 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+          
+          <div className="relative flex items-center bg-surface border-2 border-border group-focus-within:border-primary/50 rounded-2xl px-5 py-3.5 shadow-xl transition-all">
+            <SearchIcon className={`w-5 h-5 mr-3 shrink-0 transition-colors ${isSearching ? 'text-primary animate-pulse' : 'text-text-tertiary group-focus-within:text-primary'}`} />
+            
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by keyword, concept, or phrase... (Press '/' to focus)"
+              className="w-full bg-transparent border-none outline-none text-base md:text-lg text-text-primary placeholder:text-text-tertiary/50 font-medium"
+              autoFocus
+            />
+
+            {query ? (
+              <button 
+                onClick={() => { setQuery(''); setResults([]); setHasSearched(false); inputRef.current?.focus(); }}
+                className="p-1.5 hover:bg-background/80 rounded-xl text-text-tertiary hover:text-text-primary transition-colors ml-2 shrink-0"
+                title="Clear search"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            ) : (
+              <kbd className="hidden sm:inline-block px-2 py-1 text-[10px] font-mono text-text-tertiary bg-background border border-border rounded-md shadow-xs">
+                /
+              </kbd>
+            )}
           </div>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type anything to search..."
-            className="flex-1 bg-transparent border-none outline-none text-sm md:text-lg text-text-primary placeholder:text-xs md:placeholder:text-lg placeholder:text-text-tertiary/40 py-2 font-medium"
-            autoFocus
-          />
-          {query && (
-            <button 
-              onClick={() => { setQuery(''); setResults([]); setHasSearched(false); }}
-              className="p-2 mr-1 hover:bg-surface-hover rounded-xl text-text-tertiary transition-colors"
+        </div>
+
+        {/* Quick Suggestion Chips */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-[11px] font-bold text-text-tertiary uppercase tracking-wider mr-1">Try:</span>
+          {quickSuggestions.map((suggestion) => (
+            <button
+              key={suggestion}
+              onClick={() => handleChipClick(suggestion)}
+              className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-surface border border-border text-text-secondary hover:text-primary hover:border-primary/40 transition-all active:scale-95 shadow-xs"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              {suggestion}
             </button>
-          )}
+          ))}
         </div>
       </div>
 
-      {/* Results Grid (Dual-Column Mastery) */}
-      <div className="space-y-8 pt-4">
+      {/* Media Type Filter Ribbon (Visible when searching or when results exist) */}
+      {hasSearched && (
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none border-b border-border/40">
+          <div className="flex items-center text-text-tertiary mr-2 shrink-0">
+            <Filter className="w-3.5 h-3.5 mr-1" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Filter:</span>
+          </div>
+          {typeFilters.map((filter) => (
+            <button
+              key={filter.id}
+              onClick={() => setSelectedTypeFilter(filter.id)}
+              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 active:scale-95 border ${
+                selectedTypeFilter === filter.id
+                  ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
+                  : 'bg-surface border-border text-text-secondary hover:text-text-primary hover:border-text-primary/30'
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Results Area */}
+      <div className="pt-2">
         {isSearching && results.length === 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[1, 2, 3, 4].map(n => (
-              <div key={n} className="min-h-45 p-4 bg-surface border border-border rounded-2xl flex flex-col justify-between animate-pulse">
-                <div>
-                  <div className="w-16 h-3 bg-border/50 rounded-full mb-3"></div>
-                  <div className="w-3/4 h-5 bg-border/30 rounded-full mb-2"></div>
-                  <div className="w-full h-8 bg-border/20 rounded-xl"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-64 bg-surface border border-border rounded-2xl p-5 animate-pulse flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="w-20 h-4 bg-border/40 rounded-lg"></div>
+                  <div className="w-3/4 h-6 bg-border/30 rounded-lg"></div>
+                  <div className="w-full h-12 bg-border/20 rounded-lg"></div>
                 </div>
-                <div className="flex space-x-2 mt-4">
-                  <div className="w-12 h-3 bg-border/50 rounded-full"></div>
-                  <div className="w-16 h-3 bg-border/50 rounded-full"></div>
+                <div className="flex space-x-2 pt-4">
+                  <div className="w-12 h-4 bg-border/40 rounded-md"></div>
+                  <div className="w-16 h-4 bg-border/40 rounded-md"></div>
                 </div>
               </div>
             ))}
           </div>
-        ) : results.length > 0 ? (
-          <div className={`transition-opacity duration-300 ${isSearching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-            <div className="flex flex-col space-y-1 px-4 md:px-0 mb-8">
-               <div className="flex items-center justify-between text-text-tertiary text-[10px] font-black uppercase tracking-[0.3em]">
-                 <span className="flex items-center">
-                    Match Rank ( {">"} 70% )
-                 </span>
-                 <span className="hidden sm:inline text-primary">Semantic Match</span>
-               </div>
-               <h2 className="text-xl md:text-2xl font-black text-text-primary tracking-tight leading-tight">
-                 Found <span className="text-primary">{results.length}</span> matches for <span className="text-primary italic">"{query}"</span>
-               </h2>
+        ) : filteredResults.length > 0 ? (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+              <h2 className="text-lg md:text-xl font-black text-text-primary tracking-tight">
+                Found <span className="text-primary">{filteredResults.length}</span> {filteredResults.length === 1 ? 'match' : 'matches'} for <span className="text-primary italic">"{query}"</span>
+              </h2>
+              <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                Smart Conceptual Search
+              </span>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in zoom-in-95 duration-500">
-              {results.map((result) => (
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in duration-500">
+              {filteredResults.map((result) => (
                 <MemoryCard 
                   key={result._id} 
                   {...result} 
@@ -140,28 +218,58 @@ const Search = () => {
             </div>
           </div>
         ) : hasSearched && !isSearching ? (
-          <div className="text-center py-20 px-6 bg-surface/30 border-2 border-dashed border-border rounded-[2.5rem] animate-in fade-in zoom-in-95">
-             <div className="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6">
-               <svg className="w-8 h-8 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-               </svg>
-             </div>
-             <h3 className="text-xl font-black text-text-secondary uppercase tracking-widest mb-3">No conceptual matches</h3>
-             <p className="text-text-tertiary max-w-sm mx-auto leading-relaxed text-sm">
-               Try searching for a broader master pillar or different keywords. AI synthesis sometimes needs more context to find deep matches.
-             </p>
+          <div className="text-center py-20 px-6 bg-surface/30 border-2 border-dashed border-border rounded-3xl animate-in fade-in zoom-in-95 max-w-xl mx-auto">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-5 text-primary">
+              <SearchIcon className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-black text-text-primary uppercase tracking-wider mb-2">No Matching Content</h3>
+            <p className="text-text-secondary text-sm leading-relaxed mb-6">
+              We couldn't find items matching <span className="font-bold text-text-primary">"{query}"</span>. Try adjusting your query or selecting a different filter.
+            </p>
+            <button 
+              onClick={() => { setQuery(''); setResults([]); setHasSearched(false); setSelectedTypeFilter('all'); }}
+              className="px-6 py-2.5 bg-surface border border-border text-text-primary font-bold text-xs uppercase tracking-widest rounded-xl hover:border-text-primary/40 transition-all shadow-md active:scale-95"
+            >
+              Reset Search
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 hover:opacity-100 transition-opacity duration-500">
-            <div className="p-8 border border-border rounded-[2.5rem] bg-surface/20 relative group overflow-hidden hover:bg-surface/50 hover:shadow-xl hover:shadow-primary/5 hover:scale-[1.02] transition-all duration-300 transform cursor-pointer">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-colors duration-500"></div>
-               <span className="text-xs font-black text-primary mb-3 block uppercase tracking-[0.2em] relative z-10">Semantic Intelligence</span>
-               <p className="text-text-secondary leading-relaxed group-hover:text-text-primary transition-colors duration-300 relative z-10">Your search is <span className="font-bold text-text-primary">Context Aware</span>: it interprets conceptual intent. Querying 'learning patterns' will automatically resurface 'Spaced Repetiton' or 'Anki' based on vector similarity.</p>
+          /* Feature Showcase Cards (Default State) */
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+            <div className="p-6 border border-border rounded-3xl bg-surface/40 hover:bg-surface/70 hover:border-text-primary/30 transition-all duration-300 shadow-sm flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <h3 className="text-base font-black text-text-primary mb-2 uppercase tracking-wide">Concept Understanding</h3>
+                <p className="text-xs text-text-secondary leading-relaxed font-medium">
+                  Search by meaning, not just exact words. Querying <span className="text-text-primary font-bold">"learning strategies"</span> resurfaces notes on Spaced Repetition or Active Recall.
+                </p>
+              </div>
             </div>
-            <div className="p-8 border border-border rounded-[2.5rem] bg-surface/20 relative group overflow-hidden hover:bg-surface/50 hover:shadow-xl hover:shadow-secondary/5 hover:scale-[1.02] transition-all duration-300 transform cursor-pointer">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-secondary/20 transition-all duration-500"></div>
-               <span className="text-xs font-black text-secondary mb-3 block uppercase tracking-[0.2em] relative z-10">Universal Indexing</span>
-               <p className="text-text-secondary leading-relaxed group-hover:text-text-primary transition-colors duration-300 relative z-10">The system deeply indexes <span className="font-bold text-text-primary">Tweets, PDFs, Videos, and Articles</span> simultaneously. Experience fluid cross-media discovery across your entire archive.</p>
+
+            <div className="p-6 border border-border rounded-3xl bg-surface/40 hover:bg-surface/70 hover:border-text-primary/30 transition-all duration-300 shadow-sm flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary mb-4 group-hover:scale-110 transition-transform">
+                  <Layers className="w-6 h-6" />
+                </div>
+                <h3 className="text-base font-black text-text-primary mb-2 uppercase tracking-wide">Multi-Format Indexing</h3>
+                <p className="text-xs text-text-secondary leading-relaxed font-medium">
+                  Deeply index Articles, Tweets, PDFs, YouTube transcripts, Images, and Code Snippets in one search.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border border-border rounded-3xl bg-surface/40 hover:bg-surface/70 hover:border-text-primary/30 transition-all duration-300 shadow-sm flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-4 group-hover:scale-110 transition-transform">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <h3 className="text-base font-black text-text-primary mb-2 uppercase tracking-wide">OCR & Extracted Text</h3>
+                <p className="text-xs text-text-secondary leading-relaxed font-medium">
+                  All uploaded PDFs and images undergo automatic AI OCR text extraction, making raw documents searchable instantly.
+                </p>
+              </div>
             </div>
           </div>
         )}

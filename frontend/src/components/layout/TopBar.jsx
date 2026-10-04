@@ -8,7 +8,7 @@ const TopBar = ({ title, onToggleSidebar }) => {
 
   return (
     <>
-      <div className="h-20 fixed top-0 right-0 left-0 lg:left-[260px] border-b border-border bg-background flex items-center px-6 md:px-8 justify-between z-[40]">
+      <div className="h-20 fixed top-0 right-0 left-0 lg:left-65 border-b border-border bg-background flex items-center px-6 md:px-8 justify-between z-40">
         <div className="flex items-center">
           <button 
             onClick={onToggleSidebar}
@@ -16,7 +16,7 @@ const TopBar = ({ title, onToggleSidebar }) => {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <h2 className="text-lg md:text-xl font-bold tracking-tight text-text-primary uppercase truncate max-w-[200px] sm:max-w-none">{title}</h2>
+          <h2 className="text-lg md:text-xl font-bold tracking-tight text-text-primary uppercase truncate max-w-50 sm:max-w-none">{title}</h2>
         </div>
         
         <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-5">

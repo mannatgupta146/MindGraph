@@ -102,13 +102,13 @@ const Inbox = () => {
             </div>
             <h3 className="text-xl font-black text-text-primary uppercase tracking-widest mb-2">Inbox is Clear!</h3>
             <p className="text-text-secondary mb-8 max-w-xs mx-auto text-sm leading-relaxed">
-              You've processed all your recent captures. Your Second Brain is fully up to date.
+              You've processed all your recent captures. Your workspace is fully up to date.
             </p>
             <button 
               onClick={() => setIsModalOpen(true)}
               className="px-8 py-3.5 bg-surface border border-border text-text-primary font-black text-xs uppercase tracking-widest rounded-2xl hover:border-primary/50 transition-all active:scale-95 shadow-lg"
             >
-              Capture New Thought
+              Add New Item
             </button>
           </div>
         )}

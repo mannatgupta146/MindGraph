@@ -52,33 +52,34 @@ const Sidebar = ({ isOpen, onClose }) => {
   return (
     <aside className={`fixed inset-y-0 left-0 z-50 w-65 bg-surface border-r border-border flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
       <div className="p-6 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-black text-sm shadow-md">M</div>
-          <span className="font-black text-xl tracking-tighter uppercase text-text-primary">MindGraph</span>
-        </div>
+        <span className="font-black text-xl tracking-tighter uppercase text-text-primary">MindGraph</span>
         <button onClick={onClose} className="lg:hidden p-2 text-text-tertiary hover:text-text-primary transition-colors">
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      <nav className="flex-1 px-4 space-y-2 overflow-y-auto mt-4">
+      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto mt-4">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             onClick={onClose}
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-xl transition-all duration-300 group ${
+              `flex items-center px-4 py-2.5 rounded-xl transition-all duration-200 group ${
                 isActive
-                  ? 'bg-primary/10 text-primary font-bold shadow-[inset_3px_0_0_0_var(--color-primary)]'
-                  : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
+                  ? 'bg-surface-hover text-text-primary font-bold border-l-2 border-primary pl-3.5'
+                  : 'text-text-secondary hover:bg-surface-hover/60 hover:text-text-primary'
               }`
             }
           >
-            <svg className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d={item.icon} />
-            </svg>
-            <span className="tracking-tight">{item.name}</span>
+            {({ isActive }) => (
+              <>
+                <svg className={`w-5 h-5 mr-3 transition-transform group-hover:scale-105 ${isActive ? 'text-primary' : 'text-text-tertiary group-hover:text-text-primary'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isActive ? 2.5 : 2} d={item.icon} />
+                </svg>
+                <span className="tracking-tight">{item.name}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -106,7 +107,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               {loadingPin ? 'Generating...' : 'Get Sync Code'}
             </button>
           )}
-          <p className="mt-2 text-[9px] text-text-tertiary text-center font-medium opacity-80 uppercase tracking-tighter">Code unique to account • Valid for 10m</p>
+          <p className="mt-2.5 text-[11px] text-text-secondary text-center font-semibold leading-snug">Code unique to account • Valid for 10m</p>
         </div>
 
         <div className="flex items-center p-3 rounded-xl bg-background/40 border border-border/40 group hover:border-border transition-colors">
@@ -115,7 +116,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
           <div className="flex-1 overflow-hidden">
             <p className="text-sm font-black text-text-primary truncate tracking-tight">{user?.name || 'User'}</p>
-            <p className="text-[10px] uppercase font-bold text-text-tertiary truncate tracking-wider">{user?.email || 'user@example.com'}</p>
+            <p className="text-xs font-medium text-text-secondary truncate" title={user?.email}>{user?.email || 'user@example.com'}</p>
           </div>
           <button onClick={logout} className="ml-2 p-2 text-text-tertiary hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer" title="Logout">
             <LogOut className="w-4 h-4" />

@@ -80,18 +80,18 @@ const CollectionDetail = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Back to Projects</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Back to Collections</span>
           </button>
 
           <button 
             onClick={handleDeleteCollection}
             className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-red-500/5 hover:bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest active:scale-95 shadow-lg shadow-red-500/5"
-            title="Delete Project"
+            title="Delete Collection"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            <span>Terminate Project</span>
+            <span>Delete Collection</span>
           </button>
         </div>
 
@@ -110,7 +110,7 @@ const CollectionDetail = () => {
                     className="w-1.5 h-1.5 rounded-full" 
                     style={{ backgroundColor: collection.color }}
                   ></div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">Project Detail</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">Collection Detail</span>
                 </div>
               </div>
             </div>
@@ -122,7 +122,7 @@ const CollectionDetail = () => {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center space-x-3 bg-surface/50 border border-border px-4 py-2.5 rounded-2xl shadow-sm">
               <span className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">
-                {collection.saves?.length || 0} Registered Artifacts
+                {collection.saves?.length || 0} Items
               </span>
             </div>
             
@@ -133,7 +133,7 @@ const CollectionDetail = () => {
               <svg className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              Synergize Memory
+              Add Item
             </button>
           </div>
         </div>
@@ -159,9 +159,9 @@ const CollectionDetail = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0l-1.5-1.5M5 11l1.5-1.5" />
               </svg>
             </div>
-            <h3 className="text-xl font-black text-text-primary mb-3 uppercase tracking-widest">This Vault is Empty</h3>
+            <h3 className="text-xl font-black text-text-primary mb-3 uppercase tracking-widest">This Collection is Empty</h3>
             <p className="text-text-secondary text-sm mb-8 max-w-sm mx-auto opacity-70 leading-relaxed">
-              Time to fuel this project! Search for existing memories or capture new ones to add them to this thematic cluster.
+              Add items or link saved content to build this collection.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button 
@@ -171,13 +171,13 @@ const CollectionDetail = () => {
                 <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Synergize Memory
+                Add Item
               </button>
               <button 
                 onClick={() => navigate('/search')}
                 className="w-full sm:w-auto px-8 py-3.5 bg-surface border border-border text-text-primary font-black text-xs uppercase tracking-widest rounded-2xl hover:border-primary/50 transition-all active:scale-95 shadow-lg"
               >
-                Link Existing
+                Search Items
               </button>
             </div>
           </div>

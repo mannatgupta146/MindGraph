@@ -1,126 +1,116 @@
-# 🧬 MindGraph: The Universal Memory Engine
+# MindGraph: Smart Personal Knowledge Workspace
 
-**MindGraph** is a high-fidelity, cognitive operating system designed to solve the burden of digital information overload. It establishes a seamless **Neural Link** between your browser and a centralized, cloud-persistent vault—allowing you to **Siphon**, **Index**, and **Resurface** the world's intelligence with 100% resolution-independent precision.
-
----
-
-## 🗺️ Documentation Portal
-
-- [🚀 Core Capabilities](#-core-capabilities-what-can-mindgraph-do)
-- [🍱 The Neural Hub: Platform Sections](#-the-neural-hub-platform-sections)
-- [🚁 MindGraph Helper (Extension)](#-mindgraph-helper-the-browser-conduit)
-- [⚡ Installation & Quick Start](#-installation--local-setup)
-- [🛰️ Neural Infrastructure & AI](#-neural-infrastructure--ai)
-- [🔒 Deployment HUD](#-deployment-environment)
-- [🛠️ Technical Architecture](#-technical-architecture)
-- [🤝 Collaborations](#-collaborations--contributions)
+**MindGraph** is a full-stack personal knowledge workspace and second brain. It solves the issue of information overload by allowing you to easily save, organize, OCR-extract, and visually connect articles, notes, PDFs, tweets, videos, and images in one clean interface.
 
 ---
 
-## 🚀 Core Capabilities: What can MindGraph do?
+## Table of Contents
 
-MindGraph doesn't just save links; it siphons the essence of your digital experience.
-- **📄 PDF Siphoning**: Direct injection of research papers and documents into your neural vault.
-- **🐦 Tweet Capture**: Intercept and archive social insights before they disappear into the feed.
-- **🖼️ Visual Assets**: High-fidelity support for images (JPEG/PNG/WebP/GIF) with instant thumbnail indexing.
-- **📰 Article Extraction**: Intelligent scraping of web articles, capturing primary imagery and metadata.
-- **🎥 YouTube Linking**: Neural anchoring of video content for your educational repository.
-
----
-
-## 🍱 The Neural Hub: Platform Sections
-
-Experience your knowledge through a premium, glassmorphism-driven HUD.
-- **📊 Dashboard**: Your primary bento-grid visualization. A high-performance view of your entire second brain.
-- **📥 Inbox**: The temporary storage for newly siphoned assets awaiting classification.
-- **🗄️ Archives**: A persistent vault for long-term knowledge storage.
-- **🔍 Universal Search**: Instant semantic resurfacing of any asset in your repository.
-- **📁 Collections**: Organize your insights into high-dimensional folders and thematic groups.
-- **🕸️ Knowledge Graph**: A visual representation of how your siphoned assets connect to your mind.
+- [Features](#features)
+- [Workspace Sections](#workspace-sections)
+- [Browser Extension](#browser-extension)
+- [Getting Started & Local Setup](#getting-started--local-setup)
+- [Tech Stack & Architecture](#tech-stack--architecture)
+- [Deployment & Environment](#deployment--environment)
+- [Contributing](#contributing)
 
 ---
 
-## 🚁 MindGraph Helper: The Browser Conduit
+## Features
 
-The **MindGraph Helper** is the definitive "Scripting Conduit" that bridges your browser to the cloud.
-
-### 🤝 How it works: The Neural Handshake
-1. **Sync Code**: Generate a unique 6-digit PIN in your web dashboard sidebar.
-2. **Persistence**: Enter the PIN in the extension to anchor your identity via a **Master Bearer Token**. No login loops, no domain blocks.
-
-### ⚙️ Operating Modes
-- **🛰️ Auto Mode**: One-click siphoning. The extension automatically scrapes the DOM of your active tab for titles and images.
-- **🔗 Link Mode**: Manual URL injection.
-- **📁 File Mode**: Direct upload. Siphon PDFs and images directly from your local machine.
+- **Multi-Format Support**: Save articles, PDFs, tweets, YouTube videos, images, and text notes.
+- **Universal AI Document Parsing**: OCR text extraction cleans raw document scans, receipts, and ID cards into structured Markdown.
+- **Hybrid Semantic & Keyword Search**: Combines Pinecone vector embeddings with MongoDB text matching for accurate conceptual search.
+- **Interactive Knowledge Graph**: 2D force-directed canvas displaying connections between your saved items and topics.
+- **0ms Render Latency**: Client-side state caching via Zustand ensures instant page navigation.
 
 ---
 
-## 🚀 Installation & Local Setup
+## Workspace Sections
 
-Ready to establish your own Neural Link? Follow these definitive steps to get **MindGraph** running on your local machine.
+- **Dashboard**: Overview of active saved items, categories, and recent content.
+- **Inbox**: Unprocessed queue for review and organization into collections.
+- **Archives**: Safe storage for archived items without cluttering your active workspace.
+- **Search & Discover**: Smart search with suggestion chips, type filters, and match ranking.
+- **Collections**: Custom folders with personalized icons, accent colors, and descriptions.
+- **Knowledge Graph**: Interactive 2D visualization linking saved content by common tags and topics.
 
-### 1. Clone the Neural Vault
+---
+
+## Browser Extension
+
+The **MindGraph Chrome Extension** allows 1-click capture directly from your active browser tab.
+
+### Setup & Sync
+1. Click **Get Sync Code** in the sidebar to generate a 6-digit PIN.
+2. Enter the PIN into the Chrome Extension popup to pair your account securely.
+
+### Capture Modes
+- **Auto Capture**: Scrapes current page title, URL, and metadata with 1 click.
+- **Link Mode**: Submit any custom web link directly.
+- **File Mode**: Upload local PDFs and images directly to your workspace.
+
+---
+
+## Getting Started & Local Setup
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB database (local or MongoDB Atlas)
+- Pinecone & Mistral API keys (for AI embeddings and search)
+
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/mannatgupta146/MindGraph.git
 cd MindGraph
 ```
 
-### 2. Synchronize the Backend
+### 2. Backend Setup
 ```bash
 cd backend
 npm install --legacy-peer-deps
-# Launch: npm run dev
+# Create a .env file with MONGO_URI, JWT_SECRET, MISTRAL_API_KEY, PINECONE_API_KEY
+npm run dev
 ```
 
-### 3. Synchronize the Frontend
+### 3. Frontend Setup
 ```bash
 cd ../frontend
 npm install
-# Launch: npm run dev
+npm run dev
 ```
 
-### 4. Anchor the Helper Extension
-Import the `extension` folder into `chrome://extensions` using the **Load Unpacked** protocol.
+### 4. Chrome Extension
+Import the `extension/` folder into `chrome://extensions` using **Load unpacked**.
 
 ---
 
-## 🛰️ Neural Infrastructure & AI
+## Tech Stack & Architecture
 
-- **🤖 Mistral AI & OpenAI**: The platform's "Neural Engine" for semantic analysis and high-dimensional embeddings.
-- **🌲 Pinecone Vector DB**: Your semantic memory, indexing every siphoned asset for high-performance resurfacing.
-- **🍃 MongoDB Atlas Cluster**: The persistent vault for metadata and collection hierarchies.
-
----
-
-## 🔒 Deployment Environment
-
-### **Backend (Render + MongoDB + Pinecone)**
-- `MONGO_URI`, `JWT_SECRET`, `FRONTEND_URL`, `PINECONE_API_KEY`, `MISTRAL_API_KEY`.
-
-### **Frontend (Vercel)**
-- `VITE_API_URL`: `https://mindgraph.onrender.com/api`.
-
----
-
-## 🛰️ Technical Architecture
-
-| Layer | Neural Tech Stack |
+| Component | Stack |
 | :--- | :--- |
-| **Frontend** | React 18 (Vite) \| Tailwind CSS \| Framer Motion |
-| **Backend** | Node.js (Express) \| JWT Dual-Channel Auth \| MongoDB Atlas |
-| **Security** | `SameSite=None; Secure` cookies for cross-site stability |
+| **Frontend** | React 18, Vite, Tailwind CSS v4, Zustand (Persist), ForceGraph2D |
+| **Backend** | Node.js, Express.js, MongoDB Atlas (Mongoose), Tesseract OCR |
+| **AI & Search** | LangChain, Mistral AI Embeddings, Pinecone Vector DB, Gemini |
+| **Extension** | Chrome Extension Manifest V3 |
 
 ---
 
-## 🤝 Community Protocol: Build the Future
+## Deployment & Environment
 
-MindGraph is a vision-driven project, and I'm officially open to high-fidelity collaborations from the open-source intelligence community.
+- **Backend**: Deployed on Render with configured `/health` & `/api/health` endpoints.
+- **Frontend**: Deployed on Vercel / Render.
+- **Environment Variables**:
+  - `MONGO_URI`, `JWT_SECRET`, `FRONTEND_URL`, `PINECONE_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY`.
 
-### 🛡️ Contribution Framework
-- **🛰️ Fork the Vault**: Create your own high-fidelity copy of the MindGraph repository.
-- **🌱 Establish Neural Branch**: Use `git checkout -b feature/neural-improvement` to begin your session.
-- **💎 Commit with Precision**: Use clear, architectural commit messages to document your neural refinements.
-- **🚀 Push to the Cloud**: Synchronize your branch to your remote vault.
-- **🤝 Open Pull Request**: Every submission conducts a surgical architectural review to maintain the "Neural Gold" standard.
+---
 
-_Let's build the future of collective intelligence together._ 🚀🧠💎🌻
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests to help refine and improve MindGraph.
+
+```bash
+git checkout -b feature/your-feature-name
+git commit -m "Add feature description"
+git push origin feature/your-feature-name
+```

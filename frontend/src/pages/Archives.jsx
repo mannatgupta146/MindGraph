@@ -89,8 +89,8 @@ const Archives = () => {
             </svg>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-black text-text-secondary mb-2 uppercase tracking-widest">Vault is Empty</h3>
-            <p className="text-text-tertiary max-w-xs mx-auto text-sm">Memories you archive will appear here for deep-cold storage and safekeeping.</p>
+            <h3 className="text-xl font-black text-text-secondary mb-2 uppercase tracking-widest">Archive is Empty</h3>
+            <p className="text-text-tertiary max-w-xs mx-auto text-sm">Items you archive will appear here for safekeeping.</p>
           </div>
         </div>
       )}

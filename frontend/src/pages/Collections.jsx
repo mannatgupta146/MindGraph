@@ -41,7 +41,7 @@ const Collections = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.3em]">Collections</span>
           </div>
           <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
-            Organize your saved items into projects, topics, and custom folders.
+            Organize your saved items into folders and topics.
           </p>
         </div>
 
@@ -98,7 +98,7 @@ const Collections = () => {
               <p className="text-text-secondary line-clamp-2 text-[10px] md:text-[11px] font-medium leading-relaxed mb-4 flex-1">{col.description || 'No description provided.'}</p>
               
               <div className="flex items-center space-x-2 bg-text-primary/5 px-3 py-1.5 rounded-xl border border-border/40">
-                <span className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">{col.saves?.length || 0} Memories</span>
+                <span className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">{col.saves?.length || 0} Items</span>
               </div>
             </div>
           ))}
@@ -106,13 +106,13 @@ const Collections = () => {
       ) : (
         <div className="text-center py-20 md:py-32 bg-surface/30 border-2 border-border border-dashed rounded-[2.5rem] md:rounded-[3rem] px-6 animate-in fade-in zoom-in-95">
           <div className="text-5xl md:text-7xl mb-6 md:mb-8 opacity-20">📂</div>
-          <h3 className="text-xl md:text-3xl font-black text-text-primary mb-3 uppercase tracking-widest">No Projects Found</h3>
+          <h3 className="text-xl md:text-3xl font-black text-text-primary mb-3 uppercase tracking-widest">No Collections Found</h3>
           <p className="text-text-secondary text-sm md:text-lg mb-8 md:mb-10 max-w-sm mx-auto opacity-70 leading-relaxed">
-            Create your first collection to start organizing your memories into meaningful clusters.
+            Create your first collection to start organizing your saved items.
           </p>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-8 md:px-10 py-3.5 md:py-4 bg-surface border-2 border-border text-text-primary font-black text-xs md:text-sm uppercase tracking-widest rounded-2xl hover:border-primary transition-all hover:text-primary group shadow-lg active:scale-95"
+            className="px-8 md:px-10 py-3.5 md:py-4 bg-surface border-2 border-border text-text-primary font-black text-xs md:text-sm uppercase tracking-widest rounded-2xl hover:border-text-primary/50 transition-all group shadow-lg active:scale-95"
           >
             Start Organizing
             <span className="inline-block ml-3 group-hover:translate-x-1 transition-transform">→</span>
@@ -126,16 +126,16 @@ const Collections = () => {
           <div className="bg-surface w-full max-w-md rounded-3xl border border-border shadow-2xl p-6 md:p-8 relative overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
             
-            <h2 className="text-xl md:text-2xl font-black text-text-primary mb-8 tracking-tighter uppercase">Initialize Vault</h2>
+            <h2 className="text-xl md:text-2xl font-black text-text-primary mb-8 tracking-tighter uppercase">Create New Collection</h2>
             
             <form onSubmit={handleCreateCollection} className="space-y-6">
               <div>
-                <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.3em] mb-2 ml-1">Project Identifier</label>
+                <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.3em] mb-2 ml-1">Collection Name</label>
                 <input 
                   autoFocus
                   required
                   type="text"
-                  placeholder="e.g. AI Ethics Research"
+                  placeholder="e.g. Work Research"
                   className="w-full px-5 py-3.5 bg-background border border-border rounded-2xl text-text-primary focus:outline-none focus:border-primary transition-all text-sm font-bold shadow-inner"
                   value={newCollection.title}
                   onChange={e => setNewCollection({...newCollection, title: e.target.value})}
@@ -153,7 +153,7 @@ const Collections = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.2em] mb-1.5 ml-1">Label Color</label>
+                  <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.2em] mb-1.5 ml-1">Accent Color</label>
                   <input 
                     type="color"
                     className="w-full h-11.5 p-1.5 bg-background border border-border rounded-xl cursor-pointer focus:outline-none focus:border-primary transition-all"
@@ -164,10 +164,10 @@ const Collections = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.2em] mb-1.5 ml-1">Brief Intent</label>
+                <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-[0.2em] mb-1.5 ml-1">Description</label>
                 <textarea 
                   rows="2"
-                  placeholder="What is the goal of this collection?"
+                  placeholder="What is this collection for?"
                   className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary focus:outline-none focus:border-primary transition-all resize-none font-medium text-sm"
                   value={newCollection.description}
                   onChange={e => setNewCollection({...newCollection, description: e.target.value})}
@@ -186,7 +186,7 @@ const Collections = () => {
                   type="submit"
                   className="flex-2 py-2 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm"
                 >
-                  Construct Project
+                  Create Collection
                 </button>
               </div>
             </form>

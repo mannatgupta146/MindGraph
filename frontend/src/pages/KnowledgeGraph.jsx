@@ -229,10 +229,10 @@ const KnowledgeGraph = () => {
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
-          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">Semantic Constellation</span>
+          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">Knowledge Graph</span>
         </div>
         <p className="hidden md:block text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl">
-          A living, breathing visual representation of your connected memories.
+          A visual representation of your connected saved items and topics.
         </p>
       </div>
 
@@ -250,15 +250,15 @@ const KnowledgeGraph = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-text-primary mb-3 tracking-tight">Cosmic Void</h2>
+          <h2 className="text-xl font-bold text-text-primary mb-3 tracking-tight">Graph is Empty</h2>
           <p className="text-text-secondary max-w-sm leading-relaxed mb-8">
-            Your graph is currently empty. Capture articles, tweets, or thoughts and watch the AI weave them into a living constellation.
+            Your graph is currently empty. Save items and notes to see them connected here.
           </p>
           <button 
             onClick={() => navigate('/dashboard')}
             className="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20"
           >
-            Initialize Memory
+            Add First Item
           </button>
         </div>
       )}

@@ -46,10 +46,9 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
       formData.append('type', type);
       if (url) formData.append('url', url);
       
+      if (content) formData.append('content', content);
       if ((type === 'pdf' || type === 'image') && file) {
         formData.append('file', file);
-      } else {
-        formData.append('content', content);
       }
 
       const { data } = await api.post('/saves', formData, {
@@ -87,7 +86,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
       <div className="w-full max-w-lg bg-surface border border-border rounded-2xl shadow-2xl p-5 sm:p-6 my-auto max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4 shrink-0">
-          <h3 className="text-xl font-bold text-text-primary">Capture New Memory</h3>
+          <h3 className="text-xl font-bold text-text-primary">Add New Item</h3>
           <button onClick={onClose} className="text-text-tertiary hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-background">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -105,7 +104,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Give your memory a name"
+                placeholder="Give your item a title"
                 required
                 className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
               />
@@ -128,14 +127,14 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
 
             {collections.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Project (Optional)</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Collection (Optional)</label>
                 <select
                   value={selectedCollection}
                   onChange={(e) => setSelectedCollection(e.target.value)}
                   className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
                   disabled={!!preselectedCollectionId}
                 >
-                  <option value="">No Project</option>
+                  <option value="">No Collection</option>
                   {collections.map(col => (
                     <option key={col._id} value={col._id}>{col.icon} {col.title}</option>
                   ))}
@@ -183,11 +182,11 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
                     <span className="text-sm font-medium text-text-secondary text-center px-4">
                       {file ? file.name : `Select or drag ${type.toUpperCase()} here`}
                     </span>
-                    {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to capture</span>}
+                    {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to save</span>}
                   </label>
                 </div>
                 <p className="text-[10px] text-text-tertiary italic">
-                  {type === 'pdf' ? 'Content will be extracted automatically' : 'Original image will be persisted for visual recall'}
+                  {type === 'pdf' ? 'Content will be extracted automatically' : 'Original image will be saved for visual reference'}
                 </p>
               </div>
             ) : (type === 'youtube' || type === 'tweet') ? (
@@ -196,7 +195,7 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className="text-xs text-text-secondary leading-relaxed">
-                  <span className="text-primary font-bold">Smart Capture Active:</span> AI will automatically fetch the {type === 'tweet' ? 'tweet text' : 'video transcript'} and metadata for your Second Brain.
+                  <span className="text-primary font-bold">Smart Capture Active:</span> AI will automatically fetch the {type === 'tweet' ? 'tweet text' : 'video transcript'} and metadata for you.
                 </p>
               </div>
             ) : (

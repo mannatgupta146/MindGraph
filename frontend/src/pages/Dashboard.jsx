@@ -50,7 +50,7 @@ const Dashboard = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.3em]">Dashboard</span>
           </div>
           <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-3xl px-1">
-            Welcome back. Here is an overview of your active saved items and collections. Keep capturing thoughts to grow your second brain.
+            Welcome back. Here is an overview of your active saved items and collections.
           </p>
         </div>
 
@@ -96,7 +96,7 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex flex-col space-y-1">
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-tertiary">
-              Your Memory Base
+              Saved Content
             </span>
             <h2 className="text-xl md:text-3xl font-black tracking-tight text-text-primary uppercase leading-tight">
               {selectedTag === 'All' ? 'Saved Items' : `Category: ${selectedTag}`}
@@ -148,16 +148,16 @@ const Dashboard = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="text-xl font-black text-text-primary uppercase tracking-widest mb-2">Constellation Empty</h3>
+            <h3 className="text-xl font-black text-text-primary uppercase tracking-widest mb-2">No Items Found</h3>
             <p className="text-text-secondary mb-8 max-w-xs mx-auto text-sm leading-relaxed">
-              Start by capturing your first article, tweet, or thought to begin your cognitive journey.
+              Start by adding your first article, tweet, document, or note.
             </p>
             {selectedTag === 'All' && (
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="px-8 py-3.5 bg-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-primary-hover shadow-xl shadow-primary/20 transition-all active:scale-95"
               >
-                Capture First Memory
+                Add First Item
               </button>
             )}
           </div>
