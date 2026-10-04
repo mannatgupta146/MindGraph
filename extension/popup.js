@@ -14,7 +14,24 @@
       loginBtn: document.getElementById('login-redirect-btn')
     };
 
-    const API_BASE = 'https://mindgraph.onrender.com/api';
+    const API_ENDPOINTS = [
+      'http://localhost:5000/api',
+      'https://mindgraph.onrender.com/api'
+    ];
+
+    async function fetchWithFallback(endpointPath, options = {}) {
+      for (const baseUrl of API_ENDPOINTS) {
+        try {
+          const res = await fetch(`${baseUrl}${endpointPath}`, options);
+          if (res.status !== 502 && res.status !== 503) {
+            return res;
+          }
+        } catch (e) {
+          // ignore & try next fallback
+        }
+      }
+      return fetch(`${API_ENDPOINTS[0]}${endpointPath}`, options);
+    }
     
     // 🛡️ NEURAL CONTEXT GUARD (Resilient Storage Bridge)
     const storage = (typeof chrome !== 'undefined' && chrome.storage) ? chrome.storage.local : {
@@ -61,7 +78,7 @@
         verifyPinBtn.textContent = 'Syncing...';
 
         try {
-          const res = await fetch(`${API_BASE}/auth/verify-pin`, {
+          const res = await fetchWithFallback('/auth/verify-pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin })
@@ -267,7 +284,7 @@
           payload = JSON.stringify(metadata);
         }
 
-        const response = await fetch(`${API_BASE}/items/save`, {
+        const response = await fetchWithFallback('/saves/save', {
           method: 'POST',
           headers: headers,
           body: payload
