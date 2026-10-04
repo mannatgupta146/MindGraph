@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "MindGraph Helper",
+  "version": "2.0.15",
+  "description": "Unified Intelligence Ingestion. Instant Save for the MindGraph platform.",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:5173/*"]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "assets/icon.svg"
+  }
+}

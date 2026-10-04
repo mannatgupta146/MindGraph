@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@theme {
+  /* Map Tailwind colors to CSS variables */
+  --color-background: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-surface-hover: var(--surface-hover-color);
+  --color-border: var(--border-color);
+  --color-primary: var(--primary-color);
+  --color-primary-hover: var(--primary-hover-color);
+  --color-secondary: var(--secondary-color);
+  --color-accent: var(--accent-color);
+  --color-text-primary: var(--text-color);
+  --color-text-secondary: var(--text-muted-color);
+  --color-text-tertiary: var(--text-disabled-color);
+  --font-sans: "Inter", sans-serif;
+}
+
+:root {
+  /* Light Theme */
+  --bg-color: #F3F4F6; /* Soft cool slate (Gray 100) */
+  --surface-color: #F9FAFB; /* Very gentle off-white (Gray 50) */
+  --surface-hover-color: #E5E7EB;
+  --border-color: #E5E7EB;
+  --primary-color: #3B82F6;
+  --primary-hover-color: #2563EB;
+  --secondary-color: #06B6D4;
+  --accent-color: #F59E0B;
+  --text-color: #0F172A;
+  --text-muted-color: #64748B;
+  --text-disabled-color: #94A3B8;
+}
+
+.dark {
+  /* Premium Dark Theme (Bespoke Zinc/Neutral) */
+  --bg-color: #09090B; /* Deep OLED-like off-black */
+  --surface-color: #121214; /* Very subtle elevation */
+  --surface-hover-color: #1F1F22;
+  --border-color: #27272A;
+  --primary-color: #3B82F6;
+  --primary-hover-color: #60A5FA;
+  --secondary-color: #06B6D4;
+  --accent-color: #F59E0B;
+  --text-color: #FAFAFA;
+  --text-muted-color: #A1A1AA;
+  --text-disabled-color: #52525B;
+}
+
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  width: 100vw;
+  position: relative;
+}
+
+/* Fix for browser autofill (Chrome/Safari) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px var(--bg-color) inset !important;
+  -webkit-text-fill-color: var(--text-color) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Custom Scrollbar - Premium Aesthetics */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+}
+
+/* Firefox Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* Premium Neural OS Utilities */
+.mask-horizontal {
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+

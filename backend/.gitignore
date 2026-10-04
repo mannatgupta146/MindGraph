@@ -1,0 +1,16 @@
+# Dependency Directories
+node_modules/
+
+# Environment Files
+.env
+.env.*
+
+# Log Files
+*.log
+npm-debug.log*
+
+# OCR & Binary Data Files
+eng.traineddata
+
+# OS Files
+.DS_Store

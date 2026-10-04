@@ -1,0 +1,23 @@
+# Dependency Directories
+node_modules/
+
+# Production Build
+dist/
+dist-ssr/
+*.local
+
+# Environment Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
