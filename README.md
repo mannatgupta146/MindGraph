@@ -22,12 +22,11 @@
 
 MindGraph allows you to capture and index diverse content formats seamlessly:
 
-- **Web Articles**: Full text extraction, markdown parsing, and clean reading view.
-- **Tweets & X Posts**: Social bookmarking, thread content scraping, and author metadata.
-- **PDF Documents**: Full document indexing with automatic AI OCR scanning for PDFs.
-- **YouTube Videos**: Video details, transcript extraction, and conceptual summaries.
-- **Images & Diagrams**: AI OCR text extraction from receipts, business cards, whiteboards, and screenshots.
-- **Notes & Code Snippets**: Custom markdown notes, ideas, and code snippets organized by topic.
+- **YouTube Videos**: Video details, transcript extraction, and conceptual summaries (`#EF4444`).
+- **X / Twitter Posts**: Social bookmarking, thread content scraping, and author metadata (`#000000`).
+- **PDF Documents**: Full document indexing with automatic AI OCR scanning for PDFs (`#BE123C`).
+- **Images & Screenshots**: AI OCR text extraction from receipts, business cards, whiteboards, and diagrams (`#EAB308`).
+- **Articles & Notes**: Full text extraction, reader mode view, custom markdown notes, and code snippets (`#3B82F6`).
 
 ---
 
@@ -39,8 +38,9 @@ Automatically transforms messy raw OCR text, document scans, and receipts into c
 ### 2. Hybrid Conceptual & Keyword Search
 Combines 1024-dimensional **Pinecone** vector embeddings with **MongoDB** multi-word regex matching. Scores results based on semantic similarity, title matches, tag relevance, and collection names.
 
-### 3. Interactive 2D Knowledge Graph
-An interactive 2D canvas built with `react-force-graph-2d`. Visualizes relationships between saved content, categories, and tags with real-time node filtering.
+### 3. Interactive 3D & 2D Knowledge Graph Visualizations
+- **3D Hero Constellation Graph (`Neural3DGraph.jsx`)**: WebGL/Canvas 3D graph with magnetic mouse repulsion, node focus orbit rings, click shockwave ripples, and signal particle acceleration.
+- **2D Workspace Knowledge Map (`KnowledgeGraph.jsx`)**: Interactive 2D force-directed canvas visualizing connections between saves, categories, and tags with color-coded node badges.
 
 ### 4. Non-Blocking Resilient Processing
 Background processing pipeline guarantees 1–3s instant response times when saving items, running OCR extraction, AI summarization, and vector upserting asynchronously.

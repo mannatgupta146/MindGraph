@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ForceGraph2D from 'react-force-graph-2d';
+import Neural3DGraph from '../components/ui/Neural3DGraph';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { ThemeContext } from '../context/ThemeContext';
@@ -105,10 +105,10 @@ const Landing = () => {
   }, []);
 
   const stats = [
-    { label: 'Speed', val: '12ms', icon: <Zap className="w-3 h-3" /> },
-    { label: 'Uptime', val: '99.9%', icon: <Activity className="w-3 h-3" /> },
-    { label: 'Saved Items', val: '1.2M+', icon: <Network className="w-3 h-3" /> },
-    { label: 'Status', val: 'Active', icon: <Command className="w-3 h-3" /> }
+    { label: 'SEARCH', val: 'HYBRID', icon: <Zap className="w-3 h-3" /> },
+    { label: 'SYNC', val: 'REALTIME', icon: <Activity className="w-3 h-3" /> },
+    { label: 'GRAPH', val: '3D NEURAL', icon: <Network className="w-3 h-3" /> },
+    { label: 'STATUS', val: 'ACTIVE', icon: <Command className="w-3 h-3" /> }
   ];
 
   const features = [
@@ -138,43 +138,9 @@ const Landing = () => {
   return (
     <div className={`relative min-h-screen ${theme === 'dark' ? 'bg-black text-white' : 'bg-gray-50 text-gray-900'} overflow-x-hidden transition-colors duration-500`}>
       
-      {/* 1. INTERACTIVE NEURAL BACKGROUND (FULL SCREEN & DYNAMNIC) */}
-      <div className="absolute inset-0 z-0 opacity-50 mask-[radial-gradient(ellipse_at_center,black_70%,transparent_100%)]">
-        <ForceGraph2D
-          ref={fgRef}
-          graphData={graphData}
-          backgroundColor="rgba(0,0,0,0)"
-          nodeCanvasObject={(node, ctx, globalScale) => {
-            const label = node.name;
-            const fontSize = 11 / globalScale;
-            ctx.font = `${fontSize}px Inter, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, node.size || 5, 0, 2 * Math.PI, false);
-            ctx.fillStyle = theme === 'dark' ? node.color : (node.color === '#94A3B8' ? '#CBD5E1' : node.color);
-            ctx.fill();
-
-            if (label) {
-              ctx.fillStyle = theme === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
-              ctx.fillText(label, node.x, node.y + (node.size || 5) + 14);
-            }
-          }}
-          linkColor={() => theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}
-          linkWidth={1}
-          nodeRelSize={6}
-          enableNodeDrag={true}
-          enableZoomInteraction={false}
-          enablePanInteraction={true}
-          cooldownTicks={Infinity}
-          d3AlphaDecay={0.01}
-          d3VelocityDecay={0.1}
-          linkDirectionalParticles={3}
-          linkDirectionalParticleSpeed={0.005}
-          linkDirectionalParticleColor={() => '#60A5FA'}
-          linkDirectionalParticleWidth={2.5}
-        />
+      {/* 1. INTERACTIVE 3D NEURAL CONSTELLATION BACKGROUND (TOP HERO VIEWPORT) */}
+      <div className="absolute top-0 left-0 right-0 h-screen z-0 opacity-90 pointer-events-none overflow-hidden">
+        <Neural3DGraph theme={theme} />
       </div>
 
       {/* 2. COMMAND HEADER NAVIGATION */}
@@ -188,11 +154,11 @@ const Landing = () => {
           </div>
           
           {/* CENTER: Stats HUD */}
-          <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center bg-background/40 backdrop-blur-xl border border-border rounded-2xl px-6 py-2.5 space-x-8 text-[9px] font-black uppercase tracking-[0.2em] opacity-60 pointer-events-auto">
+          <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center bg-background/40 backdrop-blur-xl border border-border rounded-2xl px-6 py-2.5 space-x-6 text-[9px] font-black uppercase tracking-[0.2em] opacity-70 pointer-events-auto whitespace-nowrap">
              {stats.map((s, i) => (
-                <div key={i} className="flex items-center space-x-2">
+                <div key={i} className="flex items-center space-x-2 shrink-0 whitespace-nowrap">
                    <span className="text-primary">{s.icon}</span>
-                   <span>{s.label}: {s.val}</span>
+                   <span className="whitespace-nowrap">{s.label}: <span className="text-text-primary font-bold">{s.val}</span></span>
                 </div>
              ))}
           </div>
@@ -233,6 +199,111 @@ const Landing = () => {
            </button>
         </div>
       </main>
+
+      <div className="h-px w-full bg-linear-to-r from-transparent via-border/20 to-transparent" />
+
+      {/* SUPPORTED CONTENT FORMATS SHOWCASE */}
+      <section className="relative z-10 w-full max-w-400 mx-auto px-6 md:px-12 py-16 md:py-24 pointer-events-auto">
+        <div className="text-center md:text-left mb-12">
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+            Supports All Your Daily Formats.
+          </h2>
+          <p className="text-text-secondary text-base md:text-lg max-w-2xl opacity-70">
+            One click to extract transcripts, text, OCR images, and metadata automatically into your connected memory graph.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+          {/* 1. YouTube */}
+          <div className="bg-surface/40 backdrop-blur-2xl border border-border shadow-sm hover:border-red-500/40 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-500/10 group flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mb-4 group-hover:scale-110 group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186c-.273-1.011-1.04-1.802-2.028-2.074C19.694 3.827 12 3.827 12 3.827s-7.694 0-9.47.285C1.542 4.384.775 5.175.502 6.186.225 7.99.225 12 .225 12s0 4.01.277 5.814c.273 1.011 1.04 1.802 2.028 2.074 1.776.285 9.47.285 9.47.285s7.694 0 9.47-.285c.988-.272 1.755-1.063 2.028-2.074.277-1.804.277-5.814.277-5.814s0-4.01-.277-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-base text-text-primary mb-1">YouTube</h3>
+              <p className="text-xs text-text-tertiary leading-relaxed">Auto transcript & key takeaway summary.</p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase tracking-wider text-red-400">Video & Audio</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+            </div>
+          </div>
+
+          {/* 2. X / Twitter (Original Black Brand Color) */}
+          <div className="bg-surface/40 backdrop-blur-2xl border border-border shadow-sm hover:border-text-primary/50 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-text-primary/10 group flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-black border border-zinc-700/80 flex items-center justify-center text-white mb-4 group-hover:scale-110 group-hover:bg-black group-hover:border-zinc-400 group-hover:shadow-[0_0_20px_rgba(161,161,170,0.35)] transition-all duration-300 shadow-md">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-base text-text-primary mb-1">X / Twitter</h3>
+              <p className="text-xs text-text-tertiary leading-relaxed">Thread capture, post text & author metadata.</p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase tracking-wider text-text-secondary">Social Threads</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-text-primary animate-pulse"></span>
+            </div>
+          </div>
+
+          {/* 3. PDF Documents (Adobe Crimson Theme) */}
+          <div className="bg-surface/40 backdrop-blur-2xl border border-border shadow-sm hover:border-rose-600/50 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-700/15 group flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-rose-600/10 border border-rose-600/25 flex items-center justify-center text-rose-500 mb-4 group-hover:scale-110 group-hover:bg-rose-700 group-hover:border-rose-600 group-hover:text-white transition-all duration-300">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.63 15.3c-.71-.745-2.166-1.17-4.224-1.17-1.1 0-2.377.106-3.761.354a19.443 19.443 0 0 1-2.307-2.661c-.532-.71-.994-1.49-1.42-2.236.817-2.484 1.207-4.507 1.207-5.962 0-1.632-.603-3.336-2.342-3.336-.532 0-1.065.32-1.349.781-.78 1.384-.425 4.4.923 7.381a60.277 60.277 0 0 1-2.66 6.958c-3.233 1.17-5.358 2.596-5.646 3.857-.106.507.054 1.003.426 1.384.408.424.887.585 1.348.585 1.42 0 3.08-1.7 4.996-5.11a46.11 46.11 0 0 1 4.32-1.065c.958.958 1.843 1.682 2.691 2.192 2.414 1.453 4.115.958 4.896.426.674-.462 1.022-1.278.887-2.379zM2.946 20.36c.426-.958 1.917-2.093 3.58-2.946-1.065 1.933-2.022 2.946-3.58 2.946zM10.346 1.74c.639 0 .887.958.887 2.13 0 1.491-.355 2.84-.746 4.08-.674-1.775-1.03-3.535-.746-5.13.124-.71.355-1.08.605-1.08zm-.32 12.072c.532-1.065 1.065-2.272 1.526-3.585.497.887 1.065 1.738 1.668 2.555-1.03.248-2.13.639-3.194 1.03zm11.71 2.555c-.497.355-1.81.497-3.37-.461-.533-.355-1.066-.746-1.597-1.172 3.088-.355 4.968.07 5.04.532.106.39.07.887-.073 1.1z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-base text-text-primary mb-1">PDF Docs</h3>
+              <p className="text-xs text-text-tertiary leading-relaxed">Full text extraction & document intelligence.</p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase tracking-wider text-rose-500">Documents</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse"></span>
+            </div>
+          </div>
+
+          {/* 4. Images & Vision OCR */}
+          <div className="bg-surface/40 backdrop-blur-2xl border border-border shadow-sm hover:border-yellow-500/50 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-yellow-500/15 group flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center text-yellow-500 mb-4 group-hover:scale-110 group-hover:bg-yellow-500 group-hover:text-white transition-all duration-300">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="9" cy="9" r="2" />
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-base text-text-primary mb-1">Image & OCR</h3>
+              <p className="text-xs text-text-tertiary leading-relaxed">AI visual recognition & text extraction.</p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase tracking-wider text-yellow-500">Vision AI</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+            </div>
+          </div>
+
+          {/* 5. Articles & Personal Notes (Combined) */}
+          <div className="bg-surface/40 backdrop-blur-2xl border border-border shadow-sm hover:border-blue-500/40 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 group flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4" />
+                  <path d="M2 6h4M2 10h4M2 14h4M2 18h4" />
+                  <path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-base text-text-primary mb-1">Articles & Notes</h3>
+              <p className="text-xs text-text-tertiary leading-relaxed">Clean reader mode, manual thoughts & code blocks.</p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
+              <span className="text-[9px] font-black uppercase tracking-wider text-blue-400">Reader & Snippets</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="h-px w-full bg-linear-to-r from-transparent via-border/20 to-transparent" />
 
@@ -576,46 +647,29 @@ const Landing = () => {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-62.5 md:w-75 h-62.5 md:h-75 bg-amber-500/10 blur-[70px] md:blur-[100px] animate-pulse delay-1000" />
              </div>
              
-             {/* THE CONVERGENCE CORE */}
-             <div className="mb-12 md:mb-16 relative inline-flex items-center justify-center">
+             {/* THE NEURAL HUB BADGE GRID */}
+             <div className="mb-8 md:mb-10 relative inline-flex flex-col items-center justify-center">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 blur-[90px] rounded-full pointer-events-none" />
                 
-                {/* Rotating Rings (Asynchronous) */}
-                <motion.div 
-                   className="absolute w-36 md:w-48 h-36 md:h-48 rounded-full border-2 border-blue-500/20 border-t-blue-500/60"
-                   animate={{ rotate: 360 }}
-                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.div 
-                   className="absolute w-28 md:w-40 h-28 md:h-40 rounded-full border-2 border-cyan-500/20 border-b-cyan-500/60"
-                   animate={{ rotate: -360 }}
-                   transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.div 
-                   className="absolute w-20 md:w-32 h-20 md:h-32 rounded-full border-2 border-amber-500/20 border-l-amber-500/60"
-                   animate={{ rotate: 360 }}
-                   transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Core Nucleus */}
-                <div className="w-16 md:w-24 h-16 md:h-24 rounded-2xl md:rounded-3xl bg-background border border-white/10 flex items-center justify-center shadow-2xl relative z-10 overflow-hidden">
-                   <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-secondary/20 animate-pulse" />
-                   <Cpu className="w-7 md:w-10 h-7 md:h-10 text-primary relative z-20" />
+                {/* Floating Glass Pills */}
+                <div className="flex flex-wrap items-center justify-center gap-3 relative z-10">
+                   <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-surface/80 border border-border/60 text-xs font-bold text-text-primary shadow-lg backdrop-blur-md">
+                      <Sparkles className="w-3.5 h-3.5 text-primary" />
+                      <span>Smart Conceptual Index</span>
+                   </div>
+                   <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-surface/80 border border-border/60 text-xs font-bold text-text-primary shadow-lg backdrop-blur-md">
+                      <Zap className="w-3.5 h-3.5 text-amber-500" />
+                      <span>0ms Instant Sync</span>
+                   </div>
+                   <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-surface/80 border border-border/60 text-xs font-bold text-text-primary shadow-lg backdrop-blur-md">
+                      <Network className="w-3.5 h-3.5 text-secondary" />
+                      <span>Visual 2D Graph</span>
+                   </div>
                 </div>
-                
-                {/* Floating Memories (Icons) */}
-                <motion.div 
-                   className="absolute"
-                   animate={{ rotate: 360 }}
-                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                >
-                   <Network className="absolute -top-24 md:-top-32 -left-24 md:-left-32 w-5 md:w-6 h-5 md:h-6 text-blue-400/30" />
-                   <Globe className="absolute -top-24 md:-top-32 -right-24 md:-right-32 w-5 md:w-6 h-5 md:h-6 text-cyan-400/30" />
-                   <Zap className="absolute top-24 md:top-32 -left-24 md:-left-32 w-5 md:w-6 h-5 md:h-6 text-amber-400/30" />
-                </motion.div>
              </div>
 
              <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.95] tracking-tighter max-w-5xl mx-auto drop-shadow-2xl">
-                Ready to <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-500 via-cyan-400 to-amber-500 animate-gradient">Organize</span> Your Knowledge?
+                Ready to <span className="text-primary font-black drop-shadow-[0_0_40px_rgba(59,130,246,0.6)]">Organize</span> Your Knowledge?
              </h2>
              
              <p className="text-lg md:text-xl text-text-secondary opacity-60 mb-12 md:mb-16 max-w-3xl mx-auto leading-relaxed font-medium px-4">
@@ -654,7 +708,7 @@ const Landing = () => {
                 </div>
              </div>
           </motion.div>
-      </section>
+       </section>
 
       {/* 5. FOOTER HUD UPGRADE */}
       <footer className="relative z-10 border-t border-border bg-background/60 backdrop-blur-3xl px-6 md:px-12 py-12 md:py-16 pointer-events-auto">

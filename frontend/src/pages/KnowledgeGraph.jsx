@@ -9,13 +9,15 @@ import { useStore } from '../store/useStore';
 
 // Pre-compile SVG paths outside of component for blazing 60FPS render performance
 const NODE_ICONS = {
-  youtube: new Path2D('M8 5v14l11-7z'), // Play
-  pdf: new Path2D('M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm6 1.5L18.5 10H12V3.5z'), // Document
-  tweet: new Path2D('M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z'), // Bird
-  article: new Path2D('M4 6h16v2H4zm0 5h16v2H4zm0 5h8v2H4z'), // Text lines
-  image: new Path2D('M12 11.5A2.5 2.5 0 0 1 9.5 14 2.5 2.5 0 0 1 7 11.5 2.5 2.5 0 0 1 9.5 9a2.5 2.5 0 0 1 2.5 2.5M19 4h-3.17L14 2h-4L8.17 4H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM9.5 15.5c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z'), // Camera
+  youtube: new Path2D('M23.498 6.186c-.273-1.011-1.04-1.802-2.028-2.074C19.694 3.827 12 3.827 12 3.827s-7.694 0-9.47.285C1.542 4.384.775 5.175.502 6.186.225 7.99.225 12 .225 12s0 4.01.277 5.814c.273 1.011 1.04 1.802 2.028 2.074 1.776.285 9.47.285 9.47.285s7.694 0 9.47-.285c.988-.272 1.755-1.063 2.028-2.074.277-1.804.277-5.814.277-5.814s0-4.01-.277-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'), // YouTube logo
+  pdf: new Path2D('M23.63 15.3c-.71-.745-2.166-1.17-4.224-1.17-1.1 0-2.377.106-3.761.354a19.443 19.443 0 0 1-2.307-2.661c-.532-.71-.994-1.49-1.42-2.236.817-2.484 1.207-4.507 1.207-5.962 0-1.632-.603-3.336-2.342-3.336-.532 0-1.065.32-1.349.781-.78 1.384-.425 4.4.923 7.381a60.277 60.277 0 0 1-2.66 6.958c-3.233 1.17-5.358 2.596-5.646 3.857-.106.507.054 1.003.426 1.384.408.424.887.585 1.348.585 1.42 0 3.08-1.7 4.996-5.11a46.11 46.11 0 0 1 4.32-1.065c.958.958 1.843 1.682 2.691 2.192 2.414 1.453 4.115.958 4.896.426.674-.462 1.022-1.278.887-2.379zM2.946 20.36c.426-.958 1.917-2.093 3.58-2.946-1.065 1.933-2.022 2.946-3.58 2.946zM10.346 1.74c.639 0 .887.958.887 2.13 0 1.491-.355 2.84-.746 4.08-.674-1.775-1.03-3.535-.746-5.13.124-.71.355-1.08.605-1.08zm-.32 12.072c.532-1.065 1.065-2.272 1.526-3.585.497.887 1.065 1.738 1.668 2.555-1.03.248-2.13.639-3.194 1.03zm11.71 2.555c-.497.355-1.81.497-3.37-.461-.533-.355-1.066-.746-1.597-1.172 3.088-.355 4.968.07 5.04.532.106.39.07.887-.073 1.1z'), // Adobe Acrobat
+  tweet: new Path2D('M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'), // X Logo
+  // Outline icons (drawn with stroke, identical to landing page cards)
+  article: new Path2D('M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4M2 6h4M2 10h4M2 14h4M2 18h4M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z'), // Notebook pen
+  image: new Path2D('M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21'), // Photo
   default: new Path2D('M13 10V3L4 14h7v7l9-11h-7z') // Lightning Bolt
 };
+const STROKE_ICONS = new Set(['article', 'image']);
 
 const KnowledgeGraph = () => {
   const { id } = useParams();
@@ -155,15 +157,17 @@ const KnowledgeGraph = () => {
     ));
 
     const colors = { 
-      youtube: '#FF0000', 
-      pdf: '#F87171', 
-      tweet: '#1DA1F2', 
+      youtube: '#EF4444', 
+      pdf: '#BE123C', 
+      tweet: '#000000', 
       article: '#3B82F6',
-      image: '#10B981',
+      image: '#EAB308',
       default: '#10B981' 
     };
 
     const color = colors[node.type] || colors.default;
+    // Black glow is invisible on dark canvas, so X nodes glow white/silver instead
+    const glowColor = node.type === 'tweet' ? (isDark ? '#E4E4E7' : '#18181B') : color;
     const baseSize = 8.0; // Reduced from 4.5 to keep nodes elegant
     let size = isSelected ? baseSize * 1.5 : (isHighlighted ? baseSize * 1.2 : baseSize);
     
@@ -180,7 +184,7 @@ const KnowledgeGraph = () => {
     ctx.beginPath();
     ctx.arc(node.x, node.y, size * (isTagged ? 4 : 2.5), 0, 2 * Math.PI, false);
     const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * (isTagged ? 4 : 2.5));
-    gradient.addColorStop(0, `${color}${isSelected || isTagged ? '88' : '33'}`);
+    gradient.addColorStop(0, `${glowColor}${isSelected || isTagged || isHighlighted ? '88' : '33'}`);
     gradient.addColorStop(1, 'transparent');
     ctx.fillStyle = gradient;
     ctx.fill();
@@ -189,10 +193,16 @@ const KnowledgeGraph = () => {
     ctx.beginPath();
     ctx.arc(node.x, node.y, size * 1.5, 0, 2 * Math.PI, false);
     ctx.fillStyle = color;
-    ctx.shadowColor = color;
+    ctx.shadowColor = glowColor;
     ctx.shadowBlur = isSelected || isTagged ? (isTagged ? 25 : 15) : 5;
     ctx.fill();
     ctx.shadowBlur = 0;
+    // Thin ring so the black X badge stays visible on dark backgrounds
+    if (node.type === 'tweet') {
+      ctx.lineWidth = isHighlighted || isSelected ? 2 : 1.2;
+      ctx.strokeStyle = isHighlighted || isSelected ? (isDark ? '#FFFFFF' : '#000000') : (isDark ? '#52525B' : '#18181B');
+      ctx.stroke();
+    }
 
     // 3. Draw Vector Icon inside the Badge
     ctx.save();
@@ -200,8 +210,21 @@ const KnowledgeGraph = () => {
     const iconScale = (size * 1.5) / 24; 
     ctx.translate(node.x - (12 * iconScale), node.y - (12 * iconScale));
     ctx.scale(iconScale, iconScale);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fill(NODE_ICONS[node.type] || NODE_ICONS.default);
+    const iconPath = NODE_ICONS[node.type] || NODE_ICONS.default;
+    if (STROKE_ICONS.has(node.type)) {
+      // Shrink slightly so the stroke stays inside the badge
+      ctx.translate(12, 12);
+      ctx.scale(0.8, 0.8);
+      ctx.translate(-12, -12);
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke(iconPath);
+    } else {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill(iconPath);
+    }
     ctx.restore();
 
     // 3. Draw Label
