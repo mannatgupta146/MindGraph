@@ -14,6 +14,14 @@ const { getSubtitles } = require('youtube-captions-scraper');
 
 import Tesseract from 'tesseract.js';
 
+const withTimeout = (promise, ms, fallbackValue) => {
+  let timer;
+  const timeoutPromise = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(fallbackValue), ms);
+  });
+  return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timer));
+};
+
 export const createSave = async (req, res) => {
   try {
     let { title, content, type, url, source, domain, imageUrl, pdfUrl, tags: userTags } = req.body;
@@ -55,15 +63,17 @@ export const createSave = async (req, res) => {
         if ((content && content !== existingSave.content) || isFallback) {
           const contentToProcess = content || currentContent;
           const [summary, aiTags, embedding] = await Promise.all([
-            generateAISummary(contentToProcess),
-            generateAITags(contentToProcess),
-            generateMistralEmbedding(contentToProcess)
+            withTimeout(generateAISummary(contentToProcess), 6000, currentContent.substring(0, 150)),
+            withTimeout(generateAITags(contentToProcess), 6000, ['General']),
+            withTimeout(generateMistralEmbedding(contentToProcess), 6000, [])
           ]);
 
           existingSave.summary = summary;
-          existingSave.tags = [...new Set([...(userTags || []), ...aiTags])];
+          existingSave.tags = [...new Set([...(userTags || []), ...(aiTags || [])])];
           existingSave.embedding = embedding;
-          await pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), contentToProcess, { user: userId.toString() });
+          
+          pineconeService.upsertMemoryToPinecone(existingSave._id.toString(), contentToProcess, { user: userId.toString() })
+            .catch(err => console.warn('[Pinecone Async Update Warning]', err?.message));
         }
         
         await existingSave.save();
@@ -90,14 +100,18 @@ export const createSave = async (req, res) => {
         }
       } else if (isImage) {
         try {
-          // Optimized Singleton OCR Handshake
-          const { data: { text } } = await Tesseract.recognize(req.file.buffer, 'eng');
-          content = text.trim() ? text.trim() : `Visual artifact indexed: ${req.file.originalname}`;
+          // Optimized Singleton OCR Handshake with 5s timeout
+          const ocrText = await withTimeout(
+            Tesseract.recognize(req.file.buffer, 'eng').then(res => res?.data?.text),
+            5000,
+            null
+          );
+          content = ocrText && ocrText.trim() ? ocrText.trim() : `Visual artifact indexed: ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
         } catch (ocrError) {
-          console.error('[OCR Error]', ocrError);
-          content = `Visual artifact indexed (OCR Failed): ${req.file.originalname}`;
+          console.error('[OCR Error]', ocrError?.message || ocrError);
+          content = `Visual artifact indexed: ${req.file.originalname}`;
           if (!title) title = req.file.originalname;
           type = 'image';
         }
@@ -109,12 +123,14 @@ export const createSave = async (req, res) => {
     if (url) {
       if (type === 'youtube' && ytId) {
         try {
-          // Resiliency Layer 1: OEmbed for Title/Metadata (Fast & Reliable)
+          // Resiliency Layer 1: OEmbed for Title/Metadata (Fast & Reliable with timeout)
           const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
-          const oembedResponse = await fetch(oembedUrl);
-          const oembedData = await oembedResponse.json();
+          const oembedData = await withTimeout(
+            fetch(oembedUrl).then(r => r.json()),
+            4000,
+            {}
+          );
           
-          // Absolute Title Priority: Discard "Extension Junk" (like 'fdf', 'ff') and use real title
           if (oembedData.title) title = oembedData.title;
 
           let transcriptText = '';
@@ -122,63 +138,49 @@ export const createSave = async (req, res) => {
 
           // Resiliency Layer 2: YTDL for detailed info & transcription
           try {
-            const info = await ytdl.getBasicInfo(url);
-            description = info.videoDetails.description || '';
+            const info = await withTimeout(ytdl.getBasicInfo(url), 4000, null);
+            if (info?.videoDetails) description = info.videoDetails.description || '';
             try {
-              const captions = await getSubtitles({ videoID: ytId, lang: 'en' });
-              transcriptText = captions.map(c => c.text).join(' ');
+              const captions = await withTimeout(getSubtitles({ videoID: ytId, lang: 'en' }), 4000, []);
+              if (Array.isArray(captions)) transcriptText = captions.map(c => c.text).join(' ');
             } catch (tError) { 
               console.warn(`[Neural Extraction] Captions unavailable for ${ytId}`); 
             }
           } catch (yError) {
-            console.warn(`[Neural Extraction] YTDL failed for ${ytId}, falling back to Meta Scraper.`);
+            console.warn(`[Neural Extraction] YTDL failed for ${ytId}`);
           }
 
-          // Resiliency Layer 3: Bot-Resistant Meta Scraper
-          if (!description) {
-            try {
-              const pageResponse = await fetch(url, {
-                headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
-              });
-              const html = await pageResponse.text();
-              const metaDescription = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
-              description = metaDescription || '';
-            } catch (pError) { console.error('[Meta Scraper Error]'); }
-          }
-
-          // Absolute Content Displacement: Discard extension-provided junk content for YouTube
-          content = `Video: ${title || oembedData.title}\nAuthor: ${oembedData.author_name || 'N/A'}\n\nTranscript: ${transcriptText || 'N/A'}\n\nDescription: ${description || 'N/A'}`;
+          content = `Video: ${title || oembedData.title || 'YouTube Video'}\nAuthor: ${oembedData.author_name || 'N/A'}\n\nTranscript: ${transcriptText || 'N/A'}\n\nDescription: ${description || 'N/A'}`;
         } catch (yError) { 
-          console.error('[YT Extraction Total Failure]', yError); 
+          console.error('[YT Extraction Total Failure]', yError?.message || yError); 
         }
       } else if (type === 'tweet' && !content) {
         try {
           const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}`;
-          const response = await fetch(oembedUrl);
-          const data = await response.json();
-          if (!title) title = `Tweet by ${data.author_name}`;
-          content = data.html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-        } catch (tError) { console.error('Tweet Error'); }
+          const data = await withTimeout(fetch(oembedUrl).then(r => r.json()), 4000, {});
+          if (data.author_name && !title) title = `Tweet by ${data.author_name}`;
+          if (data.html) content = data.html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        } catch (tError) { console.error('Tweet Error', tError?.message); }
       }
     }
 
     // Final Fallback: Descriptive Metadata Anchor
-    if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled'} (Reference: ${url})`;
+    if (!content) content = `Multimedia Artifact Captured: ${title || 'Unlabeled'} (Reference: ${url || 'Upload'})`;
 
-    // AI Neural Pulse: Trigger all synthesis models in parallel for 100% speed resolution
+    // AI Neural Pulse: Trigger all synthesis models in parallel with a strict 6s timeout
     const [summary, aiTags, embedding] = await Promise.all([
-      generateAISummary(content),
-      generateAITags(content),
-      generateMistralEmbedding(content)
+      withTimeout(generateAISummary(content), 6000, content.substring(0, 150) + "..."),
+      withTimeout(generateAITags(content), 6000, ['General']),
+      withTimeout(generateMistralEmbedding(content), 6000, [])
     ]);
 
-    const combinedTags = [...new Set([...(userTags || []), ...aiTags])];
+    const combinedTags = [...new Set([...(userTags || []), ...(aiTags || [])])];
 
     const newSave = await Save.create({
       user: userId,
-      title,
+      title: title || 'Saved Item',
       content,
-      type,
+      type: type || 'note',
       url,
       source: source || 'Chrome',
       domain,
@@ -190,13 +192,15 @@ export const createSave = async (req, res) => {
       fileUrl
     });
 
-    await pineconeService.upsertMemoryToPinecone(newSave._id.toString(), content, { user: userId.toString() });
+    // Background Pinecone indexing so HTTP response is instant
+    pineconeService.upsertMemoryToPinecone(newSave._id.toString(), content, { user: userId.toString() })
+      .catch(pErr => console.warn('[Pinecone Background Upsert Error]', pErr?.message || pErr));
 
-    res.status(201).json(newSave);
+    return res.status(201).json(newSave);
 
   } catch (error) {
     console.error('Error creating save:', error);
-    res.status(500).json({ message: 'Error processing content' });
+    return res.status(500).json({ message: 'Error processing content' });
   }
 };
 

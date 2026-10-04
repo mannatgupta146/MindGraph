@@ -84,146 +84,148 @@ const AddSaveModal = ({ isOpen, onClose, onSaveSuccess, preselectedCollectionId 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-surface border border-border rounded-2xl shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center mb-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+      <div className="w-full max-w-lg bg-surface border border-border rounded-2xl shadow-2xl p-5 sm:p-6 my-auto max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-4 shrink-0">
           <h3 className="text-xl font-bold text-text-primary">Capture New Memory</h3>
-          <button onClick={onClose} className="text-text-tertiary hover:text-text-primary transition-colors">
+          <button onClick={onClose} className="text-text-tertiary hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-background">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {error && <p className="bg-red-500/10 text-red-500 p-3 rounded-lg mb-4 text-sm">{error}</p>}
+        {error && <p className="bg-red-500/10 text-red-500 p-3 rounded-lg mb-4 text-sm shrink-0">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-text-primary">
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Give your memory a name"
-              required
-              className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Type</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
-            >
-              <option value="article">Article</option>
-              <option value="tweet">Tweet</option>
-              <option value="pdf">PDF</option>
-              <option value="youtube">YouTube Video</option>
-              <option value="image">Image</option>
-            </select>
-          </div>
-
-          {collections.length > 0 && (
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden text-text-primary">
+          <div className="space-y-4 overflow-y-auto pr-1 pb-2 flex-1 scrollbar-thin">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">Project (Optional)</label>
-              <select
-                value={selectedCollection}
-                onChange={(e) => setSelectedCollection(e.target.value)}
+              <label className="block text-sm font-medium text-text-secondary mb-1">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Give your memory a name"
+                required
                 className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
-                disabled={!!preselectedCollectionId}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Type</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
               >
-                <option value="">No Project</option>
-                {collections.map(col => (
-                  <option key={col._id} value={col._id}>{col.icon} {col.title}</option>
-                ))}
+                <option value="article">Article</option>
+                <option value="tweet">Tweet</option>
+                <option value="pdf">PDF</option>
+                <option value="youtube">YouTube Video</option>
+                <option value="image">Image</option>
               </select>
             </div>
-          )}
 
-          { (type !== 'pdf' && type !== 'image') && (
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
-                Source URL {(type === 'youtube' || type === 'tweet') ? '(Required)' : '(Optional)'}
-              </label>
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder={type === 'youtube' ? "https://youtube.com/watch?v=..." : type === 'tweet' ? "https://twitter.com/status/..." : "https://example.com"}
-                required={type === 'youtube' || type === 'tweet'}
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
-              />
-            </div>
-          )}
-
-          { (type === 'pdf' || type === 'image') ? (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-text-secondary">
-                {type === 'pdf' ? 'PDF File' : 'Image File'}
-              </label>
-              <div className="relative group/file">
-                <input
-                  type="file"
-                  accept={type === 'pdf' ? ".pdf" : "image/*"}
-                  onChange={(e) => setFile(e.target.files[0])}
-                  required={!content}
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label 
-                  htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 px-4 py-6 bg-background/50 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
+            {collections.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Project (Optional)</label>
+                <select
+                  value={selectedCollection}
+                  onChange={(e) => setSelectedCollection(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
+                  disabled={!!preselectedCollectionId}
                 >
-                  <svg className={`w-8 h-8 mb-2 ${file ? 'text-emerald-500' : 'text-text-tertiary'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                  <span className="text-sm font-medium text-text-secondary text-center px-4">
-                    {file ? file.name : `Select or drag ${type.toUpperCase()} here`}
-                  </span>
-                  {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to capture</span>}
-                </label>
+                  <option value="">No Project</option>
+                  {collections.map(col => (
+                    <option key={col._id} value={col._id}>{col.icon} {col.title}</option>
+                  ))}
+                </select>
               </div>
-              <p className="text-[10px] text-text-tertiary italic">
-                {type === 'pdf' ? 'Content will be extracted automatically' : 'Original image will be persisted for visual recall'}
-              </p>
-            </div>
-          ) : (type === 'youtube' || type === 'tweet') ? (
-            <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl flex items-start space-x-3">
-              <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                <span className="text-primary font-bold">Smart Capture Active:</span> AI will automatically fetch the {type === 'tweet' ? 'tweet text' : 'video transcript'} and metadata for your Second Brain.
-              </p>
-            </div>
-          ) : (
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">Content / Notes</label>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Paste content or write your thoughts here..."
-                required
-                rows={4}
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors resize-none"
-              />
-            </div>
-          )}
+            )}
 
-          <div className="pt-4 flex items-center space-x-3">
+            { (type !== 'pdf' && type !== 'image') && (
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  Source URL {(type === 'youtube' || type === 'tweet') ? '(Required)' : '(Optional)'}
+                </label>
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder={type === 'youtube' ? "https://youtube.com/watch?v=..." : type === 'tweet' ? "https://twitter.com/status/..." : "https://example.com"}
+                  required={type === 'youtube' || type === 'tweet'}
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors"
+                />
+              </div>
+            )}
+
+            { (type === 'pdf' || type === 'image') ? (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-text-secondary">
+                  {type === 'pdf' ? 'PDF File' : 'Image File'}
+                </label>
+                <div className="relative group/file">
+                  <input
+                    type="file"
+                    accept={type === 'pdf' ? ".pdf" : "image/*"}
+                    onChange={(e) => setFile(e.target.files[0])}
+                    required={!content}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label 
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center w-full h-28 sm:h-32 px-4 py-4 bg-background/50 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  >
+                    <svg className={`w-7 h-7 sm:w-8 sm:h-8 mb-1.5 ${file ? 'text-emerald-500' : 'text-text-tertiary'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm font-medium text-text-secondary text-center px-4">
+                      {file ? file.name : `Select or drag ${type.toUpperCase()} here`}
+                    </span>
+                    {file && <span className="text-[10px] text-emerald-500 mt-1 uppercase font-bold">Ready to capture</span>}
+                  </label>
+                </div>
+                <p className="text-[10px] text-text-tertiary italic">
+                  {type === 'pdf' ? 'Content will be extracted automatically' : 'Original image will be persisted for visual recall'}
+                </p>
+              </div>
+            ) : (type === 'youtube' || type === 'tweet') ? (
+              <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl flex items-start space-x-3">
+                <svg className="w-5 h-5 text-primary mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  <span className="text-primary font-bold">Smart Capture Active:</span> AI will automatically fetch the {type === 'tweet' ? 'tweet text' : 'video transcript'} and metadata for your Second Brain.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Content / Notes</label>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Paste content or write your thoughts here..."
+                  required
+                  rows={3}
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:border-primary/50 transition-colors resize-none"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="pt-3 sm:pt-4 flex items-center space-x-3 shrink-0 border-t border-border/40 mt-2">
              <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 bg-surface hover:bg-surface-hover text-text-primary font-medium rounded-xl border border-border transition-colors"
+              className="flex-1 py-2.5 sm:py-3 px-4 bg-surface hover:bg-surface-hover text-text-primary font-medium rounded-xl border border-border transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-2 py-3 px-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center"
+              className="flex-2 py-2.5 sm:py-3 px-4 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center text-sm"
             >
               {loading ? (
                 <>

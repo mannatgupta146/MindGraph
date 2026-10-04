@@ -36,4 +36,12 @@ app.use('/api/saves', saveRoutes);
 app.use('/api/items', saveRoutes);
 app.use('/api/collections', collectionRoutes);
 
+// Health Check Endpoints for Ping / Keep-Alive Services
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'MindGraph API is healthy', timestamp: new Date().toISOString() });
+});
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'MindGraph API is healthy', timestamp: new Date().toISOString() });
+});
+
 export default app;

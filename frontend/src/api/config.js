@@ -5,7 +5,7 @@ export const API_BASE = import.meta.env.VITE_API_URL || 'https://mindgraph.onren
 const api = axios.create({
   baseURL: API_BASE,
   withCredentials: true,
-  timeout: 25000, // 25s timeout for cold start requests
+  timeout: 60000, // 60s timeout for cold start requests and file uploads
 });
 
 export default api;
